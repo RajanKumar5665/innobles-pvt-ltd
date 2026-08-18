@@ -178,8 +178,8 @@ a.footer-contact-link:hover { color: #00BCD4; }
 .hero-bg-right { right: -160px; top: -60px; width: 620px; height: 620px; background: radial-gradient(circle, rgba(255,159,28,.12), rgba(255,209,102,.08), transparent 72%); filter: blur(80px); }
 .hero-bg-purple{ right: 6%; top: 12%; width: 460px; height: 460px; background: radial-gradient(circle, rgba(251,146,60,.12), transparent 70%); filter: blur(70px); }
 
-.hero-grid { position: relative; display: grid; gap: 44px; align-items: center; padding: 56px 0 24px; }
-@media (min-width: 1024px) { .hero-grid { grid-template-columns: 45fr 55fr; gap: 56px; padding: 84px 0 44px; } }
+.hero-grid { position: relative; display: grid; gap: 44px; align-items: center; padding: 56px 0 40px; }
+@media (min-width: 1024px) { .hero-grid { grid-template-columns: 45fr 55fr; gap: 56px; padding: 84px 0 64px; } }
 
 /* --- Left content --- */
 .hero-badge { display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px; border: 1px solid rgba(22,199,217,.28); border-radius: 9999px; background: rgba(255,255,255,.75); backdrop-filter: blur(6px); font-size: 12px; font-weight: 600; letter-spacing: .14em; color: #14213D; box-shadow: 0 4px 14px -6px rgba(20,33,61,.14); }
@@ -188,19 +188,6 @@ a.footer-contact-link:hover { color: #00BCD4; }
 .hero-em-underline { position: absolute; left: -4%; right: -4%; bottom: -6px; height: 12px; border-radius: 9999px; background: linear-gradient(90deg, rgba(255,159,28,.4), rgba(255,209,102,.45), rgba(22,199,217,.4)); transform: skewX(-10deg) rotate(-1deg); }
 .hero-desc { margin-top: 22px; max-width: 540px; font-size: 1.05rem; line-height: 1.65; color: #475569; }
 .hero-cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 30px; }
-
-/* --- Stats --- */
-.hero-stats { margin-top: 46px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
-@media (min-width: 640px) { .hero-stats { grid-template-columns: repeat(4, 1fr); gap: 16px; } }
-.hero-stat { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 15px 16px; overflow: hidden; border: 1px solid #E8EDF3; border-radius: 18px; background: rgba(255,255,255,.78); box-shadow: 0 10px 22px -14px rgba(20,33,61,.22); backdrop-filter: blur(4px); }
-.hero-stat-accent { position: absolute; top: 0; left: 0; bottom: 0; width: 3px; }
-.hero-stat-accent.orange { background: linear-gradient(#FF9F1C, #FFD166); }
-.hero-stat-accent.cyan { background: linear-gradient(#16C7D9, #3B82F6); }
-.hero-stat-number { display: flex; align-items: center; gap: 9px; font-family: 'Plus Jakarta Sans', Poppins, sans-serif; font-size: 1.5rem; font-weight: 800; color: #14213D; }
-.hero-stat-icon { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 10px; }
-.hero-stat-icon.orange { background: rgba(255,159,28,.13); color: #FF9F1C; }
-.hero-stat-icon.cyan { background: rgba(22,199,217,.15); color: #16C7D9; }
-.hero-stat-label { font-size: .8rem; color: #64748B; }
 
 /* --- Right visual: simple animated image --- */
 .hero-visual { position: relative; }
@@ -217,13 +204,6 @@ a.footer-contact-link:hover { color: #00BCD4; }
 .hero-fcard-icon.orange { background: rgba(255,159,28,.14); color: #FF9F1C; }
 .hero-fcard-title { font-size: .76rem; font-weight: 600; color: #64748B; }
 .hero-fcard-value { font-family: 'Plus Jakarta Sans', Poppins, sans-serif; font-size: .95rem; font-weight: 700; color: #14213D; }
-
-/* --- Trusted companies --- */
-.trusted-shell { position: relative; border-top: 1px solid #E8EDF3; margin-top: 44px; padding: 38px 0 8px; text-align: center; }
-.trusted-label { font-size: .74rem; font-weight: 600; letter-spacing: .22em; color: #94A3B8; text-transform: uppercase; }
-.trusted-row { margin-top: 26px; display: flex; flex-wrap: wrap; justify-content: center; gap: 34px 56px; }
-.trusted-brand { font-family: 'Plus Jakarta Sans', Poppins, sans-serif; font-size: 1.18rem; font-weight: 700; color: #CBD5E1; transition: color 200ms, transform 200ms; }
-.trusted-brand:hover { color: #94A3B8; transform: translateY(-2px); }
 
 /* --- Keyframes --- */
 @keyframes float-y { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
@@ -356,6 +336,8 @@ a.footer-contact-link:hover { color: #00BCD4; }
   box-shadow: 0 6px 24px -14px rgba(11, 11, 11, 0.12);
   padding: 20px;
 }
+.text-career-light { color: var(--career-light, #8a8a8a); }
+.text-career-ink { color: var(--career-ink, #171717); }
 /* =====================================================================
    BLOG PAGE — black + white + orange editorial design system
    (matches the reference: white cards, #ff7200 accents, 16–18px radii)

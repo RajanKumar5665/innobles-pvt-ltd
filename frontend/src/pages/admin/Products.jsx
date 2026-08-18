@@ -8,6 +8,7 @@ const emptyForm = {
   slug: "",
   shortDescription: "",
   description: "",
+  link: "",
   specifications: "",
   status: "draft",
 };
@@ -57,6 +58,7 @@ const AdminProducts = () => {
       slug: item.slug || "",
       shortDescription: item.shortDescription || "",
       description: item.description || "",
+      link: item.link || "",
       specifications: Array.isArray(item.specifications) ? item.specifications.join("\n") : "",
       status: item.status || "draft",
     });
@@ -138,6 +140,11 @@ const AdminProducts = () => {
             <div>
               <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Short Description</label>
               <input name="shortDescription" value={form.shortDescription} onChange={handleChange} className={inputClass} />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Product Link (URL)</label>
+              <input name="link" type="url" value={form.link} onChange={handleChange} className={inputClass} placeholder="https://example.com/product" />
+              <p className="mt-1 text-xs text-slate-400">The product card button will open this link. Leave empty to use the internal product page.</p>
             </div>
             <div>
               <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Description</label>

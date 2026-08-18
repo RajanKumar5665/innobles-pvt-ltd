@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../../lib/api";
+import { api, API_BASE } from "../../lib/api";
 import Loader from "../../components/common/Loader";
 
 const inputClass =
@@ -12,6 +12,18 @@ const AdminApplications = () => {
   const [selected, setSelected] = useState(null);
   const [form, setForm] = useState({ status: "new" });
   const [formStatus, setFormStatus] = useState("idle");
+  const [viewResume, setViewResume] = useState(null);
+
+  useEffect(() => {
+    if (!viewResume) return;
+    const onKey = (e) => e.key === "Escape" && setViewResume(null);
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [viewResume]);
 
   const load = async () => {
     setStatus("loading");
@@ -64,6 +76,12 @@ const AdminApplications = () => {
       alert(err.message);
     }
   };
+
+  // PDFs are streamed through the backend proxy so they render inline.
+  const isPdfResume = !viewResume?.originalName || /\.pdf$/i.test(viewResume.originalName);
+  const resumePreviewUrl = viewResume
+    ? `${API_BASE}/admin/applications/${viewResume.id}/resume`
+    : "";
 
   return (
     <div>
@@ -162,7 +180,26 @@ const AdminApplications = () => {
                 <dt className="text-xs font-semibold uppercase tracking-wider text-slate-500">Resume</dt>
                 <dd className="mt-1">
                   {selected.resume?.url ? (
-                    <a href={selected.resume.url} target="_blank" rel="noreferrer" className="text-brand-cyan hover:underline">Download resume</a>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setViewResume({ id: selected._id, ...selected.resume })}
+                        className="rounded-lg bg-brand-cyan px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:brightness-105"
+                      >
+                        View
+                      </button>
+                      <a
+                        href={selected.resume.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="rounded-lg border border-brand-cyan px-3 py-1.5 text-xs font-semibold text-brand-cyan transition-colors hover:bg-brand-cyan/5"
+                      >
+                        Download
+                      </a>
+                      {selected.resume.originalName && (
+                        <span className="text-xs text-slate-400">{selected.resume.originalName}</span>
+                      )}
+                    </div>
                   ) : (
                     <span className="text-slate-500">No resume uploaded</span>
                   )}
@@ -176,6 +213,53 @@ const AdminApplications = () => {
           </div>
         )}
       </div>
+
+      {viewResume && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="resume-preview-title">
+          <button type="button" className="absolute inset-0 bg-ink/50 backdrop-blur-sm" aria-label="Close resume preview" onClick={() => setViewResume(null)} />
+          <div className="relative z-10 flex h-[85vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-2xl">
+            <div className="flex items-center justify-between gap-4 border-b border-line px-4 py-3">
+              <h3 id="resume-preview-title" className="min-w-0 truncate font-disp text-sm font-bold text-ink">
+                Resume — {viewResume.originalName || "Preview"}
+              </h3>
+              <div className="flex shrink-0 items-center gap-3">
+                {isPdfResume && (
+                  <a
+                    href={resumePreviewUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs font-semibold text-brand-cyan hover:underline"
+                  >
+                    Open in new tab
+                  </a>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setViewResume(null)}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-ink"
+                  aria-label="Close"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            {isPdfResume ? (
+              <iframe src={resumePreviewUrl} title="Resume preview" className="h-full w-full flex-1 bg-slate-50" />
+            ) : (
+              <div className="flex flex-1 flex-col items-center justify-center gap-4 bg-slate-50 p-8 text-center">
+                <p className="max-w-sm text-sm text-slate-500">
+                  Preview is not available for{" "}
+                  <span className="font-semibold text-ink">{viewResume.originalName}</span>. Please download the file
+                  to view it.
+                </p>
+                <a href={viewResume.url} target="_blank" rel="noreferrer" className="btn-primary">
+                  Download file
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

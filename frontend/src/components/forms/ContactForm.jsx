@@ -76,7 +76,7 @@ const ContactForm = () => {
         <input type="tel" name="phone" placeholder="Phone (optional)" value={formData.phone} onChange={handleChange} onBlur={handleBlur} className={inputClass} />
         <select name="service" value={formData.service} onChange={handleChange} onBlur={handleBlur} className={`${inputClass} ${formData.service ? "" : "text-slate-400"}`}>
           <option value="" disabled className="bg-white text-ink">Select a service</option>
-          {["Web Development", "Mobile Apps", "Cloud & DevOps", "AI & Automation", "UI/UX Design", "IT Consulting"].map((s) => (
+          {["Web Development", "Mobile Apps", "Cloud & DevOps", "AI & Automation", "UI/UX Design", "IT Consulting", "Others"].map((s) => (
             <option key={s} className="bg-white text-ink">{s}</option>
           ))}
         </select>

@@ -33,16 +33,22 @@ const getPublicBlogBySlug = asyncHandler(async (req, res) => {
 
 const adminCreateBlog = asyncHandler(async (req, res) => {
   const slug = await uniqueSlug(Blog, req.body.title);
-  let image = req.body.image;
-  if (req.file) {
-    image = await uploadSingle({ buffer: req.file.buffer, folder: "innobles/blogs" });
+  const payload = { ...req.body };
+
+  // Optional blog image upload (Cloudinary).
+  if (req.files?.image?.[0]) {
+    payload.image = await uploadSingle({ buffer: req.files.image[0].buffer, folder: "innobles/blogs" });
+  }
+  // Optional author avatar upload — stored as a URL string on the model.
+  if (req.files?.authorAvatar?.[0]) {
+    const { url } = await uploadSingle({ buffer: req.files.authorAvatar[0].buffer, folder: "innobles/avatars" });
+    payload.authorAvatar = url;
   }
 
   const blog = await Blog.create({
-    ...req.body,
+    ...payload,
     slug,
-    image,
-    publishedAt: req.body.status === "published" ? new Date() : undefined,
+    publishedAt: payload.status === "published" ? new Date() : undefined,
   });
 
   return success(res, blog, "Blog created", 201);
@@ -84,11 +90,17 @@ const adminUpdateBlog = asyncHandler(async (req, res) => {
     payload.slug = await uniqueSlug(Blog, payload.slug, blog._id);
   }
 
-  // If a new image file was uploaded, replace the old one.
-  if (req.file) {
-    const { url, publicId } = await uploadSingle({ buffer: req.file.buffer, folder: "innobles/blogs" });
+  // If a new blog image was uploaded, replace the old one.
+  if (req.files?.image?.[0]) {
+    const { url, publicId } = await uploadSingle({ buffer: req.files.image[0].buffer, folder: "innobles/blogs" });
     if (blog.image?.publicId) await deleteByPublicId(blog.image.publicId);
     payload.image = { url, publicId };
+  }
+
+  // If a new author avatar was uploaded, store the Cloudinary URL string.
+  if (req.files?.authorAvatar?.[0]) {
+    const { url } = await uploadSingle({ buffer: req.files.authorAvatar[0].buffer, folder: "innobles/avatars" });
+    payload.authorAvatar = url;
   }
 
   if (payload.status === "published" && blog.status !== "published") {

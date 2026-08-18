@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
-import Stats from "./Stats";
 
 /**
- * Left column of the hero: badge, headline, description, CTAs and stats.
+ * Left column of the hero: badge, headline, description and CTAs.
  */
 const HeroContent = () => (
   <div className="animate-fade-up">
@@ -33,8 +32,6 @@ const HeroContent = () => (
         Explore Products
       </Link>
     </div>
-
-    <Stats />
   </div>
 );
 

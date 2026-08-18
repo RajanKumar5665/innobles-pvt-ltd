@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { api } from "../../lib/api";
-import { selectAdmin } from "../../features/auth/authSlice";
 import Loader from "../../components/common/Loader";
 
 const emptyForm = {
@@ -18,8 +16,6 @@ const inputClass =
   "w-full rounded-xl border border-line bg-slate-50 px-4 py-3 text-sm text-ink placeholder-slate-400 transition-colors focus:border-brand-cyan focus:outline-none focus:ring-2 focus:ring-brand-cyan/20";
 
 const AdminBlogs = () => {
-  const dispatch = useDispatch();
-  const admin = useSelector(selectAdmin);
   const [list, setList] = useState([]);
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
@@ -28,6 +24,13 @@ const AdminBlogs = () => {
   const [formStatus, setFormStatus] = useState("idle");
   const [formError, setFormError] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  // File uploads for the blog image and author avatar.
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [existingImageUrl, setExistingImageUrl] = useState("");
+  const [existingAvatarUrl, setExistingAvatarUrl] = useState("");
 
   const load = async () => {
     setStatus("loading");
@@ -46,9 +49,19 @@ const AdminBlogs = () => {
     load();
   }, []);
 
+  const resetUploads = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    setAvatarFile(null);
+    setAvatarPreview(null);
+    setExistingImageUrl("");
+    setExistingAvatarUrl("");
+  };
+
   const startCreate = () => {
     setEditing(null);
     setForm(emptyForm);
+    resetUploads();
     setShowForm(true);
     setFormStatus("idle");
     setFormError(null);
@@ -65,6 +78,9 @@ const AdminBlogs = () => {
       authorAvatar: item.authorAvatar || "",
       status: item.status || "draft",
     });
+    resetUploads();
+    setExistingImageUrl(item.image?.url || "");
+    setExistingAvatarUrl(item.authorAvatar || "");
     setShowForm(true);
     setFormStatus("idle");
     setFormError(null);
@@ -72,12 +88,41 @@ const AdminBlogs = () => {
 
   const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
+  const handleImageFileChange = (e) => {
+    const file = e.target.files[0];
+    setImageFile(file || null);
+    setImagePreview(file ? URL.createObjectURL(file) : null);
+  };
+
+  const handleAvatarFileChange = (e) => {
+    const file = e.target.files[0];
+    setAvatarFile(file || null);
+    setAvatarPreview(file ? URL.createObjectURL(file) : null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormStatus("loading");
     setFormError(null);
     try {
-      if (editing) {
+      const hasUploads = imageFile || avatarFile;
+      if (hasUploads) {
+        // multipart/form-data so the uploaded files reach the backend.
+        const fd = new FormData();
+        fd.append("title", form.title);
+        fd.append("category", form.category);
+        fd.append("description", form.description || "");
+        fd.append("content", form.content || "");
+        fd.append("author", form.author || "");
+        fd.append("status", form.status);
+        if (imageFile) fd.append("image", imageFile);
+        if (avatarFile) fd.append("authorAvatar", avatarFile);
+        if (editing) {
+          await api.putForm(`/admin/blogs/${editing}`, fd);
+        } else {
+          await api.postForm("/admin/blogs", fd);
+        }
+      } else if (editing) {
         await api.put(`/admin/blogs/${editing}`, form);
       } else {
         await api.post("/admin/blogs", form);
@@ -86,6 +131,7 @@ const AdminBlogs = () => {
       setShowForm(false);
       setEditing(null);
       setForm(emptyForm);
+      resetUploads();
       load();
     } catch (err) {
       setFormStatus("error");
@@ -157,9 +203,42 @@ const AdminBlogs = () => {
                 <input name="author" value={form.author} onChange={handleChange} className={inputClass} />
               </div>
               <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Author Avatar URL</label>
-                <input name="authorAvatar" value={form.authorAvatar} onChange={handleChange} className={inputClass} />
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Blog Image</label>
+                <input type="file" accept="image/*" onChange={handleImageFileChange} className={inputClass} />
+                {(imagePreview || existingImageUrl) && (
+                  <div className="mt-2 flex items-center gap-3">
+                    <img
+                      src={imagePreview || existingImageUrl}
+                      alt="Blog image preview"
+                      className="h-16 w-24 rounded-lg border border-slate-200 object-cover"
+                    />
+                    <span className="text-xs text-slate-500">
+                      {imageFile ? "New image selected" : "Current image"}
+                    </span>
+                  </div>
+                )}
               </div>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Author Avatar</label>
+                <input type="file" accept="image/*" onChange={handleAvatarFileChange} className={inputClass} />
+                <p className="mt-1 text-xs text-slate-400">Optional. JPEG/PNG/WEBP up to 5MB.</p>
+              </div>
+              {(avatarPreview || existingAvatarUrl) && (
+                <div className="flex items-end">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={avatarPreview || existingAvatarUrl}
+                      alt="Author avatar preview"
+                      className="h-14 w-14 rounded-full border border-slate-200 object-cover"
+                    />
+                    <span className="text-xs text-slate-500">
+                      {avatarFile ? "New avatar selected" : "Current avatar"}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
             {formError && <p className="text-sm text-red-600">{formError}</p>}
             <div className="flex gap-3">

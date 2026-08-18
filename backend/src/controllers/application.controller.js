@@ -13,10 +13,16 @@ const createApplication = asyncHandler(async (req, res) => {
 
   let resume = {};
   if (req.file) {
+    // PDFs are uploaded as an "image" asset so Cloudinary serves them with an
+    // inline Content-Disposition — the admin can preview them in the browser.
+    // DOC/DOCX cannot be stored as image assets, so they stay as raw downloads.
+    const isPdf =
+      req.file.mimetype === "application/pdf" ||
+      req.file.originalname.toLowerCase().endsWith(".pdf");
     const asset = await uploadSingle({
       buffer: req.file.buffer,
       folder: "innobles/resumes",
-      resourceType: "raw",
+      resourceType: isPdf ? "image" : "raw",
       fileName: `resume-${Date.now()}`,
     });
     resume = { ...asset, originalName: req.file.originalname };
@@ -70,6 +76,51 @@ const adminGetApplication = asyncHandler(async (req, res) => {
   return success(res, application, "Application retrieved");
 });
 
+/**
+ * GET /api/admin/applications/:id/resume
+ * Streams the stored resume back with an inline Content-Disposition so the
+ * browser renders it (e.g. a PDF inside an iframe) instead of downloading it.
+ * Cloudinary raw URLs often lack a file extension, which makes browsers treat
+ * them as octet-stream and force a download — this proxy fixes that.
+ */
+const adminGetResume = asyncHandler(async (req, res) => {
+  const application = await JobApplication.findById(req.params.id);
+  if (!application || !application.resume?.url) {
+    throw new ApiError(404, "Resume not found");
+  }
+
+  const ext = (application.resume.originalName || "")
+    .split(".")
+    .pop()
+    .toLowerCase();
+  const contentTypes = {
+    pdf: "application/pdf",
+    doc: "application/msword",
+    docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  };
+  const contentType = contentTypes[ext] || "application/octet-stream";
+
+  let upstream;
+  try {
+    upstream = await fetch(application.resume.url);
+  } catch {
+    throw new ApiError(502, "Failed to fetch resume from storage");
+  }
+  if (!upstream.ok || !upstream.body) {
+    throw new ApiError(502, "Failed to fetch resume from storage");
+  }
+
+  res.setHeader("Content-Type", contentType);
+  res.setHeader(
+    "Content-Disposition",
+    `inline; filename="resume${ext ? `.${ext}` : ""}"`,
+  );
+  res.setHeader("Cache-Control", "private, max-age=300");
+
+  const { Readable } = await import("node:stream");
+  Readable.fromWeb(upstream.body).pipe(res);
+});
+
 const adminUpdateApplicationStatus = asyncHandler(async (req, res) => {
   const application = await JobApplication.findById(req.params.id);
   if (!application) throw new ApiError(404, "Application not found");
@@ -89,6 +140,7 @@ export default {
   createApplication,
   adminListApplications,
   adminGetApplication,
+  adminGetResume,
   adminUpdateApplicationStatus,
   adminDeleteApplication,
 };

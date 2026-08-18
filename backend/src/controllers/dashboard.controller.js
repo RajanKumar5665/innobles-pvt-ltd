@@ -1,5 +1,6 @@
 import Blog from "../models/Blog.js";
 import Product from "../models/Product.js";
+import Service from "../models/Service.js";
 import Career from "../models/Career.js";
 import Contact from "../models/Contact.js";
 import JobApplication from "../models/JobApplication.js";

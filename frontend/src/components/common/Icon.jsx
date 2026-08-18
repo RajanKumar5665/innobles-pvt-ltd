@@ -16,6 +16,7 @@ const lucideMap = {
   hrms: UserCog,
   analytics: BarChart3,
   commerce: ShoppingCart,
+  package: Package,
 };
 
 /**

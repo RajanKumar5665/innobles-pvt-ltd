@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
 import { SlidersHorizontal } from "lucide-react";
-import { useSelector } from "react-redux";
 import Seo from "../components/seo/Seo";
 import CareersHero from "../components/careers/CareersHero";
 import CareerFilters from "../components/careers/CareerFilters";
 import JobCard from "../components/careers/JobCard";
 import JobPagination from "../components/careers/JobPagination";
 import EmptyJobsState from "../components/careers/EmptyJobsState";
-import { selectCareers, selectCareersStatus } from "../features/careers/careersSlice";
+import ApplicationModal from "../components/careers/ApplicationModal";
+import { useCareers } from "../hooks/useCareers";
 
 const JOBS_PER_PAGE = 3;
 
@@ -50,13 +50,13 @@ const DEFAULT_FILTERS = {
 };
 
 const Careers = () => {
-  const list = useSelector(selectCareers);
-  const apiStatus = useSelector(selectCareersStatus);
+  const { list, status: apiStatus } = useCareers();
   const [query, setQuery] = useState("");
   const [draft, setDraft] = useState(DEFAULT_FILTERS);
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [sortBy, setSortBy] = useState("newest");
   const [page, setPage] = useState(1);
+  const [applyJob, setApplyJob] = useState(null);
 
   const handleChange = (key, value) => {
     if (key === "search") {
@@ -186,7 +186,7 @@ const Careers = () => {
               <>
                 <div className="mt-8 flex flex-col gap-5">
                   {pageJobs.map((job) => (
-                    <JobCard key={job.id} job={job} />
+                    <JobCard key={job.id} job={job} onApply={setApplyJob} />
                   ))}
                 </div>
                 <JobPagination current={safePage} total={totalPages} onChange={setPage} />
@@ -195,6 +195,8 @@ const Careers = () => {
           </>
         )}
       </section>
+
+      <ApplicationModal job={applyJob} onClose={() => setApplyJob(null)} />
     </>
   );
 };

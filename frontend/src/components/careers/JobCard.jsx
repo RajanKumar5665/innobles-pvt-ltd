@@ -3,7 +3,7 @@ import { ArrowRight, CalendarDays, Clock, MapPin } from "lucide-react";
 /**
  * Vertical job card with department badge, meta row, description and Apply button.
  */
-const JobCard = ({ job }) => (
+const JobCard = ({ job, onApply }) => (
   <article className="career-job-card p-5 md:p-6">
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div className="min-w-0">
@@ -38,13 +38,10 @@ const JobCard = ({ job }) => (
     <p className="mt-4 max-w-[850px] text-sm leading-relaxed text-career-gray">{job.description}</p>
 
     <div className="mt-5">
-      <a
-        href={`mailto:careers@innobles.in?subject=${encodeURIComponent(`Application — ${job.title}`)}`}
-        className="career-apply-btn"
-      >
+      <button type="button" onClick={() => onApply(job)} className="career-apply-btn">
         Apply Now
         <ArrowRight size={15} className="career-arrow" aria-hidden="true" />
-      </a>
+      </button>
     </div>
   </article>
 );

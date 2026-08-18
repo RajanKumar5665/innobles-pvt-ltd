@@ -1,6 +1,7 @@
 import Seo from "../components/seo/Seo";
 import Hero from "../components/home/Hero";
 import Technology from "../components/home/Technology";
+import Testimonials from "../components/home/Testimonials";
 import CTA from "../components/home/CTA";
 import ContactSection from "../components/home/ContactSection";
 
@@ -10,6 +11,7 @@ const Home = () => {
       <Seo title="Smart Software, Mobile & AI Solutions" path="/" />
       <Hero />
       <Technology />
+      <Testimonials />
       <CTA />
       <ContactSection />
     </>

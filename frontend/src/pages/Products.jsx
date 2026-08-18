@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import Seo from "../components/seo/Seo";
 import SectionHeading from "../components/common/SectionHeading";
 import Reveal from "../components/common/Reveal";
@@ -49,38 +51,64 @@ const Products = () => {
 
         {status === "success" && (
           <div className="mt-12 grid gap-6 md:grid-cols-2">
-            {list.map((p, i) => (
-              <Reveal key={p.id} delay={(i % 2) * 90}>
-                <article className="card group flex h-full flex-col p-7">
-                  <div className="mb-5 flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/30 to-accent/15 ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-110">
-                        <Icon icon={p.icon} className="h-7 w-7 text-accent" strokeWidth={1.8} />
+            {list.map((p, i) => {
+              const isExternal = p.link && /^https?:\/\//i.test(p.link);
+              const viewLinkClass =
+                "mt-6 inline-flex items-center gap-1.5 self-start rounded-xl border border-brand-cyan/30 bg-brand-cyan/5 px-4 py-2 text-sm font-semibold text-brand-cyan transition-all hover:border-brand-cyan hover:bg-brand-cyan/10 hover:brightness-105";
+              return (
+                <Reveal key={p.id} delay={(i % 2) * 90}>
+                  <article className="card flex flex-col overflow-hidden p-7">
+                    <div className="mb-5 flex items-start justify-between gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/30 to-accent/15 ring-1 ring-white/10 transition-transform duration-300 hover:scale-110">
+                          <Icon icon={p.icon} className="h-7 w-7 text-accent" strokeWidth={1.8} />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold uppercase tracking-wider text-primary">{p.category}</p>
+                          <h3 className="font-disp text-xl font-bold">{p.title}</h3>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-wider text-primary">{p.category}</p>
-                        <h3 className="font-disp text-xl font-bold">{p.title}</h3>
-                      </div>
+                      <span className="max-w-[140px] truncate rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
+                        {p.pricing}
+                      </span>
                     </div>
-                    <span className="shrink-0 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
-                      {p.pricing}
-                    </span>
-                  </div>
-                  <p className="text-sm font-medium text-white/70">{p.tagline}</p>
-                  <p className="mt-3 text-sm leading-relaxed text-white/55">{p.desc}</p>
-                  <ul className="mt-5 grid gap-2 sm:grid-cols-2">
-                    {p.features.map((f) => (
-                      <li key={f} className="flex items-center gap-2 text-sm text-white/60">
-                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/15 text-[10px] text-accent">
-                          ✓
-                        </span>
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                </article>
-              </Reveal>
-            ))}
+                    <p className="text-sm font-medium text-white/70">{p.tagline}</p>
+                    <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-white/55">{p.desc}</p>
+                    <ul className="mt-5 grid gap-2 sm:grid-cols-2">
+                      {p.features.map((f) => (
+                        <li key={f} className="flex items-center gap-2 text-sm text-white/60">
+                          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/15 text-[10px] text-accent">
+                            ✓
+                          </span>
+                          <span className="truncate" title={f}>{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    {isExternal ? (
+                      <a
+                        href={p.link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={viewLinkClass}
+                        aria-label={`View ${p.title}`}
+                      >
+                        View details
+                        <ArrowRight size={14} aria-hidden="true" />
+                      </a>
+                    ) : (
+                      <Link
+                        to={`/products/${p.slug}`}
+                        className={viewLinkClass}
+                        aria-label={`View details for ${p.title}`}
+                      >
+                        View details
+                        <ArrowRight size={14} aria-hidden="true" />
+                      </Link>
+                    )}
+                  </article>
+                </Reveal>
+              );
+            })}
           </div>
         )}
       </section>

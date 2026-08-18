@@ -12,6 +12,7 @@ const baseProduct = {
   }),
   shortDescription: Joi.string().trim().allow("", null).max(600),
   description: Joi.string().allow("", null),
+  link: Joi.string().trim().uri().allow("", null).max(500),
   specifications: Joi.alternatives().try(
     Joi.array().items(Joi.string().allow("", null)),
     Joi.array().items(Joi.object()),

@@ -6,6 +6,7 @@ import Services from "../pages/Services";
 import Blog from "../pages/Blog";
 import BlogDetail from "../pages/BlogDetail";
 import Products from "../pages/Products";
+import ProductDetail from "../pages/ProductDetail";
 import Careers from "../pages/Careers";
 import Contact from "../pages/Contact";
 import NotFound from "../pages/NotFound";
@@ -23,6 +24,7 @@ const AppRoutes = () => {
         <Route path="about" element={<About />} />
         <Route path="services" element={<Services />} />
         <Route path="products" element={<Products />} />
+        <Route path="products/:slug" element={<ProductDetail />} />
         <Route path="careers" element={<Careers />} />
         <Route path="blog" element={<Blog />} />
         <Route path="blog/:slug" element={<BlogDetail />} />

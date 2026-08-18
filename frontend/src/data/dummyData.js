@@ -260,9 +260,60 @@ export const projects = [
 ];
 
 export const testimonials = [
-  { quote: "Innobles shipped our dashboard two weeks early and the quality is outstanding. They feel like an in-house team.", name: "Riya Sharma", role: "CEO, FinTech Startup", avatar: "RS" },
-  { quote: "Their team understood our hospital workflows better than any agency we've worked with. Patients love the new app.", name: "Dr. Arjun Mehta", role: "COO, Healthcare Chain", avatar: "AM" },
-  { quote: "The automation they built saves our ops team 200+ hours every month. ROI was obvious within a quarter.", name: "Sneha Patel", role: "Operations Head, Logistics", avatar: "SP" },
+  {
+    quote:
+      "Innobles understood our requirements quickly and delivered a clean, scalable solution. The communication throughout the project was excellent.",
+    name: "Riya Sharma",
+    role: "Founder",
+    company: "FinTech Startup",
+    rating: 5,
+    avatar: "RS",
+  },
+  {
+    quote:
+      "Their team understood our hospital workflows better than any agency we've worked with. Patients love the new app.",
+    name: "Dr. Arjun Mehta",
+    role: "COO",
+    company: "Healthcare Chain",
+    rating: 5,
+    avatar: "AM",
+  },
+  {
+    quote:
+      "The automation they built saves our ops team 200+ hours every month. ROI was obvious within a quarter.",
+    name: "Sneha Patel",
+    role: "Operations Head",
+    company: "Logistics Co.",
+    rating: 5,
+    avatar: "SP",
+  },
+  {
+    quote:
+      "From discovery to launch the team stayed senior and hands-on. Our e-commerce platform now handles peak-season traffic effortlessly.",
+    name: "Vikram Rao",
+    role: "CEO",
+    company: "Retail Brand",
+    rating: 4,
+    avatar: "VR",
+  },
+  {
+    quote:
+      "Innobles replaced our old system without a single day of downtime. The dashboards they built are genuinely easy to use.",
+    name: "Ananya Iyer",
+    role: "Head of Product",
+    company: "EdTech Platform",
+    rating: 5,
+    avatar: "AI",
+  },
+  {
+    quote:
+      "Excellent technical depth and honest communication. Weekly demos kept everyone in the loop and there were zero surprises.",
+    name: "Kabir Malhotra",
+    role: "Director",
+    company: "Logistics Group",
+    rating: 5,
+    avatar: "KM",
+  },
 ];
 
 export const team = [
@@ -277,6 +328,53 @@ export const values = [
   { icon: "🤝", title: "Radical transparency", desc: "Weekly demos, honest estimates and no hidden surprises — ever." },
   { icon: "🚀", title: "Ship & iterate", desc: "We move fast, learn from real users and improve continuously." },
   { icon: "🎓", title: "Always learning", desc: "The stack changes; our curiosity doesn't. We invest in the latest tools." },
+];
+
+/* About page "Our Locations" section.
+   `illustration` is a string key mapped by the LocationIllustration component.
+   Addresses are clean placeholders — swap them for official office data when
+   it becomes available. Phone/email follow the siteConfig contact conventions. */
+export const locations = [
+  {
+    id: "lucknow",
+    city: "Lucknow",
+    country: "India",
+    label: "Lucknow, India",
+    illustration: "lucknow",
+    address: "2nd Floor, Hazratganj, Lucknow, Uttar Pradesh 226001, India",
+    phone: "+91 98765 43210",
+    email: "lucknow@innobles.in",
+  },
+  {
+    id: "mumbai",
+    city: "Mumbai",
+    country: "India",
+    label: "Mumbai, India",
+    illustration: "mumbai",
+    address: "Bandra Kurla Complex, Bandra East, Mumbai, Maharashtra 400051, India",
+    phone: "+91 98765 43210",
+    email: "mumbai@innobles.in",
+  },
+  {
+    id: "delhi",
+    city: "Delhi",
+    country: "India",
+    label: "Delhi, India",
+    illustration: "delhi",
+    address: "Connaught Place, New Delhi, Delhi 110001, India",
+    phone: "+91 98765 43210",
+    email: "delhi@innobles.in",
+  },
+  {
+    id: "uae",
+    city: "UAE",
+    country: "United Arab Emirates",
+    label: "UAE",
+    illustration: "uae",
+    address: "Business Bay, Dubai, United Arab Emirates",
+    phone: "+971 4 000 0000",
+    email: "uae@innobles.in",
+  },
 ];
 
 export const careers = [

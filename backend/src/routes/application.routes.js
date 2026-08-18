@@ -18,6 +18,7 @@ publicRouter.post(
 const adminRouter = express.Router();
 adminRouter.get("/", validate(applicationQuerySchema, "query"), ctrl.adminListApplications);
 adminRouter.get("/:id", validate(applicationIdParamSchema, "params"), ctrl.adminGetApplication);
+adminRouter.get("/:id/resume", validate(applicationIdParamSchema, "params"), ctrl.adminGetResume);
 adminRouter.patch(
   "/:id/status",
   validate(applicationStatusSchema),

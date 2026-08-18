@@ -1,10 +1,9 @@
 import HeroContent from "./hero/HeroContent";
 import HeroVisual from "./hero/HeroVisual";
-import TrustedCompanies from "./hero/TrustedCompanies";
 
 /**
  * Premium homepage hero:
- * left = business messaging + CTA + stats
+ * left = business messaging + CTA
  * right = futuristic animated AI/Web/Cloud visual
  */
 const Hero = () => (
@@ -18,7 +17,6 @@ const Hero = () => (
         <HeroContent />
         <HeroVisual />
       </div>
-      <TrustedCompanies />
     </div>
   </section>
 );

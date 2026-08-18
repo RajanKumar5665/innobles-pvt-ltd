@@ -23,6 +23,11 @@ const productSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    link: {
+      type: String,
+      trim: true,
+      default: "",
+    },
     specifications: {
       type: mongoose.Schema.Types.Mixed,
       default: [],

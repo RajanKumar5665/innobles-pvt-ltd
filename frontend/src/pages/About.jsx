@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
+import { Mail, MapPin, Phone } from "lucide-react";
 import Seo from "../components/seo/Seo";
 import SectionHeading from "../components/common/SectionHeading";
 import Reveal from "../components/common/Reveal";
-import CTA from "../components/home/CTA";
-import { stats, team, values } from "../data/dummyData";
+import LocationIllustration from "../components/about/LocationIllustration";
+import { stats, team, locations } from "../data/dummyData";
 
 const About = () => {
   return (
@@ -63,26 +64,6 @@ const About = () => {
         </Reveal>
       </section>
 
-      {/* Values */}
-      <section className="border-t border-white/10 bg-white/[0.015] py-20">
-        <div className="container-x">
-          <SectionHeading eyebrow="Values" title="What we stand for" align="center" />
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {values.map((v, i) => (
-              <Reveal key={v.title} delay={i * 90}>
-                <div className="card h-full p-6 text-center hover:border-primary/60">
-                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] text-3xl">
-                    {v.icon}
-                  </div>
-                  <h3 className="font-disp font-bold">{v.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-white/50">{v.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Team */}
       <section className="container-x py-20">
         <SectionHeading eyebrow="Team" title="The people behind the work" align="center" />
@@ -101,7 +82,52 @@ const About = () => {
         </div>
       </section>
 
-      <CTA />
+      {/* Locations */}
+      <section className="border-t border-white/10 bg-white/[0.015] py-20">
+        <div className="container-x">
+          <SectionHeading
+            eyebrow="Our Locations"
+            title="Where we are"
+            align="center"
+            subtitle="We're growing our presence across key locations, connecting with clients and teams across India and the UAE."
+          />
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {locations.map((loc, i) => (
+              <Reveal key={loc.id} delay={i * 90} className="h-full">
+                <article className="card flex h-full flex-col overflow-hidden hover:border-brand-cyan/40">
+                  <LocationIllustration city={loc.illustration} />
+                  <div className="flex flex-1 flex-col p-6">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 shrink-0 text-brand-orange" aria-hidden="true" />
+                      <h3 className="font-disp text-lg font-bold">{loc.city}</h3>
+                    </div>
+                    <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-cyan">
+                      {loc.country}
+                    </p>
+                    <p className="mt-4 flex-1 text-sm leading-relaxed text-muted">{loc.address}</p>
+                    <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line pt-4 text-xs text-muted">
+                      <a
+                        href={`tel:${loc.phone.replace(/\s/g, "")}`}
+                        className="inline-flex items-center gap-1.5 transition-colors hover:text-brand-orange"
+                      >
+                        <Phone className="h-3.5 w-3.5 text-brand-cyan" aria-hidden="true" />
+                        {loc.phone}
+                      </a>
+                      <a
+                        href={`mailto:${loc.email}`}
+                        className="inline-flex items-center gap-1.5 transition-colors hover:text-brand-cyan"
+                      >
+                        <Mail className="h-3.5 w-3.5 text-brand-orange" aria-hidden="true" />
+                        {loc.email}
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
   );
 };

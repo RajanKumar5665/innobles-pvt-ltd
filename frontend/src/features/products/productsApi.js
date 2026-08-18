@@ -10,6 +10,7 @@ export const fetchProductsApi = async () => {
     tagline: item.shortDescription || "",
     category: "Product",
     icon: "package",
+    link: item.link || "",
     desc: item.description || "",
     features: Array.isArray(item.specifications) ? item.specifications : [],
     pricing: "Custom",

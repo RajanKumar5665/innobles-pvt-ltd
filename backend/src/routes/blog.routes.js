@@ -10,12 +10,23 @@ publicRouter.get("/", validate(blogQuerySchema, "query"), ctrl.getPublicBlogs);
 publicRouter.get("/:slug", validate(blogSlugSchema, "params"), ctrl.getPublicBlogBySlug);
 
 const adminRouter = express.Router();
-adminRouter.post("/", uploadImage.single("image"), validate(createBlog), ctrl.adminCreateBlog);
+adminRouter.post(
+  "/",
+  uploadImage.fields([
+    { name: "image", maxCount: 1 },
+    { name: "authorAvatar", maxCount: 1 },
+  ]),
+  validate(createBlog),
+  ctrl.adminCreateBlog,
+);
 adminRouter.get("/", validate(blogQuerySchema, "query"), ctrl.adminListBlogs);
 adminRouter.get("/:id", validate(idParamSchema, "params"), ctrl.adminGetBlog);
 adminRouter.put(
   "/:id",
-  uploadImage.single("image"),
+  uploadImage.fields([
+    { name: "image", maxCount: 1 },
+    { name: "authorAvatar", maxCount: 1 },
+  ]),
   validate(updateBlog),
   ctrl.adminUpdateBlog,
 );

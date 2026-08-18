@@ -1,7 +1,7 @@
 import { api } from "../../lib/api";
 
 export const fetchCareersApi = async () => {
-  const response = await api.get("/careers?limit=100");
+  const response = await api.get("/careers?limit=50");
   const list = Array.isArray(response?.data) ? response.data : [];
   return list.map((item) => ({
     id: item._id,
