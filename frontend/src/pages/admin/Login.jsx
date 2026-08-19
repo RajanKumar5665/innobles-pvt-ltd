@@ -11,7 +11,7 @@ import Loader from "../../components/common/Loader";
 
 const emptyForm = { email: "", password: "" };
 const inputClass =
-  "w-full rounded-xl border border-line bg-slate-50 px-4 py-3 text-sm text-ink placeholder-slate-400 transition-colors focus:border-brand-cyan focus:outline-none focus:ring-2 focus:ring-brand-cyan/20";
+  "w-full rounded-xl border border-line bg-slate-50 px-4 py-3 text-sm text-ink placeholder-slate-400 transition-colors focus:border-brand-orange focus:outline-none focus:ring-2 focus:ring-brand-orange/20";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -51,7 +51,7 @@ const Login = () => {
     touched[name] && errors[name] ? errors[name] : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#0F172A] flex items-center justify-center px-4">
       <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md">
         <div className="text-center">
           <p className="text-xs font-semibold uppercase tracking-wider text-brand-orange">

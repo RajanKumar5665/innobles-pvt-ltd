@@ -17,6 +17,8 @@ const getPageItems = (current, total) => {
   return items;
 };
 
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
 /**
  * Circular pill pagination — ‹/› arrows and numbered pages.
  * Active page uses the orange filled circle.
@@ -35,12 +37,12 @@ const BlogPagination = ({ current = 1, total = 1, onChange }) => {
         disabled={current <= 1}
         aria-label="Previous page"
       >
-        <span aria-hidden="true">‹</span>
+        <ChevronLeft size={14} aria-hidden="true" />
       </button>
 
       {items.map((item, index) =>
         item === "…" ? (
-          <span key={`ellipsis-${index}`} className="px-1 text-[#8a8a8a]" aria-hidden="true">
+          <span key={`ellipsis-${index}`} className="px-1 text-[#94A3B8]" aria-hidden="true">
             …
           </span>
         ) : (
@@ -64,7 +66,7 @@ const BlogPagination = ({ current = 1, total = 1, onChange }) => {
         disabled={current >= total}
         aria-label="Next page"
       >
-        <span aria-hidden="true">›</span>
+        <ChevronRight size={14} aria-hidden="true" />
       </button>
     </nav>
   );

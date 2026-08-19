@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
 import { serviceMegaMenu } from "../../data/dummyData";
 import Icon from "./Icon";
 
@@ -24,9 +25,11 @@ const ServicesMegaMenu = ({ onNavigate }) => (
                     onClick={onNavigate}
                     className="group flex items-center gap-2 text-sm text-slate-600 transition-colors hover:text-brand-orange"
                   >
-                    <span className="text-xs text-slate-400 transition-colors group-hover:text-brand-orange">
-                      ›
-                    </span>
+                    <ChevronRight
+                      size={12}
+                      className="shrink-0 text-slate-400 transition-colors group-hover:text-brand-orange"
+                      aria-hidden="true"
+                    />
                     {item}
                   </Link>
                 </li>

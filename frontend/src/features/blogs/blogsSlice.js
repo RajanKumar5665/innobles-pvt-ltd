@@ -30,6 +30,11 @@ export const { fetchPending, fetchFulfilled, fetchRejected } = blogsSlice.action
 export const selectBlogs = (state) => state.blogs.list;
 export const selectBlogsStatus = (state) => state.blogs.status;
 export const selectBlogsError = (state) => state.blogs.error;
-export const selectRecentBlogs = (state) => state.blogs.list.filter((b) => b.featured);
+/**
+ * "Recent" blogs = the latest 3 published articles.
+ * The backend sorts by publishedAt: -1 (newest first), so the
+ * first three entries in the list are the most recent ones.
+ */
+export const selectRecentBlogs = (state) => state.blogs.list.slice(0, 3);
 
 export default blogsSlice.reducer;

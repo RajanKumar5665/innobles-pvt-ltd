@@ -21,6 +21,11 @@ const careerSchema = new mongoose.Schema(
       enum: ["full-time", "part-time", "contract", "internship"],
       default: "full-time",
     },
+    experience: {
+      type: String,
+      default: "",
+      trim: true,
+    },
     description: {
       type: String,
       default: "",

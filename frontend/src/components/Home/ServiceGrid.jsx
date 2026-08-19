@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import { useServices } from "../../hooks/useServices";
 import Reveal from "../common/Reveal";
 import Loader from "../common/Loader";
 import Icon from "../common/Icon";
+import FeatureCheck from "../common/FeatureCheck";
 
 const spans = ["lg:col-span-2 lg:row-span-2", "", "", "", "lg:col-span-2", ""];
 
@@ -24,7 +26,7 @@ const ServiceGrid = () => {
           </Reveal>
           <Reveal>
             <Link to="/services" className="btn-ghost !py-2.5 text-sm">
-              All services →
+              All services <ArrowRight size={14} aria-hidden="true" />
             </Link>
           </Reveal>
         </div>
@@ -42,13 +44,13 @@ const ServiceGrid = () => {
                 <article
                   className={`group flex h-full flex-col rounded-2xl border p-6 transition-all hover:-translate-y-1 hover:shadow-lg ${
                     i === 0
-                      ? "border-brand-orange/25 bg-gradient-to-br from-brand-orange/10 via-white to-brand-yellow/10"
+                      ? "border-brand-orange/25 bg-white"
                       : i === 4
-                        ? "border-brand-cyan/25 bg-gradient-to-br from-brand-cyan/10 to-white"
+                        ? "border-line bg-white"
                         : "border-line bg-white"
                   }`}
                 >
-                  <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-gradient text-white shadow-md transition-transform group-hover:scale-105">
+                  <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-slate-50 shadow-md transition-transform group-hover:scale-105">
                     <Icon icon={s.icon} className="h-7 w-7" strokeWidth={1.8} />
                   </div>
                   <h3 className={`font-disp font-bold ${i === 0 ? "text-2xl" : "text-lg"}`}>{s.title}</h3>
@@ -57,7 +59,7 @@ const ServiceGrid = () => {
                     <ul className="mt-5 grid gap-2 sm:grid-cols-2">
                       {s.features.slice(0, 4).map((f) => (
                         <li key={f} className="flex items-center gap-2 text-sm text-slate-700">
-                          <span className="text-brand-cyan">✓</span> {f}
+                          <FeatureCheck className="h-4 w-4 text-brand-cyan" /> {f}
                         </li>
                       ))}
                     </ul>

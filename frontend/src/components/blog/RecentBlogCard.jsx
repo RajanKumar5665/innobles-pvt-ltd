@@ -13,7 +13,7 @@ const RecentBlogCard = ({ blog }) => {
     <article className="blog-post-card group">
       <Link
         to={href}
-        className="relative block h-[160px] w-full overflow-hidden bg-[#fafafa] sm:h-[180px] lg:h-[190px]"
+        className="relative block h-[160px] w-full overflow-hidden bg-[#F8FAFC] sm:h-[180px] lg:h-[190px]"
         aria-label={`Read ${blog.title}`}
       >
         <BlogImage
@@ -26,7 +26,7 @@ const RecentBlogCard = ({ blog }) => {
 
       <div className="flex flex-1 flex-col p-5">
         <h3 className="blog-post-title">
-          <Link to={href} className="transition-colors hover:text-[#ff7200]">
+          <Link to={href} className="transition-colors hover:text-[#F59E0B]">
             {blog.title}
           </Link>
         </h3>
@@ -35,7 +35,7 @@ const RecentBlogCard = ({ blog }) => {
         <div className="blog-post-meta">
           <AuthorAvatar author={blog.author} avatar={blog.authorAvatar} />
           <span>{blog.author}</span>
-          <span className="text-[#8a8a8a]" aria-hidden="true">
+          <span className="text-[#94A3B8]" aria-hidden="true">
             •
           </span>
           <span>{blog.date}</span>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 
 /**
  * Small circular author avatar. Renders the photo when available,
@@ -16,7 +16,7 @@ const AuthorAvatar = ({ author = "", avatar, size = 22, className = "" }) => {
   if (failed) {
     return (
       <span
-        className={`inline-flex items-center justify-center rounded-full bg-[#fff4eb] font-semibold text-[#ff7200] ${className}`}
+        className={`inline-flex items-center justify-center rounded-full bg-[#FEF3C7] font-semibold text-[#F59E0B] ${className}`}
         style={{ width: size, height: size, fontSize: Math.max(9, size * 0.38) }}
         aria-hidden="true"
       >

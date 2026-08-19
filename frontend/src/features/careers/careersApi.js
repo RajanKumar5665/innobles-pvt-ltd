@@ -9,6 +9,8 @@ export const fetchCareersApi = async () => {
     department: item.department,
     location: item.location || "",
     type: item.jobType || "full-time",
+    experience: item.experience || "",
+    closingDate: item.closingDate || "",
     status: item.status === "open" ? "Open" : "Closed",
     postedLabel: "Posted recently",
     postedDays: 0,

@@ -1,4 +1,4 @@
-import { ArrowLeft, CheckCircle } from "lucide-react";
+﻿import { ArrowLeft, CheckCircle } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import Seo from "../components/seo/Seo";
 import Loader from "../components/common/Loader";
@@ -60,7 +60,7 @@ const ProductDetail = () => {
           {/* Main content */}
           <div>
             <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/30 to-accent/15 ring-1 ring-white/10">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-accent/10 ring-1 ring-line/60">
                 <Icon icon={product.icon} className="h-8 w-8 text-accent" strokeWidth={1.8} />
               </div>
               <div>

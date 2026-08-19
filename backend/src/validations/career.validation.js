@@ -10,6 +10,7 @@ const baseCareer = {
   }),
   location: Joi.string().trim().allow("", null).max(120),
   jobType: Joi.string().valid("full-time", "part-time", "contract", "internship"),
+  experience: Joi.string().trim().allow("", null).max(120),
   description: Joi.string().allow("", null),
   responsibilities: Joi.array().items(Joi.string().allow("")),
   requirements: Joi.array().items(Joi.string().allow("")),

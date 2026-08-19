@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
  * Build a compact page-item list with ellipses for large page counts.
  */
 const getPageItems = (current, total) => {
-  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
   const items = [1];
   const start = Math.max(2, current - 1);
   const end = Math.min(total - 1, current + 1);

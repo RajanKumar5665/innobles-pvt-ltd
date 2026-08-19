@@ -127,7 +127,7 @@ const RecentActivity = ({ stats }) => {
                   </p>
                   <div className="flex items-center gap-2">
                     <span
-                      className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-xs font-semibold ${statusColor(item.type, item.status)} text-white`}
+                      className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-xs font-semibold ${statusColor(item.type, item.status)} text-slate-50`}
                     >
                       {statusLabel(item.type, item.status)}
                     </span>

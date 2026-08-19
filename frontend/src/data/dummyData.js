@@ -259,75 +259,11 @@ export const projects = [
   { id: "edu-platform", title: "EdTech Learning Platform", category: "Web App", desc: "Course delivery, live classes and analytics for a fast-growing edtech startup.", tech: ["React", "Node", "Redis"] },
 ];
 
-export const testimonials = [
-  {
-    quote:
-      "Innobles understood our requirements quickly and delivered a clean, scalable solution. The communication throughout the project was excellent.",
-    name: "Riya Sharma",
-    role: "Founder",
-    company: "FinTech Startup",
-    rating: 5,
-    avatar: "RS",
-  },
-  {
-    quote:
-      "Their team understood our hospital workflows better than any agency we've worked with. Patients love the new app.",
-    name: "Dr. Arjun Mehta",
-    role: "COO",
-    company: "Healthcare Chain",
-    rating: 5,
-    avatar: "AM",
-  },
-  {
-    quote:
-      "The automation they built saves our ops team 200+ hours every month. ROI was obvious within a quarter.",
-    name: "Sneha Patel",
-    role: "Operations Head",
-    company: "Logistics Co.",
-    rating: 5,
-    avatar: "SP",
-  },
-  {
-    quote:
-      "From discovery to launch the team stayed senior and hands-on. Our e-commerce platform now handles peak-season traffic effortlessly.",
-    name: "Vikram Rao",
-    role: "CEO",
-    company: "Retail Brand",
-    rating: 4,
-    avatar: "VR",
-  },
-  {
-    quote:
-      "Innobles replaced our old system without a single day of downtime. The dashboards they built are genuinely easy to use.",
-    name: "Ananya Iyer",
-    role: "Head of Product",
-    company: "EdTech Platform",
-    rating: 5,
-    avatar: "AI",
-  },
-  {
-    quote:
-      "Excellent technical depth and honest communication. Weekly demos kept everyone in the loop and there were zero surprises.",
-    name: "Kabir Malhotra",
-    role: "Director",
-    company: "Logistics Group",
-    rating: 5,
-    avatar: "KM",
-  },
-];
-
 export const team = [
   { name: "Rahul Verma", role: "Founder & CEO", avatar: "RV" },
   { name: "Neha Kapoor", role: "Head of Engineering", avatar: "NK" },
   { name: "Amit Singh", role: "Lead Product Designer", avatar: "AS" },
   { name: "Priya Nair", role: "AI / ML Lead", avatar: "PN" },
-];
-
-export const values = [
-  { icon: "🎯", title: "Outcome-first", desc: "We measure success by the results our software delivers, not lines of code." },
-  { icon: "🤝", title: "Radical transparency", desc: "Weekly demos, honest estimates and no hidden surprises — ever." },
-  { icon: "🚀", title: "Ship & iterate", desc: "We move fast, learn from real users and improve continuously." },
-  { icon: "🎓", title: "Always learning", desc: "The stack changes; our curiosity doesn't. We invest in the latest tools." },
 ];
 
 /* About page "Our Locations" section.

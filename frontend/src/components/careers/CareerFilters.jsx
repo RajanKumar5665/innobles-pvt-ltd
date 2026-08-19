@@ -37,7 +37,7 @@ const CareerFilters = ({ value, options, onChange, onSubmit }) => {
             <div className="relative">
               <Search
                 size={15}
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-career-light"
+                className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-career-light flex-shrink-0 w-4"
                 aria-hidden="true"
               />
               <input
@@ -46,7 +46,7 @@ const CareerFilters = ({ value, options, onChange, onSubmit }) => {
                 value={value.search}
                 onChange={(e) => onChange("search", e.target.value)}
                 placeholder="Search job titles"
-                className="career-field pl-9"
+                className="career-field pl-10"
               />
             </div>
           </div>
@@ -56,7 +56,7 @@ const CareerFilters = ({ value, options, onChange, onSubmit }) => {
           {renderSelect("type", "Job Type")}
         </div>
 
-        <button type="submit" className="career-btn-orange mt-5">
+        <button type="submit" className="career-btn-orange w-full flex items-center justify-center">
           Filter Jobs
           <SlidersHorizontal size={15} aria-hidden="true" />
         </button>

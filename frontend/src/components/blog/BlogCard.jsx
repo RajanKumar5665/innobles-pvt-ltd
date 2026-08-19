@@ -12,7 +12,7 @@ const BlogCard = ({ blog }) => {
     <article className="blog-all-card group">
       <Link
         to={href}
-        className="relative flex h-[168px] w-full overflow-hidden bg-[#fafafa] sm:h-[200px] lg:h-[210px]"
+        className="relative flex h-[168px] w-full overflow-hidden bg-[#F8FAFC] sm:h-[200px] lg:h-[210px]"
         aria-label={`Read ${blog.title}`}
       >
         <BlogImage
@@ -25,16 +25,16 @@ const BlogCard = ({ blog }) => {
 
       <div className="p-5 sm:p-6">
         <h3 className="blog-post-title">
-          <Link to={href} className="transition-colors hover:text-[#ff7200]">
+          <Link to={href} className="transition-colors hover:text-[#F59E0B]">
             {blog.title}
           </Link>
         </h3>
         <p className="blog-post-desc">{blog.description || blog.excerpt}</p>
         <div className="blog-post-meta">
           <span>
-            By <span className="font-semibold text-[#171717]">{blog.author}</span>
+            By <span className="font-semibold text-[#172033]">{blog.author}</span>
           </span>
-          <span className="text-[#8a8a8a]" aria-hidden="true">
+          <span className="text-[#94A3B8]" aria-hidden="true">
             •
           </span>
           <span>{blog.date}</span>

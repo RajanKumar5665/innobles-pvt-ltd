@@ -3,10 +3,11 @@ import { useAppDispatch, useAppSelector } from "../../app/hook";
 import { resetContact } from "../../features/contact/contactSlice";
 import { submitContact } from "../../features/contact/contactThunks";
 import Loader from "../common/Loader";
+import FeatureCheck from "../common/FeatureCheck";
 
 const emptyForm = { name: "", email: "", phone: "", service: "", message: "" };
 const inputClass =
-  "w-full rounded-xl border border-line bg-slate-50 px-4 py-3 text-sm text-ink placeholder-slate-400 transition-colors focus:border-brand-cyan focus:outline-none focus:ring-2 focus:ring-brand-cyan/20";
+  "w-full rounded-xl border border-line bg-slate-50 px-4 py-3 text-sm text-ink placeholder-slate-400 transition-colors focus:border-brand-orange focus:outline-none focus:ring-2 focus:ring-brand-orange/20";
 
 const validate = (v) => {
   const errs = {};
@@ -46,8 +47,10 @@ const ContactForm = () => {
   if (status === "success") {
     return (
       <div className="text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15 text-3xl">✅</div>
-        <h3 className="font-disp text-2xl font-bold">Thanks, {lastMessage?.name?.split(" ")[0] || "there"}! 🎉</h3>
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15">
+          <FeatureCheck className="h-8 w-8 text-emerald-600" strokeWidth={2.5} />
+        </div>
+        <h3 className="font-disp text-2xl font-bold">Thanks, {lastMessage?.name?.split(" ")[0] || "there"}!</h3>
         <p className="mt-3 text-white/60">
           Your message has been received (<span className="text-accent">{lastMessage?.id}</span>). We'll reply to{" "}
           <span className="text-white">{lastMessage?.email}</span> within one business day.

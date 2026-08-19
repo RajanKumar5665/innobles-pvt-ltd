@@ -71,7 +71,7 @@ const About = () => {
           {team.map((m, i) => (
             <Reveal key={m.name} delay={i * 90}>
               <div className="card p-6 text-center hover:border-primary/60">
-                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent font-disp text-xl font-bold">
+                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary font-disp text-xl font-bold text-slate-50">
                   {m.avatar}
                 </div>
                 <h3 className="font-disp font-bold">{m.name}</h3>
@@ -94,7 +94,7 @@ const About = () => {
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {locations.map((loc, i) => (
               <Reveal key={loc.id} delay={i * 90} className="h-full">
-                <article className="card flex h-full flex-col overflow-hidden hover:border-brand-cyan/40">
+                <article className="card flex h-full flex-col overflow-hidden hover:border-brand-orange/40">
                   <LocationIllustration city={loc.illustration} />
                   <div className="flex flex-1 flex-col p-6">
                     <div className="flex items-center gap-2">
@@ -115,7 +115,7 @@ const About = () => {
                       </a>
                       <a
                         href={`mailto:${loc.email}`}
-                        className="inline-flex items-center gap-1.5 transition-colors hover:text-brand-cyan"
+                        className="inline-flex items-center gap-1.5 transition-colors hover:text-brand-orange"
                       >
                         <Mail className="h-3.5 w-3.5 text-brand-orange" aria-hidden="true" />
                         {loc.email}

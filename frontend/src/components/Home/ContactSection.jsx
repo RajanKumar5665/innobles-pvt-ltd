@@ -1,8 +1,9 @@
 import Reveal from "../common/Reveal";
 import ContactForm from "../forms/ContactForm";
+import { Mail, MapPin, Phone } from "lucide-react";
 import { contactInfo } from "../../config/siteConfig";
 
-const icons = { Email: "✉", Phone: "☎", Office: "📍" };
+const contactIcons = { Email: Mail, Phone: Phone, Office: MapPin };
 
 const ContactSection = () => {
   return (
@@ -17,21 +18,26 @@ const ContactSection = () => {
         </Reveal>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-3">
-          {contactInfo.map((c, i) => (
-            <Reveal key={c.label} delay={i * 80}>
-              <div className="rounded-2xl border border-line bg-white p-5 text-center transition-all hover:border-brand-cyan/30 hover:shadow-md">
-                <span className="text-2xl">{icons[c.label] || "•"}</span>
-                <p className="mt-3 text-xs font-bold uppercase tracking-wider text-brand-orange">{c.label}</p>
-                {c.href ? (
-                  <a href={c.href} className="mt-2 block text-sm text-slate-700 transition-colors hover:text-brand-cyan">
-                    {c.value}
-                  </a>
-                ) : (
-                  <p className="mt-2 text-sm text-slate-700">{c.value}</p>
-                )}
-              </div>
-            </Reveal>
-          ))}
+          {contactInfo.map((c, i) => {
+            const IconComponent = contactIcons[c.label] || Mail;
+            return (
+              <Reveal key={c.label} delay={i * 80}>
+                <div className="rounded-2xl border border-line bg-white p-5 text-center transition-all hover:border-brand-orange/30 hover:shadow-md">
+                  <span className="inline-flex items-center justify-center text-brand-orange">
+                    <IconComponent className="h-7 w-7" strokeWidth={2} aria-hidden="true" />
+                  </span>
+                  <p className="mt-3 text-xs font-bold uppercase tracking-wider text-brand-orange">{c.label}</p>
+                  {c.href ? (
+                    <a href={c.href} className="mt-2 block text-sm text-slate-700 transition-colors hover:text-brand-orange">
+                      {c.value}
+                    </a>
+                  ) : (
+                    <p className="mt-2 text-sm text-slate-700">{c.value}</p>
+                  )}
+                </div>
+              </Reveal>
+            );
+          })}
         </div>
 
         <Reveal className="mt-10">

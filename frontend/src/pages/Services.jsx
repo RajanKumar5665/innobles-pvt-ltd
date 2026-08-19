@@ -3,6 +3,7 @@ import SectionHeading from "../components/common/SectionHeading";
 import Reveal from "../components/common/Reveal";
 import Loader from "../components/common/Loader";
 import Icon from "../components/common/Icon";
+import FeatureCheck from "../components/common/FeatureCheck";
 import CTA from "../components/home/CTA";
 import ContactSection from "../components/home/ContactSection";
 import HowItWorks from "../components/home/HowItWorks";
@@ -45,7 +46,7 @@ const Services = () => {
               <Reveal key={s.id} delay={(i % 2) * 90}>
                 <article className="card group h-full p-7">
                   <div className="mb-5 flex items-center gap-4">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/30 to-accent/15 ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-110">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 ring-1 ring-line/60 transition-transform duration-300 group-hover:scale-110">
                       <Icon icon={s.icon} className="h-7 w-7 text-accent" strokeWidth={1.8} />
                     </div>
                     <h3 className="font-disp text-xl font-bold">{s.title}</h3>
@@ -54,8 +55,8 @@ const Services = () => {
                   <ul className="mt-4 grid gap-2 sm:grid-cols-2">
                     {s.features.map((f) => (
                       <li key={f} className="flex items-center gap-2 text-sm text-white/60">
-                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/15 text-[10px] text-accent">
-                          ✓
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/15 text-accent">
+                          <FeatureCheck className="h-3 w-3" strokeWidth={3} />
                         </span>
                         {f}
                       </li>

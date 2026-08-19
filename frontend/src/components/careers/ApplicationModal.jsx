@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { X } from "lucide-react";
 import { api } from "../../lib/api";
+import FeatureCheck from "../common/FeatureCheck";
 
 const inputClass =
-  "w-full rounded-xl border border-line bg-slate-50 px-4 py-3 text-sm text-ink placeholder-slate-400 transition-colors focus:border-brand-cyan focus:outline-none focus:ring-2 focus:ring-brand-cyan/20";
+  "w-full rounded-xl border border-line bg-slate-50 px-4 py-3 text-sm text-ink placeholder-slate-400 transition-colors focus:border-brand-orange focus:outline-none focus:ring-2 focus:ring-brand-orange/20";
 
 /**
  * Application form shown when a candidate clicks "Apply Now" on a job card.
@@ -69,13 +71,13 @@ const ApplicationModal = ({ job, onClose }) => {
           className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-ink"
           aria-label="Close"
         >
-          ×
+          <X size={16} aria-hidden="true" />
         </button>
 
         {status === "success" ? (
           <div className="py-8 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-2xl text-emerald-600">
-              ✓
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+              <FeatureCheck className="h-7 w-7" strokeWidth={2.5} />
             </div>
             <h2 className="font-disp text-xl font-bold text-ink">Application submitted!</h2>
             <p className="mt-2 text-sm text-slate-500">

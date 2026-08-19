@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { api } from "../../lib/api";
 import Loader from "../../components/common/Loader";
 
@@ -7,6 +7,7 @@ const emptyForm = {
   department: "",
   location: "",
   jobType: "full-time",
+  experience: "",
   description: "",
   responsibilities: "",
   requirements: "",
@@ -14,7 +15,7 @@ const emptyForm = {
 };
 
 const inputClass =
-  "w-full rounded-xl border border-line bg-slate-50 px-4 py-3 text-sm text-ink placeholder-slate-400 transition-colors focus:border-brand-cyan focus:outline-none focus:ring-2 focus:ring-brand-cyan/20";
+  "w-full rounded-xl border border-line bg-slate-50 px-4 py-3 text-sm text-ink placeholder-slate-400 transition-colors focus:border-brand-orange focus:outline-none focus:ring-2 focus:ring-brand-orange/20";
 
 const AdminCareers = () => {
   const [list, setList] = useState([]);
@@ -58,6 +59,7 @@ const AdminCareers = () => {
       department: item.department || "",
       location: item.location || "",
       jobType: item.jobType || "full-time",
+      experience: item.experience || "",
       description: item.description || "",
       responsibilities: Array.isArray(item.responsibilities) ? item.responsibilities.join("\n") : "",
       requirements: Array.isArray(item.requirements) ? item.requirements.join("\n") : "",
@@ -153,6 +155,18 @@ const AdminCareers = () => {
                   <option value="internship">Internship</option>
                 </select>
               </div>
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">
+                Required Experience <span className="font-normal normal-case text-slate-400">(e.g. 2-4 years)</span>
+              </label>
+              <input
+                name="experience"
+                value={form.experience}
+                onChange={handleChange}
+                className={inputClass}
+                placeholder="e.g. 2-4 years, 5+ years, Fresher"
+              />
             </div>
             <div>
               <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Description</label>

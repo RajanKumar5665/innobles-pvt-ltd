@@ -1,7 +1,7 @@
 import { process } from "../../data/dummyData";
 import Reveal from "../common/Reveal";
 
-const stepColors = ["border-brand-orange bg-brand-orange/10 text-brand-orange", "border-brand-yellow bg-brand-yellow/15 text-amber-600", "border-brand-cyan bg-brand-cyan/10 text-brand-cyan", "border-brand-orange bg-brand-orange/10 text-brand-orange"];
+const stepColors = ["border-brand-orange bg-brand-orange/10 text-brand-orange", "border-ink bg-ink/5 text-ink", "border-brand-orange bg-brand-orange/10 text-brand-orange", "border-ink bg-ink/5 text-ink"];
 
 const HowItWorks = () => {
   return (
@@ -16,7 +16,7 @@ const HowItWorks = () => {
         </Reveal>
 
         <div className="relative mt-16">
-          <div className="absolute left-0 right-0 top-8 hidden h-0.5 bg-gradient-to-r from-brand-orange via-brand-yellow to-brand-cyan lg:block" />
+          <div className="absolute left-0 right-0 top-8 hidden h-0.5 bg-brand-orange lg:block" />
 
           <div className="grid gap-10 lg:grid-cols-4 lg:gap-6">
             {process.map((p, i) => (

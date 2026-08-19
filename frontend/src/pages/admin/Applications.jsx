@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
+import { X } from "lucide-react";
 import { api, API_BASE } from "../../lib/api";
 import Loader from "../../components/common/Loader";
 
 const inputClass =
-  "w-full rounded-xl border border-line bg-slate-50 px-4 py-3 text-sm text-ink placeholder-slate-400 transition-colors focus:border-brand-cyan focus:outline-none focus:ring-2 focus:ring-brand-cyan/20";
+  "w-full rounded-xl border border-line bg-slate-50 px-4 py-3 text-sm text-ink placeholder-slate-400 transition-colors focus:border-brand-orange focus:outline-none focus:ring-2 focus:ring-brand-orange/20";
 
 const AdminApplications = () => {
   const [list, setList] = useState([]);
@@ -184,7 +185,7 @@ const AdminApplications = () => {
                       <button
                         type="button"
                         onClick={() => setViewResume({ id: selected._id, ...selected.resume })}
-                        className="rounded-lg bg-brand-cyan px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:brightness-105"
+                        className="rounded-lg bg-brand-cyan px-3 py-1.5 text-xs font-semibold text-slate-50 transition-colors hover:brightness-105"
                       >
                         View
                       </button>
@@ -192,7 +193,7 @@ const AdminApplications = () => {
                         href={selected.resume.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="rounded-lg border border-brand-cyan px-3 py-1.5 text-xs font-semibold text-brand-cyan transition-colors hover:bg-brand-cyan/5"
+                        className="rounded-lg border border-brand-cyan px-3 py-1.5 text-xs font-semibold text-brand-cyan transition-colors hover:bg-brand-orange/5"
                       >
                         Download
                       </a>
@@ -239,7 +240,7 @@ const AdminApplications = () => {
                   className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-ink"
                   aria-label="Close"
                 >
-                  ×
+                  <X size={16} aria-hidden="true" />
                 </button>
               </div>
             </div>

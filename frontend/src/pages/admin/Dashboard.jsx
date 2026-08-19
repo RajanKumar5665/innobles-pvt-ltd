@@ -54,7 +54,7 @@ const Dashboard = () => {
               label="Total Blogs"
               value={stats.blogs?.total}
               icon={FileText}
-              color="bg-brand-cyan"
+              color="bg-brand-orange"
             />
             <StatCard
               label="Published Blogs"
@@ -73,7 +73,7 @@ const Dashboard = () => {
               label="Total Products"
               value={stats.products?.total}
               icon={Package}
-              color="bg-brand-cyan"
+              color="bg-brand-orange"
             />
             <StatCard
               label="Published Products"
@@ -92,7 +92,7 @@ const Dashboard = () => {
               label="Total Services"
               value={stats.services?.total}
               icon={Package}
-              color="bg-brand-cyan"
+              color="bg-brand-orange"
             />
             <StatCard
               label="Published Services"
@@ -122,7 +122,7 @@ const Dashboard = () => {
               label="Total Careers"
               value={stats.careers?.total}
               icon={Briefcase}
-              color="bg-brand-cyan"
+              color="bg-brand-orange"
             />
           </div>
 
@@ -142,7 +142,7 @@ const Dashboard = () => {
               label="Total Contacts"
               value={stats.contacts?.total}
               icon={MessageSquare}
-              color="bg-brand-cyan"
+              color="bg-brand-orange"
             />
           </div>
 
@@ -157,7 +157,7 @@ const Dashboard = () => {
               label="Total Applications"
               value={stats.applications?.total}
               icon={Users}
-              color="bg-brand-cyan"
+              color="bg-brand-orange"
             />
             <StatCard
               label="Hired"

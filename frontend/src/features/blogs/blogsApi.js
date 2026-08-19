@@ -8,7 +8,9 @@ const toDate = (value) => {
 };
 
 export const fetchBlogsApi = async () => {
-  const response = await api.get("/blogs");
+  // Fetch every available blog (the backend caps at 50) so the
+  // client-side pager on /blog has the full data set to work with.
+  const response = await api.get("/blogs?limit=50");
   const list = Array.isArray(response?.data) ? response.data : [];
   return list.map((item) => ({
     id: item._id,
@@ -23,6 +25,5 @@ export const fetchBlogsApi = async () => {
     authorAvatar: item.authorAvatar || "",
     date: toDate(item.publishedAt),
     readTime: "6 min read",
-    featured: false,
   }));
 };

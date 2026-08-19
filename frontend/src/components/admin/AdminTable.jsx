@@ -51,7 +51,7 @@ const AdminTable = ({
                 type="text"
                 placeholder="Search..."
                 onChange={handleSearch}
-                className="w-full rounded-xl border border-line bg-slate-50 px-3 py-2 pl-9 text-sm text-ink placeholder-slate-400 focus:border-brand-cyan focus:outline-none focus:ring-2 focus:ring-brand-cyan/20"
+                className="w-full rounded-xl border border-line bg-slate-50 px-3 py-2 pl-9 text-sm text-ink placeholder-slate-400 focus:border-brand-orange focus:outline-none focus:ring-2 focus:ring-brand-orange/20"
               />
             </div>
           )}
@@ -59,7 +59,7 @@ const AdminTable = ({
             <select
               onChange={(e) => onStatusFilter(e.target.value || null)}
               defaultValue=""
-              className="rounded-xl border border-line bg-slate-50 px-3 py-2 text-sm text-ink focus:border-brand-cyan focus:outline-none focus:ring-2 focus:ring-brand-cyan/20"
+              className="rounded-xl border border-line bg-slate-50 px-3 py-2 text-sm text-ink focus:border-brand-orange focus:outline-none focus:ring-2 focus:ring-brand-orange/20"
             >
               <option value="">All statuses</option>
               {statusOptions.map((s) => (

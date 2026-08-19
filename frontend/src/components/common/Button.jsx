@@ -2,13 +2,21 @@ import { Link } from "react-router-dom";
 
 /**
  * Reusable button.
- * - variant: "primary" | "ghost"
+ * - variant: "primary" (dark navy) | "accent" (orange) | "secondary" | "outline" | "ghost"
  * - `to`   -> renders react-router <Link>
  * - `href` -> renders an <a>
  * - otherwise renders a <button>
  */
+const variantClass = {
+  primary: "btn-primary",
+  accent: "btn-accent",
+  secondary: "btn-secondary",
+  outline: "btn-secondary",
+  ghost: "btn-ghost",
+};
+
 const Button = ({ children, variant = "primary", to, href, className = "", type = "button", ...rest }) => {
-  const base = variant === "ghost" ? "btn-ghost" : "btn-primary";
+  const base = variantClass[variant] || "btn-primary";
   const classes = `${base} ${className}`;
 
   if (to) {

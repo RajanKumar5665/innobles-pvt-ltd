@@ -1,23 +1,10 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Mail, MapPin, Phone, Send } from "lucide-react";
+import { Mail, MapPin, Phone, ArrowUp } from "lucide-react";
 import { FaGithub, FaInstagram, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
 import BrandLogo from "./BrandLogo";
+import FooterParticles from "./FooterParticles";
 import { contactInfo, navLinks, siteConfig } from "../../config/siteConfig";
 import { services } from "../../data/dummyData";
-
-const particles = [
-  { left: "6%", top: "15%", size: 5, delay: "0s", duration: "8s" },
-  { left: "18%", top: "78%", size: 3, delay: "-4s", duration: "11s" },
-  { left: "32%", top: "28%", size: 4, delay: "-7s", duration: "9s" },
-  { left: "49%", top: "70%", size: 6, delay: "-2s", duration: "12s" },
-  { left: "66%", top: "16%", size: 3, delay: "-6s", duration: "10s" },
-  { left: "78%", top: "58%", size: 5, delay: "-3s", duration: "9s" },
-  { left: "91%", top: "24%", size: 4, delay: "-8s", duration: "11s" },
-  { left: "24%", top: "52%", size: 3, delay: "-5s", duration: "13s" },
-  { left: "58%", top: "88%", size: 4, delay: "-1s", duration: "10s" },
-  { left: "84%", top: "76%", size: 3, delay: "-9s", duration: "8s" },
-];
 
 const socialIcons = [
   { label: "LinkedIn", url: siteConfig.socials.linkedin, Icon: FaLinkedinIn },
@@ -33,70 +20,15 @@ const contactIcons = {
 };
 
 const Footer = () => {
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (event) => {
-    event.preventDefault();
-    if (!email.trim()) return;
-    setSubscribed(true);
-    setEmail("");
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   };
 
   return (
-    <footer className="site-footer mt-16">
-      <div className="footer-particles" aria-hidden="true">
-        {particles.map((particle, index) => (
-          <span
-            key={index}
-            className="footer-particle"
-            style={{
-              left: particle.left,
-              top: particle.top,
-              width: particle.size,
-              height: particle.size,
-              animationDelay: particle.delay,
-              animationDuration: particle.duration,
-            }}
-          />
-        ))}
-      </div>
+    <footer className="site-footer mt-16 relative">
+      <FooterParticles />
 
       <div className="footer-content container-x">
-        {/* Newsletter strip */}
-        <div className="footer-newsletter">
-          <div>
-            <h2 className="footer-newsletter-title">Stay in the loop</h2>
-            <p className="footer-newsletter-text">
-              Product updates, engineering deep-dives and tech insights — straight to your inbox, no
-              spam.
-            </p>
-          </div>
-          <form className="newsletter-form" onSubmit={handleSubscribe}>
-            {subscribed ? (
-              <p className="newsletter-success">✓ You're subscribed — welcome to the list!</p>
-            ) : (
-              <>
-                <label htmlFor="footer-email" className="sr-only">
-                  Email address
-                </label>
-                <input
-                  id="footer-email"
-                  type="email"
-                  required
-                  className="newsletter-input"
-                  placeholder="Your email address"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                />
-                <button type="submit" className="newsletter-btn">
-                  Subscribe <Send size={16} strokeWidth={2} aria-hidden="true" />
-                </button>
-              </>
-            )}
-          </form>
-        </div>
-
         {/* Link columns */}
         <div className="footer-columns grid gap-12 py-14 sm:grid-cols-2 lg:grid-cols-12">
           <div className="lg:col-span-4">
@@ -172,14 +104,20 @@ const Footer = () => {
       </div>
 
       <div className="footer-content footer-bottom">
-        <div className="container-x flex flex-col items-center justify-between gap-2 py-6 text-sm md:flex-row">
+        <div className="container-x py-6 text-center text-sm">
           <span>
             © {new Date().getFullYear()} {siteConfig.legalName}. All rights reserved.
           </span>
-          <Link to="/" className="footer-back-link">
-            Back to top ↑
-          </Link>
         </div>
+      </div>
+
+      {/* Fixed back-to-top icon on right side (same side as slider) */}
+      <div
+        className="fixed right-4 bottom-4 flex items-center justify-center w-10 h-10 rounded-full bg-brand-orange shadow-lg hover:bg-brand-yellow transition-colors cursor-pointer z-40"
+        onClick={scrollToTop}
+        aria-label="Back to top"
+      >
+        <ArrowUp size={20} aria-hidden="true" className="text-slate-50" />
       </div>
     </footer>
   );

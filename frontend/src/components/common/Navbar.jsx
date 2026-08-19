@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Briefcase, ChevronDown, FileText, Home, Layers, Menu, Package, Users, X } from "lucide-react";
+import { ArrowRight, Briefcase, ChevronDown, ChevronRight, FileText, Home, Layers, Menu, Package, Users, X } from "lucide-react";
 import { navLinks } from "../../config/siteConfig";
 import { serviceMegaMenu } from "../../data/dummyData";
 import BrandLogo from "./BrandLogo";
@@ -18,7 +18,7 @@ const navIcons = {
 };
 
 const linkClass = ({ isActive }) =>
-  `relative flex items-center gap-1.5 text-sm font-semibold transition-colors hover:text-[#ff7200] ${isActive ? "text-[#ff7200]" : "text-slate-600"}`;
+  `relative flex items-center gap-1.5 text-sm font-semibold transition-colors hover:text-[#F59E0B] ${isActive ? "text-[#F59E0B]" : "text-slate-600"}`;
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -44,7 +44,7 @@ const Navbar = () => {
   return (
     <>
       <header
-        className="relative sticky top-0 z-40 border-b border-line/80 bg-white/95 shadow-sm backdrop-blur-md after:absolute after:inset-x-0 after:bottom-0 after:h-[2px] after:bg-[#ff7200]"
+        className="relative sticky top-0 z-40 border-b border-line/80 bg-white/95 shadow-sm backdrop-blur-md after:absolute after:inset-x-0 after:bottom-0 after:h-[2px] after:bg-[#F59E0B]"
         onMouseLeave={() => setServicesOpen(false)}
       >
         <nav className="container-x flex items-center justify-between py-3.5">
@@ -61,7 +61,7 @@ const Navbar = () => {
               <Link
                 to="/services"
                 onClick={closeAll}
-                className={`flex items-center gap-1.5 text-sm font-semibold transition-colors hover:text-[#ff7200] ${servicesActive ? "text-[#ff7200]" : "text-slate-600"}`}
+                className={`flex items-center gap-1.5 text-sm font-semibold transition-colors hover:text-[#F59E0B] ${servicesActive ? "text-[#F59E0B]" : "text-slate-600"}`}
               >
                 <Layers size={16} aria-hidden="true" /> Services
                 <ChevronDown size={14} className={`transition-transform ${servicesOpen ? "rotate-180" : ""}`} aria-hidden="true" />
@@ -86,9 +86,9 @@ const Navbar = () => {
             <button
               type="button"
               onClick={openContact}
-              className="hidden items-center gap-1.5 rounded-full bg-[#ff7200] !px-5 !py-2.5 !text-[13px] font-semibold !text-white transition-colors hover:bg-[#f56600] md:inline-flex"
+              className="hidden items-center gap-1.5 rounded-full bg-[#F59E0B] !px-5 !py-2.5 !text-[13px] font-semibold !text-white transition-colors hover:bg-[#D97706] md:inline-flex"
             >
-              Contact Us <span aria-hidden="true">→</span>
+              Contact Us <ArrowRight size={14} aria-hidden="true" />
             </button>
             <button
               type="button"
@@ -136,8 +136,9 @@ const Navbar = () => {
                       <p className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-orange">{category.title}</p>
                       <div className="flex flex-col gap-1">
                         {category.items.map((item) => (
-                          <Link key={item} to="/services" onClick={closeAll} className="py-1.5 text-sm text-slate-600 hover:text-brand-orange">
-                            › {item}
+                          <Link key={item} to="/services" onClick={closeAll} className="flex items-center gap-1.5 py-1.5 text-sm text-slate-600 hover:text-brand-orange">
+                            <ChevronRight size={12} className="shrink-0" aria-hidden="true" />
+                            {item}
                           </Link>
                         ))}
                       </div>
@@ -159,9 +160,9 @@ const Navbar = () => {
               <button
                 type="button"
                 onClick={openContact}
-                className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-full bg-[#ff7200] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#f56600]"
+                className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-full bg-[#F59E0B] px-5 py-3 text-sm font-semibold !text-white transition-colors hover:bg-[#D97706]"
               >
-                Contact Us <span aria-hidden="true">→</span>
+                Contact Us <ArrowRight size={14} aria-hidden="true" />
               </button>
             </div>
           </div>
