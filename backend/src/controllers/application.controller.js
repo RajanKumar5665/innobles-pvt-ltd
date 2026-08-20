@@ -40,27 +40,57 @@ const createApplication = asyncHandler(async (req, res) => {
   return success(res, { id: application._id }, "Application submitted successfully", 201);
 });
 
+/* ------------------------------ Helpers ------------------------------ */
+
+// Escape regex metacharacters so user search input is matched literally.
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 /* ------------------------------ Admin ------------------------------ */
 
 const adminListApplications = asyncHandler(async (req, res) => {
-  const { page, limit, search, status, careerId } = req.query;
+  const { page, limit, search, status, careerId, sort } = req.query;
   const filter = {};
   if (search) {
-    filter.$or = [
-      { name: { $regex: search, $options: "i" } },
-      { email: { $regex: search, $options: "i" } },
-    ];
+    const term = escapeRegex(String(search).trim());
+    if (term) {
+      // Match careers by title so a search like "developer" surfaces every
+      // application submitted for any matching position.
+      const careerMatches = await Career.find({ title: { $regex: term, $options: "i" } })
+        .select("_id")
+        .lean();
+      const careerIds = careerMatches.map((c) => c._id);
+      filter.$or = [
+        { name: { $regex: term, $options: "i" } },
+        { email: { $regex: term, $options: "i" } },
+        { phone: { $regex: term, $options: "i" } },
+      ];
+      if (careerIds.length) filter.$or.push({ careerId: { $in: careerIds } });
+    }
   }
   if (status) filter.status = status;
   if (careerId) filter.careerId = careerId;
+
+  // Whitelisted server-side sorts for name / status / date. Career-title
+  // sorting is handled client-side by the admin panel (small result set).
+  const SORTS = {
+    name: { name: 1, createdAt: -1 },
+    "-name": { name: -1, createdAt: -1 },
+    status: { status: 1, createdAt: -1 },
+    "-status": { status: -1, createdAt: -1 },
+    createdAt: { createdAt: 1 },
+    "-createdAt": { createdAt: -1 },
+  };
 
   const result = await paginate({
     model: JobApplication,
     query: filter,
     page,
     limit,
-    sort: { createdAt: -1 },
-    populate: { path: "careerId", select: "title department" },
+    sort: SORTS[sort] || { createdAt: -1 },
+    // Resume is fetched on demand via the detail/preview endpoints. Keep the
+    // internal Cloudinary publicId out of list responses entirely.
+    select: "-resume.publicId",
+    populate: { path: "careerId", select: "title department location" },
   });
   return success(res, result.data, "Applications retrieved", 200, {
     pagination: result.pagination,
@@ -68,10 +98,9 @@ const adminListApplications = asyncHandler(async (req, res) => {
 });
 
 const adminGetApplication = asyncHandler(async (req, res) => {
-  const application = await JobApplication.findById(req.params.id).populate(
-    "careerId",
-    "title department location",
-  );
+  const application = await JobApplication.findById(req.params.id)
+    .select("-resume.publicId")
+    .populate("careerId", "title department location");
   if (!application) throw new ApiError(404, "Application not found");
   return success(res, application, "Application retrieved");
 });

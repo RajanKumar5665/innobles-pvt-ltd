@@ -1,6 +1,7 @@
 import express from "express";
 import Joi from "joi";
 import validate from "../middleware/validate.middleware.js";
+import { uploadImage } from "../middleware/upload.middleware.js";
 import ctrl from "../controllers/product.controller.js";
 import { createProduct, updateProduct, productStatusSchema, productQuerySchema, } from "../validations/product.validation.js";
 import { idParamSchema } from "../validations/common.js";
@@ -12,10 +13,11 @@ publicRouter.get("/", validate(productQuerySchema, "query"), ctrl.getPublicProdu
 publicRouter.get("/:slug", validate(slugParamSchema, "params"), ctrl.getPublicProductBySlug);
 
 const adminRouter = express.Router();
-adminRouter.post("/", validate(createProduct), ctrl.adminCreateProduct);
+const imageFields = [{ name: "image", maxCount: 1 }];
+adminRouter.post("/", uploadImage.fields(imageFields), validate(createProduct), ctrl.adminCreateProduct);
 adminRouter.get("/", validate(productQuerySchema, "query"), ctrl.adminListProducts);
 adminRouter.get("/:id", validate(idParamSchema, "params"), ctrl.adminGetProduct);
-adminRouter.put("/:id", validate(updateProduct), ctrl.adminUpdateProduct);
+adminRouter.put("/:id", uploadImage.fields(imageFields), validate(updateProduct), ctrl.adminUpdateProduct);
 adminRouter.patch("/:id/status", validate(productStatusSchema), ctrl.adminUpdateProductStatus);
 adminRouter.delete("/:id", validate(idParamSchema, "params"), ctrl.adminDeleteProduct);
 

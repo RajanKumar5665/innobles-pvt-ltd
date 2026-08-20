@@ -13,7 +13,7 @@ const baseBlog = {
   category: Joi.string().trim().min(1).max(80).required().messages({
     "any.required": "Category is required",
   }),
-  description: Joi.string().trim().allow("", null).max(1200),
+  description: Joi.string().trim().allow("", null).max(10000),
   content: Joi.string().allow("", null),
   image: Joi.alternatives().try(Joi.string().uri(), imageObject).allow("", null),
   author: Joi.string().trim().allow("", null).max(100),

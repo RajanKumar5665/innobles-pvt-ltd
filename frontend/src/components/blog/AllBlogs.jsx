@@ -12,9 +12,10 @@ const AllBlogs = ({ blogs = [], page = 1, totalPages = 1, onPageChange }) => {
     return (
       <section id="all-blogs" aria-labelledby="all-blogs-title" className="mt-12 md:mt-16">
         <div className="blog-empty-state">
-          <p className="blog-empty-state-title">No articles published yet</p>
+          <p className="blog-empty-state-title">No blogs available yet.</p>
           <p className="blog-empty-state-desc">
-            New posts are on the way — check back soon!
+            There are no published articles right now. New posts will appear
+            here as soon as they go live.
           </p>
         </div>
       </section>

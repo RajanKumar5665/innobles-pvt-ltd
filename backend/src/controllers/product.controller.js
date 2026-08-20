@@ -31,19 +31,19 @@ const getPublicProductBySlug = asyncHandler(async (req, res) => {
 /* ------------------------------ Admin ------------------------------ */
 
 const adminCreateProduct = asyncHandler(async (req, res) => {
-  const slug = await uniqueSlug(Product, req.body.name);
-  let images = req.body.images || [];
+  const payload = { ...req.body };
+  delete payload.imageRemoved;
 
-  if (req.files && req.files.length) {
-    const uploaded = [];
-    for (const file of req.files) {
-      const asset = await uploadSingle({ buffer: file.buffer, folder: "innobles/products" });
-      uploaded.push(asset);
-    }
-    images = uploaded;
+  // Honor an explicit slug when provided, otherwise derive one from the name.
+  const slugBase = payload.slug && payload.slug.trim() ? payload.slug : payload.name;
+  const slug = await uniqueSlug(Product, slugBase);
+
+  // Optional single product image upload (Cloudinary).
+  if (req.files?.image?.[0]) {
+    payload.image = await uploadSingle({ buffer: req.files.image[0].buffer, folder: "innobles/products" });
   }
 
-  const product = await Product.create({ ...req.body, slug, images });
+  const product = await Product.create({ ...payload, slug });
   return success(res, product, "Product created", 201);
 });
 
@@ -74,22 +74,25 @@ const adminUpdateProduct = asyncHandler(async (req, res) => {
   if (!product) throw new ApiError(404, "Product not found");
 
   const payload = { ...req.body };
+  delete payload.imageRemoved;
 
-  if (payload.name && payload.name !== product.name && !payload.slug) {
+  // Regenerate the slug if the name changed and none was explicitly supplied.
+  // Otherwise honor an explicit slug that differs from the current one.
+  const explicitSlug = payload.slug && payload.slug.trim();
+  if (explicitSlug && explicitSlug !== product.slug) {
+    payload.slug = await uniqueSlug(Product, explicitSlug, product._id);
+  } else if (payload.name && payload.name !== product.name && !explicitSlug) {
     payload.slug = await uniqueSlug(Product, payload.name, product._id);
   }
 
-  if (req.files && req.files.length) {
-    const uploaded = [];
-    for (const file of req.files) {
-      const asset = await uploadSingle({ buffer: file.buffer, folder: "innobles/products" });
-      uploaded.push(asset);
-    }
-    // Remove previously uploaded images when replacing.
-    for (const img of product.images || []) {
-      if (img.publicId) await deleteByPublicId(img.publicId);
-    }
-    payload.images = uploaded;
+  // Replace the existing image when a new file is supplied, or clear it when
+  // the admin explicitly removed it on the edit form.
+  if (req.files?.image?.[0]) {
+    if (product.image?.publicId) await deleteByPublicId(product.image.publicId);
+    payload.image = await uploadSingle({ buffer: req.files.image[0].buffer, folder: "innobles/products" });
+  } else if (req.body.imageRemoved === "true") {
+    if (product.image?.publicId) await deleteByPublicId(product.image.publicId);
+    payload.image = null;
   }
 
   Object.assign(product, payload);
@@ -108,9 +111,7 @@ const adminUpdateProductStatus = asyncHandler(async (req, res) => {
 const adminDeleteProduct = asyncHandler(async (req, res) => {
   const product = await Product.findByIdAndDelete(req.params.id);
   if (!product) throw new ApiError(404, "Product not found");
-  for (const img of product.images || []) {
-    if (img.publicId) await deleteByPublicId(img.publicId);
-  }
+  if (product.image?.publicId) await deleteByPublicId(product.image.publicId);
   return success(res, null, "Product deleted");
 });
 

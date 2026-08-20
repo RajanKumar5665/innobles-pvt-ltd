@@ -860,3 +860,119 @@ a.footer-contact-link:hover { color: #F59E0B; }
 }
 
 
+
+/* =====================================================================
+   RICH TEXT EDITOR (blog Description) — matches the admin form theme.
+   Uses the existing navy/orange palette: borders #E2E8F0, surface #F8FAFC,
+   ink #172033, muted #64748B, accent #F59E0B. No gradients or extra shadows.
+   ===================================================================== */
+.rte {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid #E2E8F0;
+  border-radius: 0.75rem; /* matches .inputClass rounded-xl */
+  background: #FFFFFF;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.rte:focus-within {
+  border-color: #F59E0B;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2); /* matches inputClass focus ring */
+}
+
+/* Toolbar — visually separated from the editing area, wraps on small screens. */
+.rte-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px;
+  border-bottom: 1px solid #E2E8F0;
+  background: #F8FAFC;
+}
+.rte-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #64748B;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.rte-btn:hover:not(:disabled) {
+  background: #FFFFFF;
+  color: #172033;
+}
+.rte-btn.is-active {
+  background: rgba(245, 158, 11, 0.12);
+  color: #D97706;
+}
+.rte-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+.rte-sep {
+  width: 1px;
+  height: 18px;
+  margin: 0 4px;
+  flex-shrink: 0;
+  background: #E2E8F0;
+}
+
+/* Editing area — clean prose that mirrors the site typography. */
+.rte-editor .ProseMirror {
+  min-height: 220px;
+  max-height: 460px;
+  overflow-y: auto;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #172033;
+  outline: none;
+}
+.rte-editor .ProseMirror > *:first-child {
+  margin-top: 0;
+}
+.rte-editor .ProseMirror > *:last-child {
+  margin-bottom: 0;
+}
+.rte-editor .ProseMirror p {
+  margin: 0.25em 0;
+}
+.rte-editor .ProseMirror h1,
+.rte-editor .ProseMirror h2,
+.rte-editor .ProseMirror h3 {
+  font-weight: 700;
+  color: #172033;
+}
+.rte-editor .ProseMirror h1 { font-size: 1.4em; margin: 0.5em 0 0.3em; }
+.rte-editor .ProseMirror h2 { font-size: 1.2em; margin: 0.5em 0 0.3em; }
+.rte-editor .ProseMirror h3 { font-size: 1.05em; margin: 0.5em 0 0.3em; }
+.rte-editor .ProseMirror ul { list-style: disc; padding-left: 1.3rem; margin: 0.25em 0; }
+.rte-editor .ProseMirror ol { list-style: decimal; padding-left: 1.3rem; margin: 0.25em 0; }
+.rte-editor .ProseMirror blockquote {
+  margin: 0.5em 0;
+  padding: 0.25em 0 0.25em 0.75rem;
+  border-left: 3px solid #F59E0B;
+  color: #64748B;
+}
+.rte-editor .ProseMirror a {
+  color: #D97706;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.rte-editor .ProseMirror a:hover { color: #F59E0B; }
+
+/* Placeholder while the editor is empty. */
+.rte-editor .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  color: #94A3B8;
+}
+

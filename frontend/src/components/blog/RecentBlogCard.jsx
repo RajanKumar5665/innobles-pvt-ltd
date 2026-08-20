@@ -30,7 +30,7 @@ const RecentBlogCard = ({ blog }) => {
             {blog.title}
           </Link>
         </h3>
-        <p className="blog-post-desc">{blog.description || blog.excerpt}</p>
+        <p className="blog-post-desc">{blog.description}</p>
 
         <div className="blog-post-meta">
           <AuthorAvatar author={blog.author} avatar={blog.authorAvatar} />

@@ -2,8 +2,7 @@ import Seo from "../components/seo/Seo";
 import SectionHeading from "../components/common/SectionHeading";
 import Reveal from "../components/common/Reveal";
 import Loader from "../components/common/Loader";
-import Icon from "../components/common/Icon";
-import FeatureCheck from "../components/common/FeatureCheck";
+import ServiceCard from "../components/service/ServiceCard";
 import CTA from "../components/home/CTA";
 import ContactSection from "../components/home/ContactSection";
 import HowItWorks from "../components/home/HowItWorks";
@@ -26,7 +25,7 @@ const Services = () => {
         <div className="container-x relative py-20 text-center md:py-24">
           <p className="eyebrow mb-4 justify-center">Our Services</p>
           <h1 className="mx-auto max-w-3xl font-disp text-4xl font-bold leading-tight md:text-5xl">
-            Everything you need to <span className="text-gradient">ship & scale</span> software
+            Everything you need to <span className="text-gradient">ship &amp; scale</span> software
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-white/60 md:text-lg">
             Six core capabilities, one accountable team. Pick one service or let us handle the full lifecycle.
@@ -41,28 +40,10 @@ const Services = () => {
         {status === "loading" && <div className="mt-12"><Loader className="!h-32" size="lg" /></div>}
 
         {status === "success" && (
-          <div className="mt-12 grid gap-6 md:grid-cols-2">
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {list.map((s, i) => (
-              <Reveal key={s.id} delay={(i % 2) * 90}>
-                <article className="card group h-full p-7">
-                  <div className="mb-5 flex items-center gap-4">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 ring-1 ring-line/60 transition-transform duration-300 group-hover:scale-110">
-                      <Icon icon={s.icon} className="h-7 w-7 text-accent" strokeWidth={1.8} />
-                    </div>
-                    <h3 className="font-disp text-xl font-bold">{s.title}</h3>
-                  </div>
-                  <p className="text-sm leading-relaxed text-white/55">{s.desc}</p>
-                  <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-                    {s.features.map((f) => (
-                      <li key={f} className="flex items-center gap-2 text-sm text-white/60">
-                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/15 text-accent">
-                          <FeatureCheck className="h-3 w-3" strokeWidth={3} />
-                        </span>
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                </article>
+              <Reveal key={s.id} delay={(i % 3) * 90} className="h-full">
+                <ServiceCard service={s} />
               </Reveal>
             ))}
           </div>

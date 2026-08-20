@@ -7,10 +7,22 @@ const serviceSchema = new mongoose.Schema(
       required: [true, "Title is required"],
       trim: true,
     },
+    // Legacy icon key — kept for backward compatibility with services created
+    // before the admin form was updated. New services omit it entirely.
     icon: {
       type: String,
       default: "",
       trim: true,
+    },
+    shortDescription: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    category: {
+      type: String,
+      trim: true,
+      default: "",
     },
     description: {
       type: String,
@@ -20,9 +32,13 @@ const serviceSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    banner: {
+      url: { type: String },
+      publicId: { type: String },
+    },
     status: {
       type: String,
-      enum: ["draft", "published"],
+      enum: ["draft", "published", "archived"],
       default: "draft",
       index: true,
     },

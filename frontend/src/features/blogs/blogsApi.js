@@ -19,6 +19,7 @@ export const fetchBlogsApi = async () => {
     category: item.category,
     tag: item.category,
     description: item.description || "",
+    content: item.content || "",
     excerpt: item.description || "",
     image: item.image?.url || "",
     author: item.author || "Innobles Team",

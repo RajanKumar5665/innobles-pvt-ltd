@@ -21,7 +21,6 @@ const ContactForm = () => {
   const dispatch = useAppDispatch();
   const status = useAppSelector((s) => s.contact.status);
   const error = useAppSelector((s) => s.contact.error);
-  const lastMessage = useAppSelector((s) => s.contact.lastMessage);
   const [formData, setFormData] = useState(emptyForm);
   const [touched, setTouched] = useState({});
 
@@ -50,10 +49,9 @@ const ContactForm = () => {
         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15">
           <FeatureCheck className="h-8 w-8 text-emerald-600" strokeWidth={2.5} />
         </div>
-        <h3 className="font-disp text-2xl font-bold">Thanks, {lastMessage?.name?.split(" ")[0] || "there"}!</h3>
+        <h3 className="font-disp text-2xl font-bold">Thanks, there!</h3>
         <p className="mt-3 text-white/60">
-          Your message has been received (<span className="text-accent">{lastMessage?.id}</span>). We'll reply to{" "}
-          <span className="text-white">{lastMessage?.email}</span> within one business day.
+          Your message has been received. We&apos;ll reply to within one business day.
         </p>
         <button onClick={handleReset} className="btn-ghost mt-8 !py-2.5 text-sm">Send another message</button>
       </div>

@@ -10,7 +10,7 @@ const getPublicHome = asyncHandler(async (req, res) => {
     .populate({
       path: "featuredProducts",
       match: { status: "published" },
-      select: "name slug shortDescription images",
+      select: "name slug shortDescription image images",
     })
     .populate({
       path: "featuredBlogs",

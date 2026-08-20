@@ -7,21 +7,6 @@ import AuthorAvatar from "../components/blog/AuthorAvatar";
 import BlogShare from "../components/blog/BlogShare";
 import { useBlogs } from "../hooks/useBlogs";
 
-const articleSections = (blog) => [
-  {
-    heading: "The opportunity",
-    body: `${blog.excerpt} The important question is not whether technology is changing. It is which change will create a measurable improvement for your customers and your team.`,
-  },
-  {
-    heading: "How to make the right decision",
-    body: "Start with the workflow that causes the most friction today. Speak with the people who use it, map the hand-offs, and define one outcome that proves the investment is working. This gives the team a clear direction before it commits time to tools or features.",
-  },
-  {
-    heading: "A practical next step",
-    body: "Keep the first release focused and observable. Ship the smallest useful improvement, monitor how it performs, and use that feedback to decide what deserves to be built next. Strong products grow through deliberate iterations, not guesswork.",
-  },
-];
-
 const BlogDetail = () => {
   const { slug } = useParams();
   const { list, status, error } = useBlogs();
@@ -67,9 +52,11 @@ const BlogDetail = () => {
 
   const related = list.filter((item) => item.id !== blog.id).slice(0, 3);
   const title = blog.title;
-  const description = blog.description || blog.excerpt;
-  const category = blog.category || blog.tag;
-  const author = blog.author || "Innobles Team";
+  const description = blog.description;
+  const category = blog.category;
+  const author = blog.author;
+  const hasContent = Boolean(blog.content && blog.content.trim());
+  const hasDescription = Boolean(description && description.trim());
 
   return (
     <>
@@ -101,7 +88,7 @@ const BlogDetail = () => {
                 <CalendarDays size={14} className="text-[#F59E0B]" aria-hidden="true" /> {blog.date}
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <Clock3 size={14} className="text-[#F59E0B]" aria-hidden="true" /> {blog.readTime || "6 min read"}
+                <Clock3 size={14} className="text-[#F59E0B]" aria-hidden="true" /> {blog.readTime}
               </span>
             </div>
           </section>
@@ -112,19 +99,20 @@ const BlogDetail = () => {
 
           <section className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,760px)_240px]">
             <div className="blog-article-body">
-              {articleSections(blog).map((section) => (
-                <section key={section.heading}>
-                  <h2>{section.heading}</h2>
-                  <p>{section.body}</p>
-                                </section>
-              ))}
+              {hasContent ? (
+                <p className="whitespace-pre-line">{blog.content}</p>
+              ) : hasDescription ? (
+                <div dangerouslySetInnerHTML={{ __html: description }} />
+              ) : (
+                <p>No content available for this article yet.</p>
+              )}
             </div>
 
             <aside className="h-fit rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-5 lg:sticky lg:top-24">
               <p className="blog-eyebrow">Article details</p>
               <p className="mt-3 text-sm font-bold text-[#172033]">{category}</p>
               <p className="mt-2 text-[13px] leading-6 text-[#64748B]">
-                Written by {author}. Published {blog.date}. {blog.readTime || "6 min read"}.
+                Written by {author}. Published {blog.date}. {blog.readTime}.
               </p>
             </aside>
           </section>
@@ -145,12 +133,12 @@ const BlogDetail = () => {
                         alt=""
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
-                      <span className="blog-badge">{item.category || item.tag}</span>
+                      <span className="blog-badge">{item.category}</span>
                     </div>
                     <div className="flex flex-1 flex-col p-5">
                       <h3 className="blog-post-title">{item.title}</h3>
                       <p className="blog-post-meta mt-auto pt-3">
-                        {item.author || "Innobles Team"} • {item.date}
+                        {item.author} • {item.date}
                       </p>
                     </div>
                   </Link>

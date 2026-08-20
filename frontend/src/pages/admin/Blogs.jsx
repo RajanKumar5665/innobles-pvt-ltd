@@ -1,6 +1,7 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "../../lib/api";
 import Loader from "../../components/common/Loader";
+import RichTextEditor from "../../components/common/RichTextEditor";
 
 const emptyForm = {
   title: "",
@@ -14,6 +15,72 @@ const emptyForm = {
 
 const inputClass =
   "w-full rounded-xl border border-line bg-slate-50 px-4 py-3 text-sm text-ink placeholder-slate-400 transition-colors focus:border-brand-orange focus:outline-none focus:ring-2 focus:ring-brand-orange/20";
+
+/* ----------------------------------------------------------------------------
+ * Draft persistence (localStorage)
+ * A unique key per form context keeps the "New Blog" draft separate from any
+ * per-blog edit draft, so editing one post never overwrites another's draft.
+ * -------------------------------------------------------------------------- */
+const DRAFT_CREATE_KEY = "blog_form_draft_create";
+const DRAFT_EDIT_KEY = (id) => `blog_form_draft_${id}`;
+
+const readDraft = (key) => {
+  const drop = () => {
+    try {
+      localStorage.removeItem(key);
+    } catch {
+      /* ignore */
+    }
+  };
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") {
+      drop();
+      return null;
+    }
+    return parsed;
+  } catch {
+    // Malformed/corrupted JSON → ignore it and remove it.
+    drop();
+    return null;
+  }
+};
+
+const writeDraft = (key, value) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    /* ignore quota / private-mode errors */
+  }
+};
+
+const clearDraft = (key) => {
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    /* ignore */
+  }
+};
+
+/** A rich-text value counts as "empty" when it holds no visible text/image. */
+const isRichContentEmpty = (html) => {
+  if (!html) return true;
+  const node = document.createElement("div");
+  node.innerHTML = html;
+  return !node.textContent.trim() && !node.querySelector("img");
+};
+
+/** Only restore a saved draft that actually carries user-entered content. */
+const draftHasContent = (draft) =>
+  Boolean(
+    (draft.title && draft.title.trim()) ||
+      (draft.category && draft.category.trim()) ||
+      (draft.content && draft.content.trim()) ||
+      (draft.author && draft.author.trim()) ||
+      (draft.description && !isRichContentEmpty(draft.description)),
+  );
 
 const AdminBlogs = () => {
   const [list, setList] = useState([]);
@@ -31,6 +98,8 @@ const AdminBlogs = () => {
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [existingImageUrl, setExistingImageUrl] = useState("");
   const [existingAvatarUrl, setExistingAvatarUrl] = useState("");
+  // Tracks the last persisted draft so we skip redundant writes.
+  const lastDraftRef = useRef("");
 
   const load = async () => {
     setStatus("loading");
@@ -58,10 +127,59 @@ const AdminBlogs = () => {
     setExistingAvatarUrl("");
   };
 
+  // Persist the current form as a draft whenever a field changes, using a
+  // context-specific key (create vs. per-blog edit). Writing to localStorage
+  // never re-renders React, so there is no save loop; the lastDraftRef guard
+  // additionally skips re-saving an identical restored state.
+  useEffect(() => {
+    if (!showForm) return;
+    const key = editing ? DRAFT_EDIT_KEY(editing) : DRAFT_CREATE_KEY;
+    const draft = {
+      title: form.title || "",
+      category: form.category || "",
+      status: form.status || "draft",
+      description: form.description || "",
+      content: form.content || "",
+      author: form.author || "",
+      authorAvatar: form.authorAvatar || "",
+    };
+    const token = `${key}::${JSON.stringify(draft)}`;
+    if (lastDraftRef.current === token) return;
+    writeDraft(key, draft);
+    lastDraftRef.current = token;
+  }, [showForm, editing, form]);
+
+  // Warn the user before leaving/reloading with unsaved content.
+  useEffect(() => {
+    if (!showForm) return undefined;
+    const hasContent = draftHasContent(form);
+    if (!hasContent) return undefined;
+    const handler = (e) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [showForm, form]);
+
   const startCreate = () => {
     setEditing(null);
-    setForm(emptyForm);
+    lastDraftRef.current = "";
+    const saved = readDraft(DRAFT_CREATE_KEY);
     resetUploads();
+    if (saved && draftHasContent(saved)) {
+      setForm({
+        title: saved.title || "",
+        category: saved.category || "",
+        status: saved.status || "draft",
+        description: saved.description || "",
+        content: saved.content || "",
+        author: saved.author || "",
+        authorAvatar: saved.authorAvatar || "",
+      });
+    } else {
+      setForm(emptyForm);
+    }
     setShowForm(true);
     setFormStatus("idle");
     setFormError(null);
@@ -69,6 +187,9 @@ const AdminBlogs = () => {
 
   const startEdit = (item) => {
     setEditing(item._id);
+    lastDraftRef.current = "";
+    resetUploads();
+    // Load the persisted blog (source of truth) — never the create draft.
     setForm({
       title: item.title || "",
       category: item.category || "",
@@ -78,7 +199,6 @@ const AdminBlogs = () => {
       authorAvatar: item.authorAvatar || "",
       status: item.status || "draft",
     });
-    resetUploads();
     setExistingImageUrl(item.image?.url || "");
     setExistingAvatarUrl(item.authorAvatar || "");
     setShowForm(true);
@@ -87,6 +207,8 @@ const AdminBlogs = () => {
   };
 
   const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+
+  const handleDescriptionChange = (html) => setForm((prev) => ({ ...prev, description: html }));
 
   const handleImageFileChange = (e) => {
     const file = e.target.files[0];
@@ -100,21 +222,34 @@ const AdminBlogs = () => {
     setAvatarPreview(file ? URL.createObjectURL(file) : null);
   };
 
+  const handleCancel = () => {
+    clearDraft(editing ? DRAFT_EDIT_KEY(editing) : DRAFT_CREATE_KEY);
+    lastDraftRef.current = "";
+    setEditing(null);
+    setForm(emptyForm);
+    resetUploads();
+    setShowForm(false);
+    setFormStatus("idle");
+    setFormError(null);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormStatus("loading");
     setFormError(null);
     try {
+      // Normalize an "empty" rich-text description (e.g. only <p></p>) to "".
+      const description = isRichContentEmpty(form.description) ? "" : form.description;
+      const payload = { ...form, description };
       const hasUploads = imageFile || avatarFile;
       if (hasUploads) {
         // multipart/form-data so the uploaded files reach the backend.
         const fd = new FormData();
-        fd.append("title", form.title);
-        fd.append("category", form.category);
-        fd.append("description", form.description || "");
-        fd.append("content", form.content || "");
-        fd.append("author", form.author || "");
-        fd.append("status", form.status);
+        fd.append("title", payload.title);
+        fd.append("category", payload.category);
+        fd.append("description", payload.description || "");
+        fd.append("content", payload.content || "");
+        fd.append("author", payload.author || "");
+        fd.append("status", payload.status);
         if (imageFile) fd.append("image", imageFile);
         if (avatarFile) fd.append("authorAvatar", avatarFile);
         if (editing) {
@@ -123,10 +258,13 @@ const AdminBlogs = () => {
           await api.postForm("/admin/blogs", fd);
         }
       } else if (editing) {
-        await api.put(`/admin/blogs/${editing}`, form);
+        await api.put(`/admin/blogs/${editing}`, payload);
       } else {
-        await api.post("/admin/blogs", form);
+        await api.post("/admin/blogs", payload);
       }
+      // Clear the draft after a successful create/edit and reset the form.
+      clearDraft(editing ? DRAFT_EDIT_KEY(editing) : DRAFT_CREATE_KEY);
+      lastDraftRef.current = "";
       setFormStatus("success");
       setShowForm(false);
       setEditing(null);
@@ -191,7 +329,11 @@ const AdminBlogs = () => {
             </div>
             <div>
               <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Description</label>
-              <textarea name="description" value={form.description} onChange={handleChange} rows={3} className={inputClass} />
+              <RichTextEditor
+                value={form.description}
+                onChange={handleDescriptionChange}
+                placeholder="Write a short description for this blog…"
+              />
             </div>
             <div>
               <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Content</label>
@@ -245,7 +387,7 @@ const AdminBlogs = () => {
               <button type="submit" disabled={formStatus === "loading"} className="btn-primary">
                 {formStatus === "loading" ? "Saving..." : editing ? "Update" : "Create"}
               </button>
-              <button type="button" onClick={() => setShowForm(false)} className="btn-ghost">Cancel</button>
+              <button type="button" onClick={handleCancel} className="btn-ghost">Cancel</button>
             </div>
           </form>
         </div>
@@ -305,3 +447,4 @@ const AdminBlogs = () => {
 };
 
 export default AdminBlogs;
+

@@ -23,6 +23,14 @@ const applicationQuerySchema = pagination.keys({
   search: Joi.string().trim().allow(""),
   status: Joi.string().valid("new", "reviewing", "shortlisted", "rejected", "hired"),
   careerId: Joi.string().hex().length(24),
+  sort: Joi.string().valid(
+    "name",
+    "-name",
+    "status",
+    "-status",
+    "createdAt",
+    "-createdAt",
+  ),
 });
 
 const applicationIdParamSchema = Joi.object({ id: idParam() });

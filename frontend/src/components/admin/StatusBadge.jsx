@@ -4,9 +4,10 @@
  * auto-detects common status values.
  */
 const STATUS_SCHEMES = {
-  // blog / product / service (draft|published)
+  // blog / product / service (draft|published|archived)
   draft: "bg-slate-100 text-slate-600",
   published: "bg-emerald-100 text-emerald-700",
+  archived: "bg-amber-100 text-amber-700",
   // career (open|closed)
   open: "bg-emerald-100 text-emerald-700",
   closed: "bg-slate-100 text-slate-600",
