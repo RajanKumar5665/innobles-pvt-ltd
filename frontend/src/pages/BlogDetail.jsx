@@ -2,11 +2,23 @@ import { ArrowLeft, CalendarDays, Clock3 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import Seo from "../components/seo/Seo";
 import Loader from "../components/common/Loader";
+import StaggerGroup, { StaggerItem } from "../components/common/StaggerGroup";
 import BlogImage from "../components/blog/BlogImage";
 import AuthorAvatar from "../components/blog/AuthorAvatar";
 import BlogShare from "../components/blog/BlogShare";
+import BlogPreviewCard from "../components/blog/BlogPreviewCard";
 import { useBlogs } from "../hooks/useBlogs";
+import { toRenderableHtml, stripHtml } from "../lib/richText";
 
+/**
+ * Public single-blog page.
+ *
+ * The admin authors `description` and `content` in the TipTap rich-text editor,
+ * so both are stored as HTML. We render them with `dangerouslySetInnerHTML`
+ * (normalizing any legacy plain-text records via `toRenderableHtml`) so the
+ * user always sees the article laid out cleanly — headings, lists, quotes and
+ * links — never raw markup.
+ */
 const BlogDetail = () => {
   const { slug } = useParams();
   const { list, status, error } = useBlogs();
@@ -57,10 +69,11 @@ const BlogDetail = () => {
   const author = blog.author;
   const hasContent = Boolean(blog.content && blog.content.trim());
   const hasDescription = Boolean(description && description.trim());
+  const seoDescription = stripHtml(description) || title;
 
   return (
     <>
-      <Seo title={title} description={description} path={`/blog/${blog.slug}`} />
+      <Seo title={title} description={seoDescription} path={`/blog/${blog.slug}`} />
 
       <div className="blog-frame">
         <div className="blog-container py-8 md:py-10">
@@ -76,7 +89,13 @@ const BlogDetail = () => {
             <h1 className="mt-5 text-[28px] font-extrabold leading-[1.15] tracking-tight text-[#172033] md:text-[42px]">
               {title}
             </h1>
-            <p className="mt-4 max-w-2xl text-[15px] leading-7 text-[#64748B]">{description}</p>
+
+            {hasDescription ? (
+              <div
+                className="mt-4 max-w-2xl blog-detail-description"
+                dangerouslySetInnerHTML={{ __html: toRenderableHtml(description) }}
+              />
+            ) : null}
 
             <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 text-[13px] text-[#64748B]">
               <span className="inline-flex items-center gap-2">
@@ -98,14 +117,19 @@ const BlogDetail = () => {
           </div>
 
           <section className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,760px)_240px]">
-            <div className="blog-article-body">
-              {hasContent ? (
-                <p className="whitespace-pre-line">{blog.content}</p>
-              ) : hasDescription ? (
-                <div dangerouslySetInnerHTML={{ __html: description }} />
-              ) : (
-                <p>No content available for this article yet.</p>
-              )}
+            <div className="blog-article-card">
+              <div className="blog-article-body">
+                {hasContent ? (
+                  <div dangerouslySetInnerHTML={{ __html: toRenderableHtml(blog.content) }} />
+                ) : hasDescription ? (
+                  <div dangerouslySetInnerHTML={{ __html: toRenderableHtml(description) }} />
+                ) : (
+                  <p className="text-slate-500">No content available for this article yet.</p>
+                )}
+              </div>
+
+              {/* Social share strip — inside the article column */}
+              <BlogShare url={window.location.href} title={title} />
             </div>
 
             <aside className="h-fit rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-5 lg:sticky lg:top-24">
@@ -117,33 +141,17 @@ const BlogDetail = () => {
             </aside>
           </section>
 
-          {/* Social share strip — below the article, before related reads */}
-          <BlogShare url={window.location.href} title={title} />
-
           {related.length > 0 && (
             <section className="mt-16 border-t border-[#E2E8F0] pt-10">
               <p className="blog-eyebrow">Keep reading</p>
               <h2 className="blog-section-title mt-2">More from the blog</h2>
-              <div className="mt-7 grid gap-6 md:grid-cols-3">
+              <StaggerGroup className="mt-7 grid gap-6 md:grid-cols-3">
                 {related.map((item) => (
-                  <Link key={item.id} to={`/blog/${item.slug}`} className="blog-post-card group flex flex-col">
-                    <div className="relative h-[140px] w-full overflow-hidden">
-                      <BlogImage
-                        src={item.image}
-                        alt=""
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                      <span className="blog-badge">{item.category}</span>
-                    </div>
-                    <div className="flex flex-1 flex-col p-5">
-                      <h3 className="blog-post-title">{item.title}</h3>
-                      <p className="blog-post-meta mt-auto pt-3">
-                        {item.author} • {item.date}
-                      </p>
-                    </div>
-                  </Link>
+                  <StaggerItem key={item.id} className="h-full">
+                    <BlogPreviewCard blog={item} />
+                  </StaggerItem>
                 ))}
-              </div>
+              </StaggerGroup>
             </section>
           )}
         </div>

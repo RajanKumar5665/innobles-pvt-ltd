@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { api } from "../../lib/api";
 import {
   Layers,
+  Pencil,
   Plus,
   Search,
   SearchX,
@@ -10,7 +11,8 @@ import {
   X,
 } from "lucide-react";
 import Loader from "../../components/common/Loader";
-import AdminServiceCard from "../../components/admin/AdminServiceCard";
+import StatusBadge from "../../components/admin/StatusBadge";
+import ServiceBanner from "../../components/service/ServiceBanner";
 
 /* Broad service categories — used by the New/Edit form and the category filter.
    Category is optional on a service, so "Not selected" is always a valid choice. */
@@ -55,20 +57,6 @@ const FieldLabel = ({ htmlFor, required = false, children }) => (
 
 const FieldError = ({ message }) =>
   message ? <p className="mt-1.5 text-sm text-red-600">{message}</p> : null;
-
-const CardSkeleton = () => (
-  <div className="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white animate-pulse">
-    <div className="aspect-[16/9] w-full bg-slate-200" />
-    <div className="flex flex-1 flex-col gap-2.5 p-5">
-      <div className="h-4 w-1/4 rounded bg-slate-200" />
-      <div className="h-4 w-full rounded bg-slate-200" />
-      <div className="h-3.5 w-4/5 rounded bg-slate-200" />
-      <div className="h-3.5 w-full rounded bg-slate-200" />
-      <div className="h-3.5 w-3/5 rounded bg-slate-200" />
-      <div className="h-9 w-full rounded bg-slate-200" />
-    </div>
-  </div>
-);
 
 const EmptyState = ({ onCreate }) => (
   <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center">
@@ -351,16 +339,6 @@ const validate = () => {
     }
   };
 
-  const handleToggleStatus = async (item) => {
-    const next = (item.status || "draft") === "published" ? "draft" : "published";
-    try {
-      await api.patch(`/admin/services/${item._id}/status`, { status: next });
-      await load();
-    } catch (err) {
-      alert(err?.message || "Failed to update the service status.");
-    }
-  };
-
   const handleDeleteConfirm = async () => {
     if (!deleteTarget || deleting) return;
     setDeleting(true);
@@ -628,8 +606,10 @@ const validate = () => {
 
 {/* Loading skeletons */}
       {status === "loading" && (
-        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => <CardSkeleton key={i} />)}
+        <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="flex justify-center py-12">
+            <Loader size="lg" />
+          </div>
         </div>
       )}
 
@@ -638,19 +618,61 @@ const validate = () => {
         <div className="mt-6"><ErrorState onRetry={load} /></div>
       )}
 
-      {/* Service cards */}
+      {/* Service table */}
       {status === "success" && (
         filteredList.length > 0 ? (
-          <div className="mt-6 grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredList.map((item) => (
-              <AdminServiceCard
-                key={item._id}
-                service={item}
-                onEdit={startEdit}
-                onToggleStatus={handleToggleStatus}
-                onDelete={setDeleteTarget}
-              />
-            ))}
+          <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-slate-200">
+                <thead className="bg-slate-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Banner</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Title</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Category</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredList.map((item) => {
+                    const bannerUrl = item.banner?.url || item.bannerImage || "";
+                    return (
+                      <tr key={item._id} className="hover:bg-slate-50">
+                        <td className="px-4 py-3">
+                          <div className="h-12 w-16 overflow-hidden rounded-lg border border-slate-200">
+                            <ServiceBanner src={bannerUrl} alt={item.title || ""} className="h-full w-full object-cover" />
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-sm font-medium text-slate-900 break-words">
+                          {item.title}
+                          {item.shortDescription ? (
+                            <p className="text-xs text-slate-500 line-clamp-1 mt-0.5">{item.shortDescription}</p>
+                          ) : null}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-slate-600">{item.category || "—"}</td>
+                        <td className="px-4 py-3 text-sm"><StatusBadge status={item.status || "draft"} /></td>
+                        <td className="px-4 py-3 text-right text-sm">
+                          <div className="flex items-center justify-end gap-3">
+                            <button
+                              onClick={() => startEdit(item)}
+                              className="inline-flex items-center gap-1.5 font-semibold text-brand-cyan transition-colors hover:text-brand-orange"
+                            >
+                              <Pencil size={14} aria-hidden="true" /> Edit
+                            </button>
+                            <button
+                              onClick={() => setDeleteTarget(item)}
+                              className="inline-flex items-center gap-1.5 font-semibold text-red-600 transition-colors hover:text-red-700"
+                            >
+                              <Trash2 size={14} aria-hidden="true" /> Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         ) : list.length === 0 ? (
           <div className="mt-6"><EmptyState onCreate={startCreate} /></div>

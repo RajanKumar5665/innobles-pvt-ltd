@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import BlogImage from "./BlogImage";
+import { stripHtml } from "../../lib/richText";
 
 /**
  * All-blogs list card — full-width image with category badge overlay,
@@ -29,7 +30,7 @@ const BlogCard = ({ blog }) => {
             {blog.title}
           </Link>
         </h3>
-        <p className="blog-post-desc">{blog.description}</p>
+        <p className="blog-post-desc">{stripHtml(blog.description)}</p>
         <div className="blog-post-meta">
           <span>
             By <span className="font-semibold text-[#172033]">{blog.author}</span>

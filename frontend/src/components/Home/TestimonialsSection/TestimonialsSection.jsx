@@ -1,5 +1,6 @@
 import { Quote, Send } from "lucide-react";
 import { useReveal } from "../../../hooks/useReveal";
+import SectionHeader from "../../common/SectionHeader";
 import TestimonialCarousel from "./TestimonialCarousel";
 
 /**
@@ -19,13 +20,6 @@ const TsReveal = ({ children, variant = "up", delay = 0, className = "" }) => {
     </div>
   );
 };
-
-const testimonialsBadge = (
-  <span className="inline-flex items-center gap-2.5 rounded-full border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-ink shadow-[0_4px_14px_-8px_rgba(26,35,50,0.3)]">
-    <span className="h-2 w-2 rounded-full bg-brand-orange" aria-hidden="true" />
-    Client Testimonials
-  </span>
-);
 
 /**
  * Home page Testimonials section — a client-quote carousel on a premium white
@@ -75,30 +69,14 @@ const TestimonialsSection = () => (
     </div>
 
     <div className="container-x relative">
-      {/* Top badge */}
-      <TsReveal variant="fade" className="flex justify-center">
-        {testimonialsBadge}
-      </TsReveal>
-
-      {/* Main heading */}
-      <TsReveal delay={80} className="mt-6">
-        <h2
-          id="testimonials-heading"
-          className="mx-auto max-w-3xl text-center font-disp text-[2rem] font-bold leading-[1.15] text-ink sm:text-4xl md:text-[2.75rem] lg:text-5xl"
-        >
-          What our clients
-          <br />
-          <span className="ts-text-gradient">say about us</span>
-        </h2>
-      </TsReveal>
-
-      {/* Description */}
-      <TsReveal delay={160} className="mt-5">
-        <p className="mx-auto max-w-2xl text-center text-base leading-relaxed text-slate-600 md:text-lg">
-          We take pride in delivering exceptional digital solutions that help businesses grow,
-          scale, and succeed.
-        </p>
-      </TsReveal>
+      {/* Consistent section heading (matches Services + Products + Blog previews) */}
+      <SectionHeader
+        eyebrow="Testimonials"
+        title="What our clients say about us"
+        subtitle="We take pride in delivering exceptional digital solutions that help businesses grow, scale, and succeed."
+        align="center"
+        id="testimonials-heading"
+      />
 
       {/* Testimonial carousel */}
       <TsReveal variant="fade" delay={220} className="mt-14 md:mt-16">

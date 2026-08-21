@@ -18,6 +18,7 @@ import applicationRoutes from "./routes/application.routes.js";
 import homeRoutes from "./routes/home.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
 import serviceRoutes from "./routes/service.routes.js";
+import aboutRoutes from "./routes/about.routes.js";
 
 /**
  * Build and configure the Express application.
@@ -60,6 +61,7 @@ const createApp = () => {
   app.use(`${api}/careers`, applicationRoutes.publicRouter); // POST /:careerId/applications
   app.use(`${api}/contact`, contactRoutes.publicRouter);
   app.use(`${api}/upload`, uploadRoutes.publicRouter);
+  app.use(`${api}/about`, aboutRoutes.publicRouter);
 
   // ----- Admin (protected) API -----
   app.use(`${api}/admin/blogs`, requireAdmin, blogRoutes.adminRouter);
@@ -69,6 +71,7 @@ const createApp = () => {
   app.use(`${api}/admin/applications`, requireAdmin, applicationRoutes.adminRouter);
   app.use(`${api}/admin/home`, requireAdmin, homeRoutes.adminRouter);
   app.use(`${api}/admin/services`, requireAdmin, serviceRoutes.adminRouter);
+  app.use(`${api}/admin/about`, requireAdmin, aboutRoutes.adminRouter);
   app.use(`${api}/admin/dashboard`, requireAdmin, dashboardRoutes);
 
   // Simple health check

@@ -13,6 +13,7 @@ import {
   X,
   Settings,
   Home,
+  Info,
 } from "lucide-react";
 import Loader from "../components/common/Loader";
 import {
@@ -32,6 +33,7 @@ const navItems = [
   { to: "/admin/contacts", icon: MessageSquare, label: "Contacts" },
   { to: "/admin/applications", icon: Users, label: "Applications" },
   { to: "/admin/home", icon: Home, label: "Home" },
+  { to: "/admin/about", icon: Info, label: "About" },
 ];
 
 const AdminLayout = () => {

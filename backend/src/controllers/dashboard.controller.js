@@ -7,10 +7,7 @@ import JobApplication from "../models/JobApplication.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { success } from "../utils/apiResponse.js";
 
-/**
- * GET /api/admin/dashboard — summary counts + recent activity for the
- * admin dashboard.
- */
+
 const getDashboardStats = asyncHandler(async (req, res) => {
   // --- Aggregate counts (parallel) ---
   const [

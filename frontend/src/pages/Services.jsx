@@ -1,11 +1,10 @@
 import Seo from "../components/seo/Seo";
 import SectionHeading from "../components/common/SectionHeading";
-import Reveal from "../components/common/Reveal";
 import Loader from "../components/common/Loader";
+import StaggerGroup, { StaggerItem } from "../components/common/StaggerGroup";
 import ServiceCard from "../components/service/ServiceCard";
 import CTA from "../components/home/CTA";
 import ContactSection from "../components/home/ContactSection";
-import HowItWorks from "../components/home/HowItWorks";
 import { useServices } from "../hooks/useServices";
 
 const Services = () => {
@@ -40,13 +39,13 @@ const Services = () => {
         {status === "loading" && <div className="mt-12"><Loader className="!h-32" size="lg" /></div>}
 
         {status === "success" && (
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {list.map((s, i) => (
-              <Reveal key={s.id} delay={(i % 3) * 90} className="h-full">
-                <ServiceCard service={s} />
-              </Reveal>
+          <StaggerGroup className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {list.map((s) => (
+              <StaggerItem key={s.id} className="h-full">
+                <ServiceCard service={s} showFeatures={true} enableHover={false} />
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerGroup>
         )}
 
         {status === "error" && (
@@ -56,7 +55,6 @@ const Services = () => {
         )}
       </section>
 
-      <HowItWorks />
       <CTA />
       <ContactSection />
     </>
@@ -64,4 +62,3 @@ const Services = () => {
 };
 
 export default Services;
-

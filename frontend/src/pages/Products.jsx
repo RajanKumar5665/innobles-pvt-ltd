@@ -1,7 +1,7 @@
 import Seo from "../components/seo/Seo";
 import SectionHeading from "../components/common/SectionHeading";
-import Reveal from "../components/common/Reveal";
 import Loader from "../components/common/Loader";
+import StaggerGroup, { StaggerItem } from "../components/common/StaggerGroup";
 import ProductCard from "../components/product/ProductCard";
 import CTA from "../components/Home/CTA";
 import { useProducts } from "../hooks/useProducts";
@@ -48,13 +48,13 @@ const Products = () => {
         )}
 
         {status === "success" && (
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {list.map((p, i) => (
-              <Reveal key={p.id} delay={(i % 3) * 90} className="h-full">
+          <StaggerGroup className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {list.map((p) => (
+              <StaggerItem key={p.id} className="h-full">
                 <ProductCard product={p} />
-              </Reveal>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerGroup>
         )}
       </section>
 

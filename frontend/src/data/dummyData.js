@@ -204,13 +204,6 @@ export const serviceMegaMenu = [
   },
 ];
 
-export const stats = [
-  { number: "50+", label: "Projects Delivered" },
-  { number: "30+", label: "Happy Clients" },
-  { number: "5+", label: "Years Combined Exp." },
-  { number: "24/7", label: "Support" },
-];
-
 /* Home page banner (Hero) + featured/highlighted cards. All dummy content,
    so the whole hero can be edited from one place. */
 export const heroBanner = {
@@ -257,60 +250,6 @@ export const projects = [
   { id: "logistics-automation", title: "Logistics Automation", category: "AI / Automation", desc: "Automated route optimisation cutting fuel cost by 22% for a logistics firm.", tech: ["Python", "ML", "AWS"] },
   { id: "corporate-site", title: "Corporate Brand Site", category: "Marketing", desc: "High-performance, SEO-first marketing site for a B2B SaaS company.", tech: ["React", "GraphQL"] },
   { id: "edu-platform", title: "EdTech Learning Platform", category: "Web App", desc: "Course delivery, live classes and analytics for a fast-growing edtech startup.", tech: ["React", "Node", "Redis"] },
-];
-
-export const team = [
-  { name: "Rahul Verma", role: "Founder & CEO", avatar: "RV" },
-  { name: "Neha Kapoor", role: "Head of Engineering", avatar: "NK" },
-  { name: "Amit Singh", role: "Lead Product Designer", avatar: "AS" },
-  { name: "Priya Nair", role: "AI / ML Lead", avatar: "PN" },
-];
-
-/* About page "Our Locations" section.
-   `illustration` is a string key mapped by the LocationIllustration component.
-   Addresses are clean placeholders — swap them for official office data when
-   it becomes available. Phone/email follow the siteConfig contact conventions. */
-export const locations = [
-  {
-    id: "lucknow",
-    city: "Lucknow",
-    country: "India",
-    label: "Lucknow, India",
-    illustration: "lucknow",
-    address: "2nd Floor, Hazratganj, Lucknow, Uttar Pradesh 226001, India",
-    phone: "+91 98765 43210",
-    email: "lucknow@innobles.in",
-  },
-  {
-    id: "mumbai",
-    city: "Mumbai",
-    country: "India",
-    label: "Mumbai, India",
-    illustration: "mumbai",
-    address: "Bandra Kurla Complex, Bandra East, Mumbai, Maharashtra 400051, India",
-    phone: "+91 98765 43210",
-    email: "mumbai@innobles.in",
-  },
-  {
-    id: "delhi",
-    city: "Delhi",
-    country: "India",
-    label: "Delhi, India",
-    illustration: "delhi",
-    address: "Connaught Place, New Delhi, Delhi 110001, India",
-    phone: "+91 98765 43210",
-    email: "delhi@innobles.in",
-  },
-  {
-    id: "uae",
-    city: "UAE",
-    country: "United Arab Emirates",
-    label: "UAE",
-    illustration: "uae",
-    address: "Business Bay, Dubai, United Arab Emirates",
-    phone: "+971 4 000 0000",
-    email: "uae@innobles.in",
-  },
 ];
 
 export const careers = [

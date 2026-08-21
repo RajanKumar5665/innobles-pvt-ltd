@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import AuthorAvatar from "./AuthorAvatar";
 import BlogImage from "./BlogImage";
+import { stripHtml } from "../../lib/richText";
 
 /**
  * Large recent-blog card: image with category badge overlay,
@@ -30,7 +31,7 @@ const RecentBlogCard = ({ blog }) => {
             {blog.title}
           </Link>
         </h3>
-        <p className="blog-post-desc">{blog.description}</p>
+        <p className="blog-post-desc">{stripHtml(blog.description)}</p>
 
         <div className="blog-post-meta">
           <AuthorAvatar author={blog.author} avatar={blog.authorAvatar} />

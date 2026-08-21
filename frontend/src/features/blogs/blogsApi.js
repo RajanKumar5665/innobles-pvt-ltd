@@ -7,10 +7,17 @@ const toDate = (value) => {
   return date.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
 };
 
-export const fetchBlogsApi = async () => {
-  // Fetch every available blog (the backend caps at 50) so the
-  // client-side pager on /blog has the full data set to work with.
-  const response = await api.get("/blogs?limit=50");
+export const fetchBlogsApi = async (options = {}) => {
+  // `?limit=` is optional — used by the homepage preview to fetch only the N
+  // most-recent published articles. When omitted we keep the original
+  // full-newest-first behaviour (up to the 50 record cap) so the client-side
+  // pager on /blog still has the complete published set to slice.
+  const params = new URLSearchParams();
+  const limit = options.limit ?? 50;
+  if (limit) params.set("limit", String(limit));
+  const query = params.toString();
+
+  const response = await api.get(`/blogs${query ? `?${query}` : ""}`);
   const list = Array.isArray(response?.data) ? response.data : [];
   return list.map((item) => ({
     id: item._id,

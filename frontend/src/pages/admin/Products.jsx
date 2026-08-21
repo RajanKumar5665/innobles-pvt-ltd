@@ -4,6 +4,8 @@ import { api } from "../../lib/api";
 import Loader from "../../components/common/Loader";
 import StatusBadge from "../../components/admin/StatusBadge";
 import ProductImage from "../../components/product/ProductImage";
+import RichTextEditor from "../../components/common/RichTextEditor";
+import { isRichContentEmpty } from "../../lib/richText";
 
 const STATUSES = ["draft", "published"];
 
@@ -236,6 +238,11 @@ const AdminProducts = () => {
     handleChange(e);
   };
 
+  const handleDescriptionChange = (html) => {
+    setForm((prev) => ({ ...prev, description: html }));
+    if (errors.description) setErrors((prev) => ({ ...prev, description: "" }));
+  };
+
   const validate = () => {
     const errs = {};
     const name = form.name.trim();
@@ -245,7 +252,7 @@ const AdminProducts = () => {
     else if (name.length > NAME_MAX) errs.name = `Product name must be ${NAME_MAX} characters or fewer.`;
     if (!short) errs.shortDescription = "Short description is required.";
     else if (short.length > SHORT_MAX) errs.shortDescription = `Short description must be ${SHORT_MAX} characters or fewer.`;
-    if (!desc) errs.description = "Description is required.";
+    if (isRichContentEmpty(form.description)) errs.description = "Description is required.";
     else if (desc.length > DESCRIPTION_MAX) errs.description = `Description must be ${DESCRIPTION_MAX} characters or fewer.`;
     return errs;
   };
@@ -402,7 +409,13 @@ const AdminProducts = () => {
             {/* Description */}
             <div>
               <FieldLabel htmlFor="description" required>Description</FieldLabel>
-              <textarea id="description" name="description" value={form.description} onChange={handleChange} rows={6} maxLength={DESCRIPTION_MAX} className={fieldClass(!!errors.description)} />
+              <div className={errors.description ? "ring-2 ring-red-300 rounded-xl" : ""}>
+                <RichTextEditor
+                  value={form.description}
+                  onChange={handleDescriptionChange}
+                  placeholder="Write a detailed description of this product…"
+                />
+              </div>
               <FieldError message={errors.description} />
             </div>
 

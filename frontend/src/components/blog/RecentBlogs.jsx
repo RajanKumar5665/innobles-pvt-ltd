@@ -1,7 +1,9 @@
-import RecentBlogCard from "./RecentBlogCard";
+import StaggerGroup, { StaggerItem } from "../common/StaggerGroup";
+import BlogPreviewCard from "./BlogPreviewCard";
 
 /**
  * "Recent Blogs" — eyebrow + compact heading + the latest 3 articles.
+ * Uses the same modern card (and staggered entrance) as the homepage preview.
  */
 const RecentBlogs = ({ blogs = [] }) => {
   if (blogs.length === 0) return null;
@@ -13,11 +15,13 @@ const RecentBlogs = ({ blogs = [] }) => {
         Fresh reads from our latest publishing cycle
       </h2>
 
-      <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <StaggerGroup className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {blogs.map((blog) => (
-          <RecentBlogCard key={blog.id} blog={blog} />
+          <StaggerItem key={blog.id} className="h-full">
+            <BlogPreviewCard blog={blog} />
+          </StaggerItem>
         ))}
-      </div>
+      </StaggerGroup>
     </section>
   );
 };

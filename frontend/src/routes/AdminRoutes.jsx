@@ -9,6 +9,7 @@ import Careers from "../pages/admin/Careers";
 import Contacts from "../pages/admin/Contacts";
 import Applications from "../pages/admin/Applications";
 import Home from "../pages/admin/Home";
+import About from "../pages/admin/About";
 import RequireAdmin from "../components/admin/RequireAdmin";
 
 const AdminRoutes = () => {
@@ -24,6 +25,7 @@ const AdminRoutes = () => {
       >
         <Route index element={<Dashboard />} />
         <Route path="home" element={<Home />} />
+        <Route path="about" element={<About />} />
         <Route path="blogs" element={<Blogs />} />
         <Route path="products" element={<Products />} />
         <Route path="services" element={<Services />} />

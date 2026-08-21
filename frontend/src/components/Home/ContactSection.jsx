@@ -1,4 +1,5 @@
 import Reveal from "../common/Reveal";
+import SectionHeader from "../common/SectionHeader";
 import ContactForm from "../forms/ContactForm";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { contactInfo } from "../../config/siteConfig";
@@ -9,13 +10,12 @@ const ContactSection = () => {
   return (
     <section className="pb-24 pt-8">
       <div className="container-x">
-        <Reveal className="mx-auto max-w-2xl text-center">
-          <p className="pill-eyebrow mb-4 justify-center">
-            <span className="pill-dot" />
-            Contact
-          </p>
-          <h2 className="font-disp text-3xl font-bold md:text-4xl">Let&apos;s build something together</h2>
-        </Reveal>
+        {/* Consistent section heading (matches Services + Products + Blog + Testimonials) */}
+        <SectionHeader
+          eyebrow="Contact"
+          title="Let&apos;s build something together"
+          align="center"
+        />
 
         <div className="mt-10 grid gap-4 sm:grid-cols-3">
           {contactInfo.map((c, i) => {

@@ -1,114 +1,35 @@
-import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
-import { useRecentServices } from "../../hooks/useRecentServices";
-import Reveal from "../common/Reveal";
+import ContentShowcase from "./ContentShowcase";
 import ServiceCard from "../service/ServiceCard";
+import { useRecentServices } from "../../hooks/useRecentServices";
 
-const CARD_LIMIT = 4;
-
-/**
- * Skeleton card shown while services are loading.
- * Mirrors the public ServiceCard surface so the loading state
- * feels consistent rather than a generic spinner.
- */
-const CardSkeleton = () => (
-  <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-[0_4px_16px_-6px_rgba(23,32,51,0.10)]">
-    <div className="aspect-[16/9] w-full animate-pulse bg-slate-200" />
-    <div className="flex flex-1 flex-col gap-2.5 p-6">
-      <div className="h-3.5 w-1/4 rounded bg-slate-200" />
-      <div className="h-4 w-full rounded bg-slate-200" />
-      <div className="h-3.5 w-4/5 rounded bg-slate-200" />
-      <div className="h-3.5 w-full rounded bg-slate-200" />
-      <div className="mt-auto pt-5">
-        <div className="h-9 w-28 rounded bg-slate-200" />
-      </div>
-    </div>
-  </div>
-);
+const CARD_LIMIT = 3;
 
 /**
  * Public-facing "Services" highlight on the homepage.
  *
- * Replaces the former static-grid approach: cards now come from the existing
- * /services API (same data managed in the Admin panel) sorted newest-first
- * and limited to 4 via `?limit=4` at the database level — no frontend slicing.
- *
- * Reuses the existing public ServiceCard component and "View All Services"
- * navigates to the existing Services listing page (/services).
+ * Cards come from the existing /services API (same data managed in the
+ * Admin panel) sorted newest-first and limited to 3 so the grid matches the
+ * Products and Blog previews. Reuses the shared `ContentShowcase` shell
+ * (centered header + staggered 3-column grid + consistent CTA) and the existing
+ * public ServiceCard component. "View All Services" navigates to the existing
+ * Services listing page (/services). No service system is duplicated.
  */
 const ServiceGrid = () => {
   const { list, status, error } = useRecentServices(CARD_LIMIT);
 
   return (
-    <section className="bg-white py-16 md:py-20">
-      <div className="container-x">
-        {/* Heading */}
-        <Reveal>
-          <h2 className="font-disp text-3xl font-bold leading-tight text-ink md:text-4xl">
-            Services
-          </h2>
-        </Reveal>
-        <Reveal delay={60}>
-          <p className="mt-4 max-w-2xl text-slate-600 md:text-lg">
-            Explore the solutions and services we provide to help businesses
-            grow digitally.
-          </p>
-        </Reveal>
-
-        {/* Loading: skeleton cards */}
-        {status === "loading" && (
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {Array.from({ length: CARD_LIMIT }).map((_, i) => (
-              <Reveal key={i} delay={i * 70} className="h-full">
-                <CardSkeleton />
-              </Reveal>
-            ))}
-          </div>
-        )}
-
-        {/* Error */}
-        {status === "error" && (
-          <div className="mt-12 rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-red-600">
-            {error ||
-              "Something went wrong while loading services. Please refresh."}
-          </div>
-        )}
-
-        {/* Empty */}
-        {status === "success" && list.length === 0 && (
-          <div className="mt-12 rounded-2xl border border-dashed border-slate-200 bg-slate-50 py-12 text-center">
-            <p className="text-slate-500">
-              No services available at the moment. Check back soon.
-            </p>
-          </div>
-        )}
-
-        {/* Success: cards + View All */}
-        {status === "success" && list.length > 0 && (
-          <>
-            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {list.slice(0, CARD_LIMIT).map((s, i) => (
-                <Reveal key={s.id} delay={i * 70} className="h-full">
-                  <ServiceCard service={s} />
-                </Reveal>
-              ))}
-            </div>
-
-            <Reveal delay={CARD_LIMIT * 70 + 30}>
-              <div className="mt-12 flex justify-center">
-                <Link
-                  to="/services"
-                  className="btn-ghost inline-flex items-center gap-2 !py-2.5 text-sm"
-                >
-                  View All Services
-                  <ArrowRight size={14} aria-hidden="true" />
-                </Link>
-              </div>
-            </Reveal>
-          </>
-        )}
-      </div>
-    </section>
+    <ContentShowcase
+      sectionClassName="bg-white"
+      eyebrow="What We Do"
+      title="Our Services"
+      subtitle="From strategy to implementation, we deliver reliable digital solutions that help businesses grow, scale, and stay ahead."
+      list={list}
+      status={status}
+      errorMessage={error || "Something went wrong while loading services. Please refresh."}
+      emptyMessage="No services available at the moment. Check back soon."
+      renderCard={(s) => <ServiceCard service={s} showFeatures={false} />}
+      cta={{ to: "/services", label: "View All Services" }}
+    />
   );
 };
 

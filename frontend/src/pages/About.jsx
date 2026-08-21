@@ -1,17 +1,66 @@
 import { Link } from "react-router-dom";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { ExternalLink, Mail, MapPin, Phone } from "lucide-react";
 import Seo from "../components/seo/Seo";
 import SectionHeading from "../components/common/SectionHeading";
 import Reveal from "../components/common/Reveal";
-import LocationIllustration from "../components/about/LocationIllustration";
-import { stats, team, locations } from "../data/dummyData";
+import { useAbout } from "../hooks/useAbout";
+
+/** Derive an initials avatar (e.g. "Rahul Verma" -> "RV") for the team fallback. */
+const getInitials = (name = "") =>
+  name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => word[0]?.toUpperCase() || "")
+    .join("");
+
+const AboutSkeleton = () => (
+  <div className="animate-pulse">
+    <div className="h-72 w-full bg-slate-200/60" />
+    <div className="container-x py-20">
+      <div className="mx-auto h-6 w-40 rounded bg-slate-200" />
+      <div className="mx-auto mt-4 h-10 w-3/4 max-w-2xl rounded bg-slate-200" />
+      <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="h-56 rounded-2xl border border-slate-100 bg-slate-100" />
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+const AboutError = () => (
+  <section className="container-x py-24 text-center">
+    <h1 className="font-disp text-3xl font-bold text-slate-900">Oops — could not load this page</h1>
+    <p className="mx-auto mt-3 max-w-md text-slate-600">
+      We had trouble fetching the About Us content. Please try again in a moment.
+    </p>
+    <Link to="/" className="btn-primary mt-8 inline-flex">Back to Home</Link>
+  </section>
+);
 
 const About = () => {
+  const { data, status } = useAbout();
+
+  if (status === "loading") return <AboutSkeleton />;
+  if (status === "error") return <AboutError />;
+
+  const stats = Array.isArray(data?.statistics)
+    ? data.statistics.filter((s) => s.active !== false)
+    : [];
+  const team = Array.isArray(data?.teamMembers) ? data.teamMembers : [];
+  const locations = Array.isArray(data?.locations) ? data.locations : [];
+
   return (
     <>
-      <Seo title="About Us" description="Meet Innobles — the team behind fast, reliable and scalable software for growing businesses." path="/about" />
+      <Seo
+        title="About Us"
+        description="Meet Innobles — the team behind fast, reliable and scalable software for growing businesses."
+        path="/about"
+        image="/logo.png"
+      />
 
-      {/* Page hero */}
+      {/* Page hero — STATIC */}
       <section className="relative overflow-hidden border-b border-white/10">
         <div className="pointer-events-none absolute inset-0 hero-glow" />
         <div className="pointer-events-none absolute inset-0 bg-grid opacity-60" />
@@ -30,18 +79,20 @@ const About = () => {
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="container-x grid grid-cols-2 gap-8 border-t border-white/10 py-10 text-center md:grid-cols-4">
-          {stats.map((s) => (
-            <div key={s.label}>
-              <p className="font-disp text-3xl font-bold text-primary md:text-4xl">{s.number}</p>
-              <p className="mt-1 text-sm text-white/50">{s.label}</p>
+          {/* Stats — hidden entirely when none are configured */}
+          {stats.length > 0 && (
+            <div className="container-x grid grid-cols-2 gap-8 border-t border-white/10 py-10 text-center md:grid-cols-4">
+              {stats.map((s) => (
+                <div key={s._id}>
+                  <p className="font-disp text-3xl font-bold text-primary md:text-4xl">{s.value}</p>
+                  <p className="mt-1 text-sm text-white/50">{s.label}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </section>
+          )}
+        </section>
 
-      {/* Story */}
+      {/* Story — STATIC */}
       <section className="container-x grid items-center gap-10 py-20 lg:grid-cols-2">
         <Reveal variant="left">
           <p className="eyebrow mb-4">Our story</p>
@@ -65,72 +116,118 @@ const About = () => {
       </section>
 
       {/* Team */}
-      <section className="container-x py-20">
-        <SectionHeading eyebrow="Team" title="The people behind the work" align="center" />
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {team.map((m, i) => (
-            <Reveal key={m.name} delay={i * 90}>
-              <div className="card p-6 text-center hover:border-primary/60">
-                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary font-disp text-xl font-bold text-slate-50">
-                  {m.avatar}
-                </div>
-                <h3 className="font-disp font-bold">{m.name}</h3>
-                <p className="mt-1 text-sm text-white/50">{m.role}</p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      {/* Locations */}
-      <section className="border-t border-white/10 bg-white/[0.015] py-20">
-        <div className="container-x">
-          <SectionHeading
-            eyebrow="Our Locations"
-            title="Where we are"
-            align="center"
-            subtitle="We're growing our presence across key locations, connecting with clients and teams across India and the UAE."
-          />
+      {team.length > 0 && (
+        <section className="container-x py-20">
+          <SectionHeading eyebrow="Team" title="The people behind the work" align="center" />
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {locations.map((loc, i) => (
-              <Reveal key={loc.id} delay={i * 90} className="h-full">
-                <article className="card flex h-full flex-col overflow-hidden hover:border-brand-orange/40">
-                  <LocationIllustration city={loc.illustration} />
-                  <div className="flex flex-1 flex-col p-6">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 shrink-0 text-brand-orange" aria-hidden="true" />
-                      <h3 className="font-disp text-lg font-bold">{loc.city}</h3>
+            {team.map((m, i) => (
+              <Reveal key={m._id} delay={i * 90}>
+                <div className="card flex h-full flex-col p-6 text-center hover:border-primary/60">
+                  {m.image?.url ? (
+                    <img
+                      src={m.image.url}
+                      alt={m.name}
+                      className="mx-auto mb-4 h-20 w-20 rounded-full object-cover ring-2 ring-primary/10"
+                    />
+                  ) : (
+                    <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary font-disp text-xl font-bold text-slate-50">
+                      {getInitials(m.name) || "?"}
                     </div>
-                    <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-cyan">
-                      {loc.country}
-                    </p>
-                    <p className="mt-4 flex-1 text-sm leading-relaxed text-muted">{loc.address}</p>
-                    <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line pt-4 text-xs text-muted">
-                      <a
-                        href={`tel:${loc.phone.replace(/\s/g, "")}`}
-                        className="inline-flex items-center gap-1.5 transition-colors hover:text-brand-orange"
-                      >
-                        <Phone className="h-3.5 w-3.5 text-brand-cyan" aria-hidden="true" />
-                        {loc.phone}
-                      </a>
-                      <a
-                        href={`mailto:${loc.email}`}
-                        className="inline-flex items-center gap-1.5 transition-colors hover:text-brand-orange"
-                      >
-                        <Mail className="h-3.5 w-3.5 text-brand-orange" aria-hidden="true" />
-                        {loc.email}
-                      </a>
-                    </div>
-                  </div>
-                </article>
+                  )}
+                  <h3 className="font-disp font-bold">{m.name}</h3>
+                  {m.role && <p className="mt-1 text-sm text-white/50">{m.role}</p>}
+                  {m.description && <p className="mt-3 flex-1 text-sm leading-relaxed text-muted">{m.description}</p>}
+                  {m.linkedin && (
+                    <a
+                      href={m.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 inline-flex items-center justify-center gap-1.5 text-sm font-semibold text-brand-cyan transition-colors hover:text-brand-orange"
+                    >
+                      <ExternalLink className="h-4 w-4" aria-hidden="true" /> LinkedIn
+                    </a>
+                  )}
+                </div>
               </Reveal>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+{/* Locations */}
+      {locations.length > 0 && (
+        <section className="border-t border-white/10 bg-white/[0.015] py-20">
+          <div className="container-x">
+            <SectionHeading
+              eyebrow="Our Locations"
+              title="Where we are"
+              align="center"
+              subtitle="We're growing our presence across key locations, connecting with clients and teams across India and the UAE."
+            />
+            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {locations.map((loc, i) => (
+                <Reveal key={loc._id} delay={i * 90} className="h-full">
+                  <article className="card flex h-full flex-col overflow-hidden hover:border-brand-orange/40">
+                    {loc.image?.url ? (
+                      <img src={loc.image.url} alt={loc.city} className="h-40 w-full object-cover" />
+                    ) : (
+                      <div className="flex h-40 w-full items-center justify-center bg-light-surface">
+                        <MapPin className="h-10 w-10 text-slate-300" aria-hidden="true" />
+                      </div>
+                    )}
+                    <div className="flex flex-1 flex-col p-6">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 shrink-0 text-brand-orange" aria-hidden="true" />
+                        <h3 className="font-disp text-lg font-bold">{loc.city}</h3>
+                      </div>
+                      {loc.country && (
+                        <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-cyan">
+                          {loc.country}
+                        </p>
+                      )}
+                      {loc.description && (
+                        <p className="mt-3 text-sm leading-relaxed text-white/60">{loc.description}</p>
+                      )}
+                      {loc.address && <p className="mt-4 flex-1 text-sm leading-relaxed text-muted">{loc.address}</p>}
+                      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line pt-4 text-xs text-muted">
+                        {loc.phone && (
+                          <a
+                            href={`tel:${loc.phone.replace(/\s/g, "")}`}
+                            className="inline-flex items-center gap-1.5 transition-colors hover:text-brand-orange"
+                          >
+                            <Phone className="h-3.5 w-3.5 text-brand-cyan" aria-hidden="true" />
+                            {loc.phone}
+                          </a>
+                        )}
+                        {loc.email && (
+                          <a
+                            href={`mailto:${loc.email}`}
+                            className="inline-flex items-center gap-1.5 transition-colors hover:text-brand-orange"
+                          >
+                            <Mail className="h-3.5 w-3.5 text-brand-orange" aria-hidden="true" />
+                            {loc.email}
+                          </a>
+                        )}
+                      </div>
+                      {loc.mapLink && (
+                        <a
+                          href={loc.mapLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-brand-cyan transition-colors hover:text-brand-orange"
+                        >
+                          <MapPin className="h-3.5 w-3.5" aria-hidden="true" /> View on map
+                        </a>
+                      )}
+                    </div>
+                  </article>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </>
   );
 };
 
 export default About;
-

@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { Image as ImageIcon } from "lucide-react";
 
 /**
  * Blog image that renders the backend-provided URL. When there is no
- * usable image (empty / missing / broken URL) it shows a neutral
- * placeholder block (matching the card background) instead of falling
- * back to a hard-coded stock photo, so cards never display dummy imagery.
+ * usable image (empty / missing / broken URL) it shows a clean, neutral
+ * placeholder (matching the shared card surface) instead of falling back to a
+ * hard-coded stock photo, so cards never display dummy imagery.
  */
 const BlogImage = ({ src, alt = "", className = "", ...rest }) => {
   const [failed, setFailed] = useState(false);
@@ -13,11 +14,13 @@ const BlogImage = ({ src, alt = "", className = "", ...rest }) => {
   if (!validSrc) {
     return (
       <div
-        className={`bg-[#F8FAFC] ${className}`}
+        className={`relative flex items-center justify-center bg-slate-100 ${className}`}
         role="img"
         aria-label={alt || undefined}
         {...rest}
-      />
+      >
+        <ImageIcon className="h-8 w-8 text-slate-400" strokeWidth={1.5} aria-hidden="true" />
+      </div>
     );
   }
 

@@ -210,6 +210,8 @@ const AdminBlogs = () => {
 
   const handleDescriptionChange = (html) => setForm((prev) => ({ ...prev, description: html }));
 
+  const handleContentChange = (html) => setForm((prev) => ({ ...prev, content: html }));
+
   const handleImageFileChange = (e) => {
     const file = e.target.files[0];
     setImageFile(file || null);
@@ -239,7 +241,8 @@ const AdminBlogs = () => {
     try {
       // Normalize an "empty" rich-text description (e.g. only <p></p>) to "".
       const description = isRichContentEmpty(form.description) ? "" : form.description;
-      const payload = { ...form, description };
+      const content = isRichContentEmpty(form.content) ? "" : form.content;
+      const payload = { ...form, description, content };
       const hasUploads = imageFile || avatarFile;
       if (hasUploads) {
         // multipart/form-data so the uploaded files reach the backend.
@@ -337,7 +340,11 @@ const AdminBlogs = () => {
             </div>
             <div>
               <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Content</label>
-              <textarea name="content" value={form.content} onChange={handleChange} rows={5} className={inputClass} />
+              <RichTextEditor
+                value={form.content}
+                onChange={handleContentChange}
+                placeholder="Write the full blog article here…"
+              />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>

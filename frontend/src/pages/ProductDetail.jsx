@@ -4,6 +4,7 @@ import Seo from "../components/seo/Seo";
 import Loader from "../components/common/Loader";
 import ProductImage from "../components/product/ProductImage";
 import { useProducts } from "../hooks/useProducts";
+import { toRenderableHtml } from "../lib/richText";
 
 /**
  * Product detail page — shows the complete product. Built from the real
@@ -87,9 +88,10 @@ const ProductDetail = () => {
             {hasDescription && (
               <div className="mt-6 border-t border-line pt-6">
                 <h2 className="font-disp text-xl font-bold text-ink">About this product</h2>
-                <p className="mt-4 whitespace-pre-line text-base leading-7 text-slate-600">
-                  {product.description}
-                </p>
+                <div
+                  className="content-rich-body"
+                  dangerouslySetInnerHTML={{ __html: toRenderableHtml(product.description) }}
+                />
               </div>
             )}
           </div>
