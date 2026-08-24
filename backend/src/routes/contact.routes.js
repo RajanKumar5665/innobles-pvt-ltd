@@ -2,7 +2,12 @@ import express from "express";
 import validate from "../middleware/validate.middleware.js";
 import { contactLimiter } from "../middleware/rateLimit.middleware.js";
 import ctrl from "../controllers/contact.controller.js";
-import { createContact, contactStatusSchema, contactQuerySchema, contactIdParamSchema, } from "../validations/contact.validation.js";
+import {
+  createContact,
+  contactStatusSchema,
+  contactQuerySchema,
+  contactIdParamSchema,
+} from "../validations/contact.validation.js";
 
 const publicRouter = express.Router();
 publicRouter.post("/", contactLimiter, validate(createContact), ctrl.createContact);

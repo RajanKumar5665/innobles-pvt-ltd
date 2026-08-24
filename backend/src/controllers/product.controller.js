@@ -5,7 +5,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError, success } from "../utils/apiResponse.js";
 import { uploadSingle, deleteByPublicId } from "../config/cloudinary.js";
 
-/* ------------------------------ Public ------------------------------ */
+// Public
 
 const getPublicProducts = asyncHandler(async (req, res) => {
   const { page, limit, search } = req.query;
@@ -28,17 +28,16 @@ const getPublicProductBySlug = asyncHandler(async (req, res) => {
   return success(res, product, "Product retrieved");
 });
 
-/* ------------------------------ Admin ------------------------------ */
+// Admin
 
 const adminCreateProduct = asyncHandler(async (req, res) => {
   const payload = { ...req.body };
   delete payload.imageRemoved;
 
-  // Honor an explicit slug when provided, otherwise derive one from the name.
+  // Prefer an explicit slug, otherwise derive one from the name.
   const slugBase = payload.slug && payload.slug.trim() ? payload.slug : payload.name;
   const slug = await uniqueSlug(Product, slugBase);
 
-  // Optional single product image upload (Cloudinary).
   if (req.files?.image?.[0]) {
     payload.image = await uploadSingle({ buffer: req.files.image[0].buffer, folder: "innobles/products" });
   }
@@ -76,8 +75,7 @@ const adminUpdateProduct = asyncHandler(async (req, res) => {
   const payload = { ...req.body };
   delete payload.imageRemoved;
 
-  // Regenerate the slug if the name changed and none was explicitly supplied.
-  // Otherwise honor an explicit slug that differs from the current one.
+  // Regenerate the slug when the name/slug changed and none was supplied explicitly.
   const explicitSlug = payload.slug && payload.slug.trim();
   if (explicitSlug && explicitSlug !== product.slug) {
     payload.slug = await uniqueSlug(Product, explicitSlug, product._id);
@@ -85,8 +83,7 @@ const adminUpdateProduct = asyncHandler(async (req, res) => {
     payload.slug = await uniqueSlug(Product, payload.name, product._id);
   }
 
-  // Replace the existing image when a new file is supplied, or clear it when
-  // the admin explicitly removed it on the edit form.
+  // Replace the image on upload, or clear it when the admin removed it.
   if (req.files?.image?.[0]) {
     if (product.image?.publicId) await deleteByPublicId(product.image.publicId);
     payload.image = await uploadSingle({ buffer: req.files.image[0].buffer, folder: "innobles/products" });

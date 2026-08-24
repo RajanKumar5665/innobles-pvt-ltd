@@ -1,11 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import { ApiError } from "../utils/apiResponse.js";
 
-/**
- * Configure the Cloudinary SDK from environment variables.
- * Call this once during app startup.
- */
-const configureCloudinary = () => {
+export const configureCloudinary = () => {
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
@@ -21,8 +17,7 @@ const isConfigured = () =>
       process.env.CLOUDINARY_API_SECRET,
   );
 
-/** Upload a single file (buffer) to Cloudinary and return { url, publicId }. */
-const uploadSingle = async ({ buffer, folder = "innobles", resourceType = "auto", fileName }) => {
+export const uploadSingle = async ({ buffer, folder = "innobles", resourceType = "auto", fileName }) => {
   if (!isConfigured()) {
     throw new ApiError(500, "Cloudinary is not configured on the server");
   }
@@ -39,8 +34,8 @@ const uploadSingle = async ({ buffer, folder = "innobles", resourceType = "auto"
   });
 };
 
-/** Delete a previously uploaded asset by its public id (best-effort). */
-const deleteByPublicId = async (publicId) => {
+// Best-effort delete — a failure here shouldn't fail the main request.
+export const deleteByPublicId = async (publicId) => {
   if (!publicId || !isConfigured()) return null;
   try {
     return await cloudinary.uploader.destroy(publicId);
@@ -50,4 +45,4 @@ const deleteByPublicId = async (publicId) => {
   }
 };
 
-export { cloudinary, configureCloudinary, uploadSingle, deleteByPublicId, isConfigured };
+export { cloudinary };

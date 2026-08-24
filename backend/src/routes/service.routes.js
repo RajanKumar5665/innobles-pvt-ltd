@@ -10,12 +10,12 @@ import {
 } from "../validations/service.validation.js";
 import { idParamSchema } from "../validations/common.js";
 
+const bannerFields = [{ name: "banner", maxCount: 1 }];
+
 const publicRouter = express.Router();
 publicRouter.get("/", validate(serviceQuerySchema, "query"), ctrl.getPublicServices);
 
 const adminRouter = express.Router();
-const bannerFields = [{ name: "banner", maxCount: 1 }];
-
 adminRouter.post(
   "/",
   uploadImage.fields(bannerFields),

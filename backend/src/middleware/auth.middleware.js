@@ -3,23 +3,17 @@ import Admin from "../models/Admin.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiResponse.js";
 
-const getCookieName = () => process.env.JWT_COOKIE_NAME || "token";
+export const getCookieName = () => process.env.JWT_COOKIE_NAME || "token";
 
-/**
- * Protect admin routes: reads the HttpOnly JWT cookie, verifies it,
- * loads the admin and checks the account is active.
- * On success sets req.admin and calls next().
- */
-const requireAdmin = asyncHandler(async (req, res, next) => {
+// Reads the HttpOnly JWT cookie, verifies it, and loads the active admin onto req.admin.
+export const requireAdmin = asyncHandler(async (req, res, next) => {
   const token = req.cookies?.[getCookieName()];
-  if (!token) {
-    throw new ApiError(401, "Not authenticated");
-  }
+  if (!token) throw new ApiError(401, "Not authenticated");
 
   let payload;
   try {
     payload = verifyToken(token);
-  } catch (error) {
+  } catch {
     throw new ApiError(401, "Invalid or expired session");
   }
 
@@ -36,15 +30,3 @@ const requireAdmin = asyncHandler(async (req, res, next) => {
   };
   return next();
 });
-
-/**
- * Role guard — extensible for "super-admin"-only actions later.
- */
-const requireRole = (...roles) => (req, res, next) => {
-  if (!req.admin || !roles.includes(req.admin.role)) {
-    return next(new ApiError(403, "You do not have permission to perform this action"));
-  }
-  return next();
-};
-
-export { requireAdmin, requireRole, getCookieName };

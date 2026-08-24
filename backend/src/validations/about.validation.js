@@ -5,11 +5,8 @@ const imageObject = Joi.object({
   publicId: Joi.string().allow("", null),
 });
 
-/**
- * Team / location images arrive as multipart/form-data files (multer), so the
- * image itself is not part of the body schema — only an optional removal flag
- * plus a backward-compatible URL/object value are accepted.
- */
+// Images arrive as multipart files, so the schema only accepts a removal flag
+// plus a backward-compatible URL/object value.
 const imageAlternative = Joi.alternatives()
   .try(Joi.string().uri(), imageObject)
   .allow("", null);

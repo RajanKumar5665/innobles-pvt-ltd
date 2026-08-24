@@ -27,10 +27,8 @@ const servicesSlice = createSlice({
 
 export const { fetchPending, fetchFulfilled, fetchRejected } = servicesSlice.actions;
 
-// Selectors
 export const selectServices = (state) => state.services.list;
 export const selectServicesStatus = (state) => state.services.status;
 export const selectServicesError = (state) => state.services.error;
 
 export default servicesSlice.reducer;
-

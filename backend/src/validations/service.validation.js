@@ -5,11 +5,7 @@ const imageObject = Joi.object({
   publicId: Joi.string().allow("", null),
 });
 
-/**
- * `features` arrives as an array when multiple FormData entries are used, or as
- * a single string when only one feature line is submitted. Accept either and
- * let the controller normalize it into an array.
- */
+// features arrive as an array (multiple FormData entries) or a single string.
 const features = Joi.alternatives()
   .try(
     Joi.array().items(Joi.string().trim().min(1).max(200)).min(1).max(30),

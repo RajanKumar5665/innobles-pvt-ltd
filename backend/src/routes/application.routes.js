@@ -3,7 +3,13 @@ import validate from "../middleware/validate.middleware.js";
 import { uploadResume } from "../middleware/upload.middleware.js";
 import { applicationLimiter } from "../middleware/rateLimit.middleware.js";
 import ctrl from "../controllers/application.controller.js";
-import { createApplication, careerApplyParamSchema, applicationStatusSchema, applicationQuerySchema, applicationIdParamSchema, } from "../validations/application.validation.js";
+import {
+  createApplication,
+  careerApplyParamSchema,
+  applicationStatusSchema,
+  applicationQuerySchema,
+  applicationIdParamSchema,
+} from "../validations/application.validation.js";
 
 const publicRouter = express.Router();
 publicRouter.post(

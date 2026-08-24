@@ -1,7 +1,4 @@
-/**
- * Convert a string into an SEO-friendly URL slug.
- * e.g. "Designing Scalable Systems!" -> "designing-scalable-systems"
- */
+// e.g. "Designing Scalable Systems!" -> "designing-scalable-systems"
 const slugify = (text = "") =>
   text
     .toString()
@@ -11,10 +8,7 @@ const slugify = (text = "") =>
     .replace(/[\s_-]+/g, "-")
     .replace(/^-+|-+$/g, "") || "untitled";
 
-/**
- * Return a slug guaranteed to be unique in the given model by appending
- * numeric suffixes (-2, -3, ...) when necessary.
- */
+// Appends -2, -3, ... until the slug is unique in the given model.
 const uniqueSlug = async (Model, base, excludeId = null) => {
   const root = slugify(base);
   let candidate = root;

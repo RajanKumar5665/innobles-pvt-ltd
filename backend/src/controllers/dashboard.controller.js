@@ -7,9 +7,7 @@ import JobApplication from "../models/JobApplication.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { success } from "../utils/apiResponse.js";
 
-
 const getDashboardStats = asyncHandler(async (req, res) => {
-  // --- Aggregate counts (parallel) ---
   const [
     totalBlogs,
     publishedBlogs,
@@ -54,53 +52,31 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     JobApplication.countDocuments({ status: "rejected" }),
   ]);
 
-  // --- Recent activity (latest 5 of each) ---
-  const [recentBlogs, recentApplications, recentContacts] =
-    await Promise.all([
-      Blog.find()
-        .sort({ createdAt: -1 })
-        .limit(5)
-        .select("title status createdAt updatedAt")
-        .lean(),
-      JobApplication.find()
-        .sort({ createdAt: -1 })
-        .limit(5)
-        .populate("careerId", "title department")
-        .select("name email status createdAt")
-        .lean(),
-      Contact.find()
-        .sort({ createdAt: -1 })
-        .limit(5)
-        .select("name email status createdAt")
-        .lean(),
-    ]);
+  const [recentBlogs, recentApplications, recentContacts] = await Promise.all([
+    Blog.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .select("title status createdAt updatedAt")
+      .lean(),
+    JobApplication.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate("careerId", "title department")
+      .select("name email status createdAt")
+      .lean(),
+    Contact.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .select("name email status createdAt")
+      .lean(),
+  ]);
 
   const stats = {
-    blogs: {
-      total: totalBlogs,
-      published: publishedBlogs,
-      draft: draftBlogs,
-    },
-    products: {
-      total: totalProducts,
-      published: publishedProducts,
-      draft: draftProducts,
-    },
-    services: {
-      total: totalServices,
-      published: publishedServices,
-      draft: draftServices,
-    },
-    careers: {
-      total: totalCareers,
-      open: openCareers,
-      closed: closedCareers,
-    },
-    contacts: {
-      total: totalContacts,
-      unread: unreadContacts,
-      read: readContacts,
-    },
+    blogs: { total: totalBlogs, published: publishedBlogs, draft: draftBlogs },
+    products: { total: totalProducts, published: publishedProducts, draft: draftProducts },
+    services: { total: totalServices, published: publishedServices, draft: draftServices },
+    careers: { total: totalCareers, open: openCareers, closed: closedCareers },
+    contacts: { total: totalContacts, unread: unreadContacts, read: readContacts },
     applications: {
       total: totalApplications,
       new: newApplications,

@@ -1,4 +1,4 @@
-﻿import { useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Package, Users, FileText, MessageSquare, Briefcase } from "lucide-react";
 import {
@@ -8,7 +8,7 @@ import {
   selectStatsError,
 } from "../../features/auth/authThunks";
 import Loader from "../../components/common/Loader";
-import StatCard from "../../components/admin/StatCard";
+import ContentStatCard from "../../components/admin/ContentStatCard";
 import DashboardChart from "../../components/admin/DashboardChart";
 import ApplicationChart from "../../components/admin/ApplicationChart";
 import RecentActivity from "../../components/admin/RecentActivity";
@@ -47,122 +47,68 @@ const Dashboard = () => {
       )}
 
       {status === "success" && (
-        <div className="space-y-8">
-          {/* --- Stat Cards (grouped by content type) --- */}
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <StatCard
-              label="Total Blogs"
-              value={stats.blogs?.total}
+        <div className="space-y-6">
+          {/* --- Stats: one card per content type, all values combined --- */}
+          <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+            <ContentStatCard
+              title="Blogs"
               icon={FileText}
               color="bg-brand-orange"
+              stats={[
+                { label: "Total", value: stats.blogs?.total, dot: "bg-brand-orange" },
+                { label: "Published", value: stats.blogs?.published, dot: "bg-emerald-500" },
+                { label: "Draft", value: stats.blogs?.draft, dot: "bg-slate-400" },
+              ]}
             />
-            <StatCard
-              label="Published Blogs"
-              value={stats.blogs?.published}
-              color="bg-emerald-500"
-            />
-            <StatCard
-              label="Draft Blogs"
-              value={stats.blogs?.draft}
-              color="bg-slate-400"
-            />
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <StatCard
-              label="Total Products"
-              value={stats.products?.total}
+            <ContentStatCard
+              title="Products"
               icon={Package}
               color="bg-brand-orange"
+              stats={[
+                { label: "Total", value: stats.products?.total, dot: "bg-brand-orange" },
+                { label: "Published", value: stats.products?.published, dot: "bg-emerald-500" },
+                { label: "Draft", value: stats.products?.draft, dot: "bg-slate-400" },
+              ]}
             />
-            <StatCard
-              label="Published Products"
-              value={stats.products?.published}
-              color="bg-emerald-500"
-            />
-            <StatCard
-              label="Draft Products"
-              value={stats.products?.draft}
-              color="bg-slate-400"
-            />
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <StatCard
-              label="Total Services"
-              value={stats.services?.total}
+            <ContentStatCard
+              title="Services"
               icon={Package}
               color="bg-brand-orange"
+              stats={[
+                { label: "Total", value: stats.services?.total, dot: "bg-brand-orange" },
+                { label: "Published", value: stats.services?.published, dot: "bg-emerald-500" },
+                { label: "Draft", value: stats.services?.draft, dot: "bg-slate-400" },
+              ]}
             />
-            <StatCard
-              label="Published Services"
-              value={stats.services?.published}
-              color="bg-emerald-500"
-            />
-            <StatCard
-              label="Draft Services"
-              value={stats.services?.draft}
-              color="bg-slate-400"
-            />
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <StatCard
-              label="Open Careers"
-              value={stats.careers?.open}
+            <ContentStatCard
+              title="Careers"
               icon={Briefcase}
               color="bg-emerald-500"
+              stats={[
+                { label: "Open", value: stats.careers?.open, dot: "bg-emerald-500" },
+                { label: "Closed", value: stats.careers?.closed, dot: "bg-slate-400" },
+                { label: "Total", value: stats.careers?.total, dot: "bg-brand-orange" },
+              ]}
             />
-            <StatCard
-              label="Closed Careers"
-              value={stats.careers?.closed}
-              color="bg-slate-400"
-            />
-            <StatCard
-              label="Total Careers"
-              value={stats.careers?.total}
-              icon={Briefcase}
-              color="bg-brand-orange"
-            />
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <StatCard
-              label="Unread Contacts"
-              value={stats.contacts?.unread}
+            <ContentStatCard
+              title="Contacts"
               icon={MessageSquare}
               color="bg-red-500"
+              stats={[
+                { label: "Unread", value: stats.contacts?.unread, dot: "bg-red-500" },
+                { label: "Read", value: stats.contacts?.read, dot: "bg-amber-500" },
+                { label: "Total", value: stats.contacts?.total, dot: "bg-brand-orange" },
+              ]}
             />
-            <StatCard
-              label="Read Contacts"
-              value={stats.contacts?.read}
-              color="bg-amber-500"
-            />
-            <StatCard
-              label="Total Contacts"
-              value={stats.contacts?.total}
-              icon={MessageSquare}
-              color="bg-brand-orange"
-            />
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <StatCard
-              label="New Applications"
-              value={stats.applications?.new}
+            <ContentStatCard
+              title="Applications"
               icon={Users}
               color="bg-blue-500"
-            />
-            <StatCard
-              label="Total Applications"
-              value={stats.applications?.total}
-              icon={Users}
-              color="bg-brand-orange"
-            />
-            <StatCard
-              label="Hired"
-              value={stats.applications?.hired}
-              color="bg-emerald-500"
+              stats={[
+                { label: "New", value: stats.applications?.new, dot: "bg-blue-500" },
+                { label: "Hired", value: stats.applications?.hired, dot: "bg-emerald-500" },
+                { label: "Total", value: stats.applications?.total, dot: "bg-brand-orange" },
+              ]}
             />
           </div>
 

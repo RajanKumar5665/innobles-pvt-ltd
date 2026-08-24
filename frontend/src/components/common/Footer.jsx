@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail, MapPin, Phone, ArrowUp } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import { FaGithub, FaInstagram, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
 import BrandLogo from "./BrandLogo";
 import FooterParticles from "./FooterParticles";
@@ -20,10 +20,6 @@ const contactIcons = {
 };
 
 const Footer = () => {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-  };
-
   return (
     <footer className="site-footer mt-16 relative">
       <FooterParticles />
@@ -109,15 +105,6 @@ const Footer = () => {
             © {new Date().getFullYear()} {siteConfig.legalName}. All rights reserved.
           </span>
         </div>
-      </div>
-
-      {/* Fixed back-to-top icon on right side (same side as slider) */}
-      <div
-        className="fixed right-4 bottom-4 flex items-center justify-center w-10 h-10 rounded-full bg-brand-orange shadow-lg hover:bg-brand-yellow transition-colors cursor-pointer z-40"
-        onClick={scrollToTop}
-        aria-label="Back to top"
-      >
-        <ArrowUp size={20} aria-hidden="true" className="text-slate-50" />
       </div>
     </footer>
   );

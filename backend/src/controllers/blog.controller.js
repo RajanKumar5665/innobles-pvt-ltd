@@ -5,7 +5,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError, success } from "../utils/apiResponse.js";
 import { uploadSingle, deleteByPublicId } from "../config/cloudinary.js";
 
-/* ------------------------------ Public ------------------------------ */
+// Public
 
 const getPublicBlogs = asyncHandler(async (req, res) => {
   const { page, limit, search, category } = req.query;
@@ -29,18 +29,17 @@ const getPublicBlogBySlug = asyncHandler(async (req, res) => {
   return success(res, blog, "Blog retrieved");
 });
 
-/* ------------------------------ Admin ------------------------------ */
+// Admin
 
 const adminCreateBlog = asyncHandler(async (req, res) => {
-  const slug = await uniqueSlug(Blog, req.body.title);
   const payload = { ...req.body };
+  const slug = await uniqueSlug(Blog, req.body.title);
 
-  // Optional blog image upload (Cloudinary).
   if (req.files?.image?.[0]) {
     payload.image = await uploadSingle({ buffer: req.files.image[0].buffer, folder: "innobles/blogs" });
   }
-  // Optional author avatar upload — stored as a URL string on the model.
   if (req.files?.authorAvatar?.[0]) {
+    // The avatar is stored as a plain URL string.
     const { url } = await uploadSingle({ buffer: req.files.authorAvatar[0].buffer, folder: "innobles/avatars" });
     payload.authorAvatar = url;
   }
@@ -83,21 +82,20 @@ const adminUpdateBlog = asyncHandler(async (req, res) => {
 
   const payload = { ...req.body };
 
-  // Regenerate the slug if the title changed and none was explicitly supplied.
+  // Regenerate the slug when the title changed and none was supplied explicitly.
   if (payload.title && payload.title !== blog.title && !payload.slug) {
     payload.slug = await uniqueSlug(Blog, payload.title, blog._id);
   } else if (payload.slug && payload.slug !== blog.slug) {
     payload.slug = await uniqueSlug(Blog, payload.slug, blog._id);
   }
 
-  // If a new blog image was uploaded, replace the old one.
+  // Replace the old image only when a new one is uploaded.
   if (req.files?.image?.[0]) {
     const { url, publicId } = await uploadSingle({ buffer: req.files.image[0].buffer, folder: "innobles/blogs" });
     if (blog.image?.publicId) await deleteByPublicId(blog.image.publicId);
     payload.image = { url, publicId };
   }
 
-  // If a new author avatar was uploaded, store the Cloudinary URL string.
   if (req.files?.authorAvatar?.[0]) {
     const { url } = await uploadSingle({ buffer: req.files.authorAvatar[0].buffer, folder: "innobles/avatars" });
     payload.authorAvatar = url;

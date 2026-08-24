@@ -5,13 +5,11 @@ import { uploadSingle, deleteByPublicId } from "../config/cloudinary.js";
 
 const IMAGE_FOLDER = "innobles/about";
 
-
 const getDoc = async () => {
   let doc = await AboutContent.findOne();
   if (!doc) doc = await AboutContent.create({});
   return doc;
 };
-
 
 const sortByOrder = (arr = []) =>
   [...arr].sort(
@@ -20,7 +18,7 @@ const sortByOrder = (arr = []) =>
       new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
   );
 
-/** Build the payload shared by the public + admin read endpoints. */
+// Payload for public + admin reads.
 const serialize = (doc, { publicOnly = false } = {}) => ({
   teamMembers: sortByOrder(doc.teamMembers),
   locations: sortByOrder(doc.locations),
@@ -29,23 +27,23 @@ const serialize = (doc, { publicOnly = false } = {}) => ({
   ),
 });
 
-const findIndex = (items, id) => items.findIndex((item) => item._id.toString() === id);
+const findIndex = (arr, id) => arr.findIndex((item) => item._id.toString() === id);
 
-/* ------------------------------ Public ------------------------------ */
+// Public
 
 const getPublicAbout = asyncHandler(async (req, res) => {
   const doc = await getDoc();
   return success(res, serialize(doc, { publicOnly: true }), "About content retrieved");
 });
 
-/* ------------------------------ Admin read (team/locations/stats) ------------------------------ */
+// Admin
 
 const adminGetAbout = asyncHandler(async (req, res) => {
   const doc = await getDoc();
   return success(res, serialize(doc), "About content retrieved");
 });
 
-/* ------------------------------ Team ------------------------------ */
+// Team
 
 const adminListTeam = asyncHandler(async (req, res) => {
   const doc = await getDoc();
@@ -55,7 +53,7 @@ const adminListTeam = asyncHandler(async (req, res) => {
 const adminCreateTeamMember = asyncHandler(async (req, res) => {
   const doc = await getDoc();
   const nextOrder = doc.teamMembers.length
-    ? Math.max(...doc.teamMembers.map((m) => m.order ?? 0)) + 1
+    ? Math.max(...doc.teamMembers.map((t) => t.order ?? 0)) + 1
     : 0;
 
   let image = null;
@@ -111,8 +109,7 @@ const adminDeleteTeamMember = asyncHandler(async (req, res) => {
 const adminReorderTeam = asyncHandler(async (req, res) => {
   const doc = await getDoc();
   const byId = new Map(doc.teamMembers.map((m) => [m._id.toString(), m]));
-  const ids = req.body.ids;
-  doc.teamMembers = ids
+  doc.teamMembers = req.body.ids
     .map((id, i) => {
       const item = byId.get(id);
       if (item) item.order = i;
@@ -123,7 +120,7 @@ const adminReorderTeam = asyncHandler(async (req, res) => {
   return success(res, sortByOrder(doc.teamMembers), "Team reordered");
 });
 
-/* ------------------------------ Locations ------------------------------ */
+// Locations
 
 const adminListLocations = asyncHandler(async (req, res) => {
   const doc = await getDoc();
@@ -195,8 +192,7 @@ const adminDeleteLocation = asyncHandler(async (req, res) => {
 const adminReorderLocations = asyncHandler(async (req, res) => {
   const doc = await getDoc();
   const byId = new Map(doc.locations.map((l) => [l._id.toString(), l]));
-  const ids = req.body.ids;
-  doc.locations = ids
+  doc.locations = req.body.ids
     .map((id, i) => {
       const item = byId.get(id);
       if (item) item.order = i;
@@ -207,7 +203,7 @@ const adminReorderLocations = asyncHandler(async (req, res) => {
   return success(res, sortByOrder(doc.locations), "Locations reordered");
 });
 
-/* ------------------------------ Statistics ------------------------------ */
+// Statistics
 
 const adminListStatistics = asyncHandler(async (req, res) => {
   const doc = await getDoc();
@@ -254,8 +250,7 @@ const adminDeleteStatistic = asyncHandler(async (req, res) => {
 const adminReorderStatistics = asyncHandler(async (req, res) => {
   const doc = await getDoc();
   const byId = new Map(doc.statistics.map((s) => [s._id.toString(), s]));
-  const ids = req.body.ids;
-  doc.statistics = ids
+  doc.statistics = req.body.ids
     .map((id, i) => {
       const item = byId.get(id);
       if (item) item.order = i;

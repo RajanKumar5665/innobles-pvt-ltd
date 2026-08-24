@@ -10,37 +10,27 @@ const createLimiter = ({ windowMs, max, message }) =>
       res.status(429).json({ success: false, message, errors: [] }),
   });
 
-// Strict — admin registration is a one-time action
-const adminRegisterLimiter = createLimiter({
+// Registration is a one-time action, so it gets a strict limit.
+export const adminRegisterLimiter = createLimiter({
   windowMs: 15 * 60 * 1000,
   max: 3,
   message: "Too many registration attempts. Please try again later.",
 });
 
-// Strict — protect the admin login endpoint from brute force
-const adminLoginLimiter = createLimiter({
+export const adminLoginLimiter = createLimiter({
   windowMs: 15 * 60 * 1000,
   max: 5,
   message: "Too many login attempts. Please try again later.",
 });
 
-// Public form — reasonable limit
-const contactLimiter = createLimiter({
+export const contactLimiter = createLimiter({
   windowMs: 15 * 60 * 1000,
   max: 10,
   message: "Too many messages sent. Please try again later.",
 });
 
-// Public form — reasonable limit
-const applicationLimiter = createLimiter({
+export const applicationLimiter = createLimiter({
   windowMs: 15 * 60 * 1000,
   max: 10,
   message: "Too many applications submitted. Please try again later.",
 });
-
-export {
-  adminRegisterLimiter,
-  adminLoginLimiter,
-  contactLimiter,
-  applicationLimiter,
-};

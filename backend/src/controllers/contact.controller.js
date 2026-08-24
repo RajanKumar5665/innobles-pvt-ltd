@@ -3,14 +3,14 @@ import paginate from "../utils/paginate.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError, success } from "../utils/apiResponse.js";
 
-/* ------------------------------ Public ------------------------------ */
+// Public
 
 const createContact = asyncHandler(async (req, res) => {
   const contact = await Contact.create(req.body);
   return success(res, { id: contact._id }, "Message sent successfully", 201);
 });
 
-/* ------------------------------ Admin ------------------------------ */
+// Admin
 
 const adminListContacts = asyncHandler(async (req, res) => {
   const { page, limit, search, status } = req.query;

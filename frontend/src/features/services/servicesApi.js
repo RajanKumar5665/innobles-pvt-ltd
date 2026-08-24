@@ -1,17 +1,9 @@
 import { api } from "../../lib/api";
 
 /**
- * Fetch published services from the public API.
- *
- * The backend already sorts by `createdAt` descending (newest first) and
- * accepts `?limit=` / `?page=` query params (see serviceQuerySchema + paginate).
- *
- * Pass `{ limit }` to fetch only the N most-recent records (used by the
- * homepage highlight section). Omit it to fetch the full published set
- * (used by the Services listing / detail pages via the shared Redux slice).
- *
- * Backward-compatible: existing callers that pass no arguments still get the
- * default backend behaviour (all published services, newest-first).
+ * Fetches published services from the public API.
+ * Pass { limit } to get only the N most recent ones (used on the homepage).
+ * Omit it to get the full published list (used on the Services page).
  */
 export const fetchServicesApi = async (options = {}) => {
   const params = new URLSearchParams();
@@ -20,11 +12,10 @@ export const fetchServicesApi = async (options = {}) => {
 
   const response = await api.get(`/services${query ? `?${query}` : ""}`);
   const list = Array.isArray(response?.data) ? response.data : [];
+
   return list.map((item) => ({
     id: item._id,
-    // Backend stores the Cloudinary asset as `banner: { url, publicId }`.
-    // We surface the URL as `bannerImage` so cards/details can use one field.
-    bannerImage: item.banner?.url || "",
+    bannerImage: item.banner?.url || "", // backend stores it as banner: { url, publicId }
     title: item.title || "",
     category: item.category || "",
     shortDescription: item.shortDescription || "",

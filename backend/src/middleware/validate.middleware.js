@@ -1,10 +1,5 @@
 import { ApiError } from "../utils/apiResponse.js";
 
-/**
- * Validate a request part against a Joi schema before it reaches the controller.
- * @param {object} schema Joi schema
- * @param {string} source "body" | "query" | "params"
- */
 const validate = (schema, source = "body") => (req, res, next) => {
   const { error, value } = schema.validate(req[source], {
     abortEarly: false,
@@ -19,10 +14,7 @@ const validate = (schema, source = "body") => (req, res, next) => {
     return next(new ApiError(400, "Validation failed", errors));
   }
 
-  // On Node >= 17, `req.query` is exposed as a read-only getter on
-  // IncomingMessage, so a plain assignment (`req.query = value`) throws.
-  // Replace it via defineProperty instead so controllers receive the
-  // validated + stripped value.
+  // On newer Node versions req.query is read-only, so replace it via defineProperty.
   if (source === "query") {
     Object.defineProperty(req, "query", {
       value,

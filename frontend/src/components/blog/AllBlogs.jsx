@@ -1,6 +1,7 @@
-import BlogCard from "./BlogCard";
+import BlogPreviewCard from "./BlogPreviewCard";
 import BlogPagination from "./BlogPagination";
 import BlogShare from "./BlogShare";
+import StaggerGroup, { StaggerItem } from "../common/StaggerGroup";
 
 /**
  * "All Blogs" — a single rounded container holding the paginated
@@ -42,11 +43,13 @@ const AllBlogs = ({ blogs = [], page = 1, totalPages = 1, onPageChange }) => {
           <BlogPagination current={page} total={totalPages} onChange={onPageChange} />
         )}
 
-        <div className="mt-8 flex flex-col gap-6">
+        <StaggerGroup className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {blogs.map((blog) => (
-            <BlogCard key={blog.id} blog={blog} />
+            <StaggerItem key={blog.id} className="h-full">
+              <BlogPreviewCard blog={blog} />
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGroup>
 
         {totalPages > 1 && (
           <BlogPagination current={page} total={totalPages} onChange={onPageChange} />

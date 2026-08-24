@@ -2,18 +2,13 @@ const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 export { API_BASE };
 
-async function request(path, options = {}) {
-  const url = `${API_BASE}${path}`;
-  const res = await fetch(url, {
-    ...options,
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-  });
-
+/**
+ * Shared response handler for both JSON and FormData requests.
+ * Parses the JSON body (if any) and throws a normalized Error on failure.
+ */
+async function handleResponse(res) {
   const data = await res.json().catch(() => ({}));
+
   if (!res.ok) {
     const message = data?.message || `Request failed with status ${res.status}`;
     const error = new Error(message);
@@ -21,40 +16,81 @@ async function request(path, options = {}) {
     error.payload = data;
     throw error;
   }
+
   return data;
 }
 
 /**
+ * Core request function for JSON payloads (GET/POST/PUT/PATCH/DELETE).
+ */
+async function request(path, options = {}) {
+  const url = `${API_BASE}${path}`;
+
+  let res;
+  try {
+    res = await fetch(url, {
+      ...options,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+      },
+    });
+  } catch {
+    throw new Error(
+      "Unable to reach the server. Please check your connection.",
+    );
+  }
+
+  return handleResponse(res);
+}
+
+/**
  * Upload a multipart/form-data payload (file uploads).
- * Content-Type is NOT set manually so the browser sets the boundary.
+ * Content-Type is NOT set manually so the browser sets the correct boundary.
  */
 async function requestForm(path, options = {}) {
   const url = `${API_BASE}${path}`;
-  const res = await fetch(url, {
-    ...options,
-    credentials: "include",
-    body: options.body,
-  });
 
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    const message = data?.message || `Request failed with status ${res.status}`;
-    const error = new Error(message);
-    error.status = res.status;
-    error.payload = data;
-    throw error;
+  let res;
+  try {
+    res = await fetch(url, {
+      ...options,
+      credentials: "include",
+      body: options.body,
+    });
+  } catch {
+    throw new Error(
+      "Unable to reach the server. Please check your connection.",
+    );
   }
-  return data;
+
+  return handleResponse(res);
+}
+
+/** Builds a query string from a plain object, skipping empty/undefined values. */
+function toQueryString(params = {}) {
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      query.append(key, value);
+    }
+  });
+  const qs = query.toString();
+  return qs ? `?${qs}` : "";
 }
 
 export const api = {
-  get: (path) => request(path),
-  post: (path, body) => request(path, { method: "POST", body: JSON.stringify(body) }),
+  get: (path, params) => request(`${path}${toQueryString(params)}`),
+  post: (path, body) =>
+    request(path, { method: "POST", body: JSON.stringify(body) }),
   postForm: (path, formData) =>
     requestForm(path, { method: "POST", body: formData }),
-  put: (path, body) => request(path, { method: "PUT", body: JSON.stringify(body) }),
+  put: (path, body) =>
+    request(path, { method: "PUT", body: JSON.stringify(body) }),
   putForm: (path, formData) =>
     requestForm(path, { method: "PUT", body: formData }),
-  patch: (path, body) => request(path, { method: "PATCH", body: JSON.stringify(body) }),
+  patch: (path, body) =>
+    request(path, { method: "PATCH", body: JSON.stringify(body) }),
   delete: (path) => request(path, { method: "DELETE" }),
 };

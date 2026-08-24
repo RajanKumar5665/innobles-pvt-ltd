@@ -27,29 +27,20 @@ const documentFileFilter = (req, file, cb) => {
   return cb(new ApiError(400, "Only PDF, DOC or DOCX documents are allowed"));
 };
 
-/** Single image upload (blog image, product image, career image, home hero image). */
-const uploadImage = multer({
+export const uploadImage = multer({
   storage,
   limits: { fileSize: MAX_IMAGE_SIZE },
   fileFilter: imageFileFilter,
 });
 
-/** Multiple image upload (product gallery). Field name "images". */
-const uploadImages = multer({
+export const uploadImages = multer({
   storage,
   limits: { fileSize: MAX_IMAGE_SIZE, files: MAX_IMAGES },
   fileFilter: imageFileFilter,
 });
 
-/** Resume upload (PDF/DOC/DOCX). Field name "resume". */
-const uploadResume = multer({
+export const uploadResume = multer({
   storage,
   limits: { fileSize: MAX_RESUME_SIZE },
   fileFilter: documentFileFilter,
 });
-
-export {
-  uploadImage,
-  uploadImages,
-  uploadResume,
-};

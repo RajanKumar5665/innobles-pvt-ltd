@@ -5,7 +5,10 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError, success } from "../utils/apiResponse.js";
 import { uploadSingle, deleteByPublicId } from "../config/cloudinary.js";
 
-/* ------------------------------ Public ------------------------------ */
+// Escape regex metacharacters so user search input is matched literally.
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+// Public
 
 const createApplication = asyncHandler(async (req, res) => {
   const career = await Career.findOne({ _id: req.params.careerId, status: "open" });
@@ -13,9 +16,8 @@ const createApplication = asyncHandler(async (req, res) => {
 
   let resume = {};
   if (req.file) {
-    // PDFs are uploaded as an "image" asset so Cloudinary serves them with an
-    // inline Content-Disposition — the admin can preview them in the browser.
-    // DOC/DOCX cannot be stored as image assets, so they stay as raw downloads.
+    // PDFs are uploaded as image assets so Cloudinary can preview them inline;
+    // DOC/DOCX stay as raw downloads.
     const isPdf =
       req.file.mimetype === "application/pdf" ||
       req.file.originalname.toLowerCase().endsWith(".pdf");
@@ -40,12 +42,7 @@ const createApplication = asyncHandler(async (req, res) => {
   return success(res, { id: application._id }, "Application submitted successfully", 201);
 });
 
-/* ------------------------------ Helpers ------------------------------ */
-
-// Escape regex metacharacters so user search input is matched literally.
-const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-/* ------------------------------ Admin ------------------------------ */
+// Admin
 
 const adminListApplications = asyncHandler(async (req, res) => {
   const { page, limit, search, status, careerId, sort } = req.query;
@@ -53,8 +50,7 @@ const adminListApplications = asyncHandler(async (req, res) => {
   if (search) {
     const term = escapeRegex(String(search).trim());
     if (term) {
-      // Match careers by title so a search like "developer" surfaces every
-      // application submitted for any matching position.
+      // Include careers whose title matches, so searching "developer" surfaces its applications.
       const careerMatches = await Career.find({ title: { $regex: term, $options: "i" } })
         .select("_id")
         .lean();
@@ -70,8 +66,7 @@ const adminListApplications = asyncHandler(async (req, res) => {
   if (status) filter.status = status;
   if (careerId) filter.careerId = careerId;
 
-  // Whitelisted server-side sorts for name / status / date. Career-title
-  // sorting is handled client-side by the admin panel (small result set).
+  // Whitelisted server-side sorts; career-title sorting happens client-side.
   const SORTS = {
     name: { name: 1, createdAt: -1 },
     "-name": { name: -1, createdAt: -1 },
@@ -87,8 +82,7 @@ const adminListApplications = asyncHandler(async (req, res) => {
     page,
     limit,
     sort: SORTS[sort] || { createdAt: -1 },
-    // Resume is fetched on demand via the detail/preview endpoints. Keep the
-    // internal Cloudinary publicId out of list responses entirely.
+    // Resume is fetched separately; keep the Cloudinary publicId out of lists.
     select: "-resume.publicId",
     populate: { path: "careerId", select: "title department location" },
   });
@@ -105,13 +99,8 @@ const adminGetApplication = asyncHandler(async (req, res) => {
   return success(res, application, "Application retrieved");
 });
 
-/**
- * GET /api/admin/applications/:id/resume
- * Streams the stored resume back with an inline Content-Disposition so the
- * browser renders it (e.g. a PDF inside an iframe) instead of downloading it.
- * Cloudinary raw URLs often lack a file extension, which makes browsers treat
- * them as octet-stream and force a download — this proxy fixes that.
- */
+// Streams the resume with an inline Content-Disposition so browsers render it
+// (e.g. a PDF in an iframe) instead of forcing a download.
 const adminGetResume = asyncHandler(async (req, res) => {
   const application = await JobApplication.findById(req.params.id);
   if (!application || !application.resume?.url) {
@@ -140,10 +129,7 @@ const adminGetResume = asyncHandler(async (req, res) => {
   }
 
   res.setHeader("Content-Type", contentType);
-  res.setHeader(
-    "Content-Disposition",
-    `inline; filename="resume${ext ? `.${ext}` : ""}"`,
-  );
+  res.setHeader("Content-Disposition", `inline; filename="resume${ext ? `.${ext}` : ""}"`);
   res.setHeader("Cache-Control", "private, max-age=300");
 
   const { Readable } = await import("node:stream");

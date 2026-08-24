@@ -4,17 +4,13 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError, success } from "../utils/apiResponse.js";
 import { uploadSingle, deleteByPublicId } from "../config/cloudinary.js";
 
-/** Normalize the features field (array, or single string from one FormData entry). */
+// features may be an array, or a single string when only one line is submitted.
 const normalizeFeatures = (value) => {
-  const arr = Array.isArray(value)
-    ? value
-    : typeof value === "string"
-      ? [value]
-      : [];
-  return arr.map((f) => String(f).trim()).filter(Boolean);
+  const list = Array.isArray(value) ? value : typeof value === "string" ? [value] : [];
+  return list.map((f) => String(f).trim()).filter(Boolean);
 };
 
-/* ------------------------------ Public ------------------------------ */
+// Public
 
 const getPublicServices = asyncHandler(async (req, res) => {
   const { page, limit } = req.query;
@@ -30,15 +26,13 @@ const getPublicServices = asyncHandler(async (req, res) => {
   return success(res, result.data, "Services retrieved", 200, { pagination: result.pagination });
 });
 
-/* ------------------------------ Admin ------------------------------ */
+// Admin
 
 const adminCreateService = asyncHandler(async (req, res) => {
   const payload = { ...req.body };
   payload.features = normalizeFeatures(payload.features);
   delete payload.bannerRemoved;
 
-  // Banner image is required for a new service. It is uploaded through the
-  // same Cloudinary pipeline used by blogs and products.
   if (req.files?.banner?.[0]) {
     payload.banner = await uploadSingle({ buffer: req.files.banner[0].buffer, folder: "innobles/services" });
   } else {
@@ -81,8 +75,7 @@ const adminUpdateService = asyncHandler(async (req, res) => {
 
   Object.assign(service, payload);
 
-  // Replace the existing banner when a new file is supplied, or remove it when
-  // the admin explicitly cleared it on the edit form.
+  // Replace the banner on upload, or remove it when the admin cleared it.
   if (req.files?.banner?.[0]) {
     if (service.banner?.publicId) await deleteByPublicId(service.banner.publicId);
     service.banner = await uploadSingle({ buffer: req.files.banner[0].buffer, folder: "innobles/services" });

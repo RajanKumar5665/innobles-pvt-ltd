@@ -1,6 +1,6 @@
-/**
- * Paginate any Mongoose query safely. Enforces a max limit of 50.
- */
+// Capped so a client can't page through an unbounded result set.
+const MAX_LIMIT = 50;
+
 const paginate = async ({
   model,
   query = {},
@@ -11,7 +11,7 @@ const paginate = async ({
   populate = [],
 }) => {
   const safePage = Math.max(1, Number(page) || 1);
-  const safeLimit = Math.max(1, Math.min(50, Number(limit) || 10));
+  const safeLimit = Math.max(1, Math.min(MAX_LIMIT, Number(limit) || 10));
 
   const [total, data] = await Promise.all([
     model.countDocuments(query),

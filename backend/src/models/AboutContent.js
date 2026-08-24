@@ -1,15 +1,7 @@
 import mongoose from "mongoose";
 
-/**
- * About Us content — a single editable document.
- *
- * Mirrors the existing HomeContent pattern: one document holds structured
- * sections, and the admin edits it through dedicated endpoints. Nested
- * sections (team / locations / statistics) are stored as arrays of
- * subdocuments. Each subdocument has its own `_id`, `createdAt`/`updatedAt`
- * and an `order` field used for explicit reordering.
- */
-
+// Single editable document — the intro copy stays hardcoded on the public page,
+// only the admin-managed sections (team / locations / statistics) are stored here.
 const imageObject = {
   url: { type: String, default: "" },
   publicId: { type: String, default: "" },
@@ -54,13 +46,8 @@ const statisticSchema = new mongoose.Schema(
   { _id: true, timestamps: true },
 );
 
-/**
- * About Us content — the general/intro copy is STATIC (hardcoded in the
- * public page) and intentionally NOT stored here. Only the sections that are
- * managed through the admin panel — team, locations and statistics — live in
- * this document. Each entry is a subdocument with its own `_id`,
- * `createdAt`/`updatedAt` and an `order` field used for explicit reordering.
- */
+// General/intro copy is static (hardcoded in the public page) and intentionally
+// not stored here; only the admin-managed sections live in this document.
 const aboutContentSchema = new mongoose.Schema(
   {
     teamMembers: { type: [teamMemberSchema], default: [] },

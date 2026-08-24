@@ -5,7 +5,7 @@ import { ApiError, success } from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { getCookieName } from "../middleware/auth.middleware.js";
 
-/** Environment-aware HttpOnly cookie options matching the JWT lifetime. */
+// HttpOnly cookie options matching the JWT lifetime (JWT_EXPIRES_IN, in days).
 const cookieOptions = () => {
   const production = process.env.NODE_ENV === "production";
   const expires = process.env.JWT_EXPIRES_IN || "1d";
@@ -19,29 +19,22 @@ const cookieOptions = () => {
   };
 };
 
-/**
- * POST /api/admin/auth/register  (one-time, via Postman, protected by
- * x-admin-setup-secret header). Creates the single initial admin only.
- */
+// One-time setup: creates the first (and only) admin via Postman.
 const register = asyncHandler(async (req, res) => {
   const configuredSecret = process.env.ADMIN_SETUP_SECRET;
   if (!configuredSecret) {
     throw new ApiError(500, "ADMIN_SETUP_SECRET is not configured on the server");
   }
 
-  const provided = req.headers["x-admin-setup-secret"];
-  if (!provided || provided !== configuredSecret) {
+  if (req.headers["x-admin-setup-secret"] !== configuredSecret) {
     throw new ApiError(403, "Invalid setup secret");
   }
 
-  const existing = await Admin.countDocuments();
-  if (existing > 0) {
+  if ((await Admin.countDocuments()) > 0) {
     throw new ApiError(403, "Admin registration is already completed");
   }
 
-  const salt = await bcrypt.genSalt(12);
-  const password = await bcrypt.hash(req.body.password, salt);
-
+  const password = await bcrypt.hash(req.body.password, 12);
   const admin = await Admin.create({
     name: req.body.name,
     email: req.body.email,
@@ -56,16 +49,12 @@ const register = asyncHandler(async (req, res) => {
   );
 });
 
-/**
- * POST /api/admin/auth/login — validates credentials, sets the HttpOnly JWT cookie.
- */
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-
   const admin = await Admin.findOne({ email }).select("+password");
   const passwordMatches = admin && (await bcrypt.compare(password, admin.password));
 
-  // Generic message — do not reveal whether the email exists.
+  // Keep the message generic — don't reveal whether the email exists.
   if (!admin || !admin.isActive || !passwordMatches) {
     throw new ApiError(401, "Invalid email or password");
   }
@@ -83,13 +72,11 @@ const login = asyncHandler(async (req, res) => {
   );
 });
 
-/** POST /api/admin/auth/logout — clears the auth cookie. */
 const logout = (req, res) => {
   res.clearCookie(getCookieName(), cookieOptions());
   return success(res, null, "Logged out successfully");
 };
 
-/** GET /api/admin/auth/me — returns the authenticated admin (protected). */
 const me = (req, res) => success(res, req.admin, "Authenticated admin information");
 
 export default { register, login, logout, me };

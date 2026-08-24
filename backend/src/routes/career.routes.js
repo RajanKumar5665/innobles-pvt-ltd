@@ -1,7 +1,13 @@
 import express from "express";
 import validate from "../middleware/validate.middleware.js";
 import ctrl from "../controllers/career.controller.js";
-import { createCareer, updateCareer, careerStatusSchema, careerQuerySchema, careerIdParamSchema, } from "../validations/career.validation.js";
+import {
+  createCareer,
+  updateCareer,
+  careerStatusSchema,
+  careerQuerySchema,
+  careerIdParamSchema,
+} from "../validations/career.validation.js";
 
 const publicRouter = express.Router();
 publicRouter.get("/", validate(careerQuerySchema, "query"), ctrl.getPublicCareers);

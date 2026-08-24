@@ -3,7 +3,7 @@ import paginate from "../utils/paginate.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError, success } from "../utils/apiResponse.js";
 
-/* ------------------------------ Public ------------------------------ */
+// Public
 
 const getPublicCareers = asyncHandler(async (req, res) => {
   const { page, limit, search, department, location, jobType } = req.query;
@@ -29,7 +29,7 @@ const getPublicCareerById = asyncHandler(async (req, res) => {
   return success(res, career, "Career retrieved");
 });
 
-/* ------------------------------ Admin ------------------------------ */
+// Admin
 
 const adminCreateCareer = asyncHandler(async (req, res) => {
   const career = await Career.create(req.body);

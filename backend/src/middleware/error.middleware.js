@@ -3,11 +3,8 @@ import jwt from "jsonwebtoken";
 import { MulterError } from "multer";
 import { ApiError } from "../utils/apiResponse.js";
 
-/**
- * Centralized error handler.
- * Maps framework/mongoose/JWT/multer errors to clean JSON and never
- * leaks stack traces in production.
- */
+// Central error handler — maps framework/DB errors to clean JSON and never
+// leaks stack traces to clients.
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (err, req, res, next) => {
   let statusCode = err.statusCode || 500;
@@ -42,15 +39,12 @@ const errorHandler = (err, req, res, next) => {
     message = err.message;
   }
 
-  // Log operational + unexpected errors server-side only.
+  // Log unexpected errors server-side only.
   if (statusCode >= 500) {
     console.error(`[${new Date().toISOString()}] Server error:`, err);
   }
 
-  if (res.headersSent) {
-    return next(err);
-  }
-
+  if (res.headersSent) return next(err);
   return res.status(statusCode).json({ success: false, message, errors });
 };
 

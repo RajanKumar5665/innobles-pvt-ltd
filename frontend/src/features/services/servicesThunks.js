@@ -1,12 +1,12 @@
 import { fetchServicesApi } from "./servicesApi";
+import { fetchPending, fetchFulfilled, fetchRejected } from "./servicesSlice";
 
 export const fetchServices = () => async (dispatch) => {
-  dispatch({ type: "services/fetchPending" });
+  dispatch(fetchPending());
   try {
     const data = await fetchServicesApi();
-    dispatch({ type: "services/fetchFulfilled", payload: data });
+    dispatch(fetchFulfilled(data));
   } catch (error) {
-    dispatch({ type: "services/fetchRejected", payload: error.message });
+    dispatch(fetchRejected(error.message));
   }
 };
-
