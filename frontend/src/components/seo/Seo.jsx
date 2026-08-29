@@ -1,11 +1,8 @@
 import { useEffect } from "react";
 import { siteConfig } from "../../config/siteConfig";
 
-/**
- * Dependency-free SEO helper.
- * Updates <title>, meta description, canonical, OG and Twitter tags per page.
- * Props: title, description, keywords, path (relative url path), image.
- */
+// Updates the page title, meta tags and social (OG/Twitter) tags.
+// Props: title, description, keywords, path, image.
 const Seo = ({ title, description, keywords, path = "/", image = "/hero.png" }) => {
   useEffect(() => {
     const fullTitle = title ? `${title} | ${siteConfig.name}` : siteConfig.name;

@@ -1,18 +1,10 @@
 import { useEffect, useState } from "react";
 import { fetchBlogsApi } from "../features/blogs/blogsApi";
 
-/**
- * Fetches the most-recently published blogs (limited, newest-first) directly
- * from the existing public /blogs API.
- *
- * Uses local component state (NOT the shared blogs Redux slice) so the
- * homepage's small preview fetch never interferes with the Blog listing /
- * detail pages which need the full published set.
- *
- * Returns the same shape as the existing `useBlogs` hook:
- *   { list, status, error }
- * where status is one of: "idle" | "loading" | "success" | "error".
- */
+// Fetch the newest published blogs from the public /blogs API.
+// Uses local state (not Redux) so the home page preview does not
+// interfere with the full blog listing/detail pages.
+// Returns { list, status, error }.
 export const useRecentBlogs = (limit = 3) => {
   const [list, setList] = useState([]);
   const [status, setStatus] = useState("idle");

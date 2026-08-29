@@ -3,7 +3,6 @@ import SectionHeading from "../components/common/SectionHeading";
 import Loader from "../components/common/Loader";
 import StaggerGroup, { StaggerItem } from "../components/common/StaggerGroup";
 import ServiceCard from "../components/service/ServiceCard";
-import CTA from "../components/home/CTA";
 import ContactSection from "../components/home/ContactSection";
 import { useServices } from "../hooks/useServices";
 
@@ -27,7 +26,8 @@ const Services = () => {
             Everything you need to <span className="text-gradient">ship &amp; scale</span> software
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-white/60 md:text-lg">
-            Six core capabilities, one accountable team. Pick one service or let us handle the full lifecycle.
+            Six capabilities, one accountable team. Pick one service or let us run the full
+lifecycle — from requirement gathering to live operations.
           </p>
         </div>
       </section>
@@ -55,7 +55,7 @@ const Services = () => {
         )}
       </section>
 
-      <CTA />
+      {/* <CTA /> */}
       <ContactSection />
     </>
   );

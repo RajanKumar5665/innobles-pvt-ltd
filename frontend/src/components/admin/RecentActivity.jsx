@@ -51,9 +51,7 @@ const timeAgo = (date) => {
   return `${Math.floor(diff / 86400)}d ago`;
 };
 
-/**
- * Shows the latest activity from blogs, applications and contacts.
- */
+// Shows the latest activity from blogs, applications and contacts.
 const RecentActivity = ({ stats }) => {
   const items = [];
 

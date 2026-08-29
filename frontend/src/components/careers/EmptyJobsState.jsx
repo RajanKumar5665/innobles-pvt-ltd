@@ -1,8 +1,6 @@
 import { RotateCcw, SearchX } from "lucide-react";
 
-/**
- * Empty state shown when no job matches the active search / filters.
- */
+// Shown when no job matches the active search / filters.
 const EmptyJobsState = ({ onClear }) => (
   <div className="mt-10 rounded-[18px] border border-dashed border-career-border bg-white px-6 py-16 text-center">
     <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-career-orange-light">

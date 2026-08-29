@@ -28,11 +28,8 @@ import {
   RemoveFormatting,
 } from "lucide-react";
 
-/**
- * Toolbar button. Uses `onMouseDown` (with preventDefault) for mouse clicks so
- * the editor keeps its selection/focus, and a `detail === 0` click for keyboard
- * activation to avoid running the command twice.
- */
+// Toolbar button. Uses onMouseDown so the editor keeps focus, and triggers
+// once on keyboard activation to avoid running the command twice.
 const ToolbarButton = ({ title, active = false, disabled = false, onAction, children }) => {
   const run = () => {
     if (!disabled) onAction();
@@ -60,10 +57,8 @@ const ToolbarButton = ({ title, active = false, disabled = false, onAction, chil
 
 const Separator = () => <span className="rte-sep" aria-hidden="true" />;
 
-/**
- * Lightweight MS Word-style rich text editor (TipTap) bound to a controlled
- * HTML string via `value` / `onChange`. Used for the blog Description field.
- */
+// MS Word-style rich text editor (TipTap) bound to an HTML string via
+// value/onChange. Used for the blog Description field.
 const RichTextEditor = ({ value = "", onChange, placeholder = "Write your description…" }) => {
   const editor = useEditor({
     immediatelyRender: false,
@@ -94,8 +89,7 @@ const RichTextEditor = ({ value = "", onChange, placeholder = "Write your descri
     },
   });
 
-  // Sync externally-supplied values (draft restore / edit load) into the editor
-  // without re-emitting `onChange` (emitUpdate = false) to avoid update loops.
+  // Sync an external value (draft restore / edit load) without re-emitting onChange.
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
       editor.commands.setContent(value || "", false);

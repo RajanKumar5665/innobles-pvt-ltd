@@ -1,10 +1,7 @@
 import StaggerGroup, { StaggerItem } from "../common/StaggerGroup";
 import BlogPreviewCard from "./BlogPreviewCard";
 
-/**
- * "Recent Blogs" — eyebrow + compact heading + the latest 3 articles.
- * Uses the same modern card (and staggered entrance) as the homepage preview.
- */
+// "Recent Blogs" — eyebrow + heading + the latest 3 articles.
 const RecentBlogs = ({ blogs = [] }) => {
   if (blogs.length === 0) return null;
 

@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { ArrowRight, Briefcase, CalendarDays, ChevronDown, ChevronUp, Clock, ListChecks, MapPin, Target } from "lucide-react";
 
-/**
- * Vertical job card with department badge, meta row, description and Apply button.
- * A "View Details" toggle expands the full job details: required experience,
- * responsibilities and requirements.
- */
+// Job card with department badge, meta row, description and an Apply button.
+// "View Details" toggles the full responsibilities/requirements.
 const formatDate = (value) => {
   if (!value) return "";
   const d = new Date(value);

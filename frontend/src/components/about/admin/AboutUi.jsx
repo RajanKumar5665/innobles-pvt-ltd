@@ -1,11 +1,11 @@
 import { useRef } from "react";
 import { Image as ImageIcon, Loader as LoaderIcon, Trash2, X } from "lucide-react";
 
-/** Accepted image types + size limit (kept in sync with the admin forms elsewhere). */
+// Allowed image types + size limit (kept in sync with the other admin forms).
 export const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 export const IMAGE_MAX_MB = 5;
 
-/** Shared input class — aligns with the Product/Service admin forms. */
+// Shared input class, aligned with the Product/Service admin forms.
 export const fieldClass = (hasError) =>
   `w-full rounded-xl border ${
     hasError ? "border-red-400" : "border-line"
@@ -75,7 +75,7 @@ export const ImageField = ({ id, label, preview = "", onFile, onRemove, error })
   );
 };
 
-/** Confirmation modal used for deleting any About Us entry. */
+// Confirmation modal used when deleting any About Us entry.
 export const DeleteModal = ({ title = "", busy = false, onCancel, onDelete }) => (
   <div
     className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-[2px] overscroll-contain"
@@ -120,7 +120,7 @@ export const DeleteModal = ({ title = "", busy = false, onCancel, onDelete }) =>
   </div>
 );
 
-/** Simple success/error toast, mirroring the Applications admin toast. */
+// Simple success/error toast.
 export const Toast = ({ toast, onDismiss }) => {
   if (!toast) return null;
   const success = toast.type === "success";

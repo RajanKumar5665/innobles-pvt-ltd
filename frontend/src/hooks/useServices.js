@@ -7,10 +7,8 @@ import {
   selectServicesError,
 } from "../features/services/servicesSlice";
 
-/**
- * Loads services from the Redux store (dispatching once on first use)
- * and exposes { list, status, error } for loading/empty/error UI.
- */
+// Loads services from Redux (dispatch runs only the first time).
+// Returns { list, status, error } for loading/empty/error UI.
 export const useServices = () => {
   const dispatch = useAppDispatch();
   const list = useAppSelector(selectServices);

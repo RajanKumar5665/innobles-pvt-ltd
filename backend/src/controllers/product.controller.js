@@ -8,9 +8,14 @@ import { uploadSingle, deleteByPublicId } from "../config/cloudinary.js";
 // Public
 
 const getPublicProducts = asyncHandler(async (req, res) => {
-  const { page, limit, search } = req.query;
+  const { page, limit, search, category } = req.query;
   const filter = { status: "published" };
-  if (search) filter.name = { $regex: search, $options: "i" };
+  if (search) {
+    // Search across name, description and category.
+    const term = { $regex: search, $options: "i" };
+    filter.$or = [{ name: term }, { description: term }, { category: term }];
+  }
+  if (category) filter.category = category;
 
   const result = await paginate({
     model: Product,
@@ -19,11 +24,16 @@ const getPublicProducts = asyncHandler(async (req, res) => {
     limit,
     sort: { createdAt: -1 },
   });
-  return success(res, result.data, "Products retrieved", 200, { pagination: result.pagination });
+  return success(res, result.data, "Products retrieved", 200, {
+    pagination: result.pagination,
+  });
 });
 
 const getPublicProductBySlug = asyncHandler(async (req, res) => {
-  const product = await Product.findOne({ slug: req.params.slug, status: "published" });
+  const product = await Product.findOne({
+    slug: req.params.slug,
+    status: "published",
+  });
   if (!product) throw new ApiError(404, "Product not found");
   return success(res, product, "Product retrieved");
 });
@@ -35,11 +45,15 @@ const adminCreateProduct = asyncHandler(async (req, res) => {
   delete payload.imageRemoved;
 
   // Prefer an explicit slug, otherwise derive one from the name.
-  const slugBase = payload.slug && payload.slug.trim() ? payload.slug : payload.name;
+  const slugBase =
+    payload.slug && payload.slug.trim() ? payload.slug : payload.name;
   const slug = await uniqueSlug(Product, slugBase);
 
   if (req.files?.image?.[0]) {
-    payload.image = await uploadSingle({ buffer: req.files.image[0].buffer, folder: "innobles/products" });
+    payload.image = await uploadSingle({
+      buffer: req.files.image[0].buffer,
+      folder: "innobles/products",
+    });
   }
 
   const product = await Product.create({ ...payload, slug });
@@ -47,10 +61,14 @@ const adminCreateProduct = asyncHandler(async (req, res) => {
 });
 
 const adminListProducts = asyncHandler(async (req, res) => {
-  const { page, limit, search, status } = req.query;
+  const { page, limit, search, status, category } = req.query;
   const filter = {};
-  if (search) filter.name = { $regex: search, $options: "i" };
+  if (search) {
+    const term = { $regex: search, $options: "i" };
+    filter.$or = [{ name: term }, { description: term }, { category: term }];
+  }
   if (status) filter.status = status;
+  if (category) filter.category = category;
 
   const result = await paginate({
     model: Product,
@@ -59,7 +77,9 @@ const adminListProducts = asyncHandler(async (req, res) => {
     limit,
     sort: { createdAt: -1 },
   });
-  return success(res, result.data, "Products retrieved", 200, { pagination: result.pagination });
+  return success(res, result.data, "Products retrieved", 200, {
+    pagination: result.pagination,
+  });
 });
 
 const adminGetProduct = asyncHandler(async (req, res) => {
@@ -86,7 +106,10 @@ const adminUpdateProduct = asyncHandler(async (req, res) => {
   // Replace the image on upload, or clear it when the admin removed it.
   if (req.files?.image?.[0]) {
     if (product.image?.publicId) await deleteByPublicId(product.image.publicId);
-    payload.image = await uploadSingle({ buffer: req.files.image[0].buffer, folder: "innobles/products" });
+    payload.image = await uploadSingle({
+      buffer: req.files.image[0].buffer,
+      folder: "innobles/products",
+    });
   } else if (req.body.imageRemoved === "true") {
     if (product.image?.publicId) await deleteByPublicId(product.image.publicId);
     payload.image = null;
@@ -102,7 +125,11 @@ const adminUpdateProductStatus = asyncHandler(async (req, res) => {
   if (!product) throw new ApiError(404, "Product not found");
   product.status = req.body.status;
   await product.save();
-  return success(res, product, `Product ${product.status === "published" ? "published" : "unpublished"}`);
+  return success(
+    res,
+    product,
+    `Product ${product.status === "published" ? "published" : "unpublished"}`,
+  );
 });
 
 const adminDeleteProduct = asyncHandler(async (req, res) => {

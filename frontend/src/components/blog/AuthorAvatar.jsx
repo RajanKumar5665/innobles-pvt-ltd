@@ -1,9 +1,6 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 
-/**
- * Small circular author avatar. Renders the photo when available,
- * otherwise falls back to an orange initials circle.
- */
+// Small circular author avatar, or an orange initials circle if no photo.
 const AuthorAvatar = ({ author = "", avatar, size = 22, className = "" }) => {
   const [failed, setFailed] = useState(!avatar);
   const initials = author

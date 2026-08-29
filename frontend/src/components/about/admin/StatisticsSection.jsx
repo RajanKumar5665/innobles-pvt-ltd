@@ -4,11 +4,8 @@ import { api } from "../../../lib/api";
 import Loader from "../../common/Loader";
 import { FieldError, FieldLabel, fieldClass, Toast } from "./AboutUi";
 
-/**
- * The four fixed statistics managed by the admin and shown on the About Us page.
- * The public page/server always read from the backend — these defaults are only
- * used to seed the form for a fresh document so the admin has sensible fields.
- */
+// The four fixed statistics shown on the About Us page. These defaults
+// only seed the form for a fresh document.
 const DEFAULT_STATS = [
   { key: "projects", label: "Projects Delivered", value: "50+" },
   { key: "clients", label: "Happy Clients", value: "30+" },
@@ -20,7 +17,7 @@ const byOrder = (a, b) =>
   (a.order ?? 0) - (b.order ?? 0) ||
   new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
 
-/** Merge persisted stats into the four fixed slots (by order), seeding defaults. */
+// Merge saved stats into the four fixed slots, seeding defaults where empty.
 const mergeRows = (statistics = []) => {
   const sorted = [...statistics].sort(byOrder);
   return DEFAULT_STATS.map((def, i) => {

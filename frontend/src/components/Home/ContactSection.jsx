@@ -10,7 +10,7 @@ const ContactSection = () => {
   return (
     <section className="pb-24 pt-8">
       <div className="container-x">
-        {/* Consistent section heading (matches Services + Products + Blog + Testimonials) */}
+        {/* Consistent section heading (matches Services + Products + Blog + Contact) */}
         <SectionHeader
           eyebrow="Contact"
           title="Let&apos;s build something together"

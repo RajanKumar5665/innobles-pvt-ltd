@@ -20,7 +20,9 @@ const getPublicCareers = asyncHandler(async (req, res) => {
     limit,
     sort: { postedAt: -1 },
   });
-  return success(res, result.data, "Careers retrieved", 200, { pagination: result.pagination });
+  return success(res, result.data, "Careers retrieved", 200, {
+    pagination: result.pagination,
+  });
 });
 
 const getPublicCareerById = asyncHandler(async (req, res) => {
@@ -37,7 +39,8 @@ const adminCreateCareer = asyncHandler(async (req, res) => {
 });
 
 const adminListCareers = asyncHandler(async (req, res) => {
-  const { page, limit, search, department, location, jobType, status } = req.query;
+  const { page, limit, search, department, location, jobType, status } =
+    req.query;
   const filter = {};
   if (search) filter.title = { $regex: search, $options: "i" };
   if (department) filter.department = department;
@@ -52,7 +55,9 @@ const adminListCareers = asyncHandler(async (req, res) => {
     limit,
     sort: { postedAt: -1 },
   });
-  return success(res, result.data, "Careers retrieved", 200, { pagination: result.pagination });
+  return success(res, result.data, "Careers retrieved", 200, {
+    pagination: result.pagination,
+  });
 });
 
 const adminGetCareer = asyncHandler(async (req, res) => {
@@ -74,7 +79,11 @@ const adminUpdateCareerStatus = asyncHandler(async (req, res) => {
   if (!career) throw new ApiError(404, "Career not found");
   career.status = req.body.status;
   await career.save();
-  return success(res, career, `Career ${career.status === "open" ? "opened" : "closed"}`);
+  return success(
+    res,
+    career,
+    `Career ${career.status === "open" ? "opened" : "closed"}`,
+  );
 });
 
 const adminDeleteCareer = asyncHandler(async (req, res) => {

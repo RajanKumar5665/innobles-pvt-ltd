@@ -1,6 +1,7 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react";
 import { Layers, Pencil, Plus, Search, SearchX, Trash2, Upload, X } from "lucide-react";
 import { api } from "../../lib/api";
+import { PRODUCT_CATEGORY_LABELS } from "../../config/productCategories";
 import Loader from "../../components/common/Loader";
 import StatusBadge from "../../components/admin/StatusBadge";
 import ProductImage from "../../components/product/ProductImage";
@@ -15,9 +16,9 @@ const emptyForm = () => ({
   shortDescription: "",
   description: "",
   productLink: "",
+  category: "",
   status: "draft",
 });
-
 const NAME_MAX = 200;
 const SHORT_MAX = 600;
 const DESCRIPTION_MAX = 10000;
@@ -81,6 +82,8 @@ const AdminProducts = () => {
   const [loadError, setLoadError] = useState(null);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("newest");
 
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyForm());
@@ -134,26 +137,44 @@ const AdminProducts = () => {
     load();
   }, []);
 
-  /* Search matches name and slug; filtering happens client-side using the
-     already-fetched records so the table stays snappy for admin management. */
+  /* Search matches name/slug/description/category; filtering + sorting happen
+     client-side using the already-fetched records so the table stays snappy. */
   const filteredList = useMemo(() => {
     const term = search.trim().toLowerCase();
-    return list.filter((item) => {
+    const matched = list.filter((item) => {
       const itemStatus = item.status || "draft";
       if (statusFilter !== "all" && itemStatus !== statusFilter) return false;
+      if (categoryFilter !== "all" && (item.category || "") !== categoryFilter) return false;
       if (term) {
-        const name = (item.name || "").toLowerCase();
-        const slug = (item.slug || "").toLowerCase();
-        if (!name.includes(term) && !slug.includes(term)) return false;
+        const haystack =
+          `${item.name || ""} ${item.slug || ""} ${item.description || ""} ${item.category || ""}`.toLowerCase();
+        if (!haystack.includes(term)) return false;
       }
       return true;
     });
-  }, [list, search, statusFilter]);
+    return [...matched].sort((a, b) => {
+      switch (sortBy) {
+        case "oldest":
+          return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+        case "az":
+          return (a.name || "").localeCompare(b.name || "");
+        case "za":
+          return (b.name || "").localeCompare(a.name || "");
+        default: // newest
+          return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+      }
+    });
+  }, [list, search, statusFilter, categoryFilter, sortBy]);
 
   const clearFilters = () => {
     setSearch("");
     setStatusFilter("all");
+    setCategoryFilter("all");
+    setSortBy("newest");
   };
+
+  const hasActiveFilters =
+    search.trim() !== "" || statusFilter !== "all" || categoryFilter !== "all" || sortBy !== "newest";
 
   const validateImageFile = (file) => {
     if (!file) return "";
@@ -209,6 +230,7 @@ const AdminProducts = () => {
       shortDescription: item.shortDescription || "",
       description: item.description || "",
       productLink: item.productLink || item.link || "",
+      category: item.category || "",
       status: item.status || "draft",
     });
     setErrors({});
@@ -248,6 +270,7 @@ const AdminProducts = () => {
     const name = form.name.trim();
     const short = form.shortDescription.trim();
     const desc = form.description.trim();
+    if (!form.category) errs.category = "Please select a category.";
     if (!name) errs.name = "Product name is required.";
     else if (name.length > NAME_MAX) errs.name = `Product name must be ${NAME_MAX} characters or fewer.`;
     if (!short) errs.shortDescription = "Short description is required.";
@@ -271,6 +294,7 @@ const AdminProducts = () => {
       fd.append("slug", form.slug.trim());
       fd.append("shortDescription", form.shortDescription.trim());
       fd.append("productLink", form.productLink.trim());
+      fd.append("category", form.category);
       fd.append("description", form.description.trim());
       fd.append("status", form.status);
       if (imageFile) fd.append("image", imageFile);
@@ -323,13 +347,35 @@ const AdminProducts = () => {
           <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true" />
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name or slug..." className="w-full rounded-xl border border-line bg-white py-2.5 pl-10 pr-3 text-sm text-ink placeholder-slate-400 focus:border-brand-orange focus:outline-none focus:ring-2 focus:ring-brand-orange/20" />
         </div>
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Sort products" className="rounded-xl border border-line bg-white px-3 py-2.5 text-sm font-medium text-slate-700 focus:border-brand-orange focus:outline-none">
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+          <option value="az">Name: A to Z</option>
+          <option value="za">Name: Z to A</option>
+        </select>
         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="rounded-xl border border-line bg-white px-3 py-2.5 text-sm font-medium text-slate-700 capitalize focus:border-brand-orange focus:outline-none">
           <option value="all">All Statuses</option>
           {STATUSES.map((st) => (
             <option key={st} value={st} className="capitalize">{st}</option>
           ))}
         </select>
+        <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} aria-label="Filter by category" className="max-w-[220px] rounded-xl border border-line bg-white px-3 py-2.5 text-sm font-medium text-slate-700 focus:border-brand-orange focus:outline-none">
+          <option value="all">All Categories</option>
+          {PRODUCT_CATEGORY_LABELS.map((label) => (
+            <option key={label} value={label}>{label}</option>
+          ))}
+        </select>
+        {hasActiveFilters && (
+          <button type="button" onClick={clearFilters} className="btn-ghost !py-2.5 whitespace-nowrap text-sm">
+            Clear Filters
+          </button>
+        )}
       </div>
+
+      {/* Live count for the currently active filters */}
+      <p className="mt-3 text-sm text-slate-500">
+        Showing {filteredList.length} of {list.length} products
+      </p>
 
       {showForm && (
         <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -390,6 +436,18 @@ const AdminProducts = () => {
                 <input id="slug" name="slug" value={form.slug} onChange={handleSlugChange} maxLength={NAME_MAX} placeholder="auto-generated from name" className={fieldClass(!!errors.slug)} />
                 <FieldError message={errors.slug} />
               </div>
+            </div>
+            {/* Category */}
+            <div>
+              <FieldLabel htmlFor="category" required>Category</FieldLabel>
+              <select id="category" name="category" value={form.category} onChange={handleChange} className={fieldClass(!!errors.category)}>
+                <option value="">Select a category...</option>
+                {PRODUCT_CATEGORY_LABELS.map((label) => (
+                  <option key={label} value={label}>{label}</option>
+                ))}
+              </select>
+              <p className="mt-1.5 text-xs text-slate-400">Groups this product under footer sections and filters on the Products page.</p>
+              <FieldError message={errors.category} />
             </div>
             {/* Short Description */}
             <div>
@@ -463,6 +521,7 @@ const AdminProducts = () => {
                     <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Image</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Name</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Slug</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Category</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
                     <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
                   </tr>
@@ -479,6 +538,13 @@ const AdminProducts = () => {
                         </td>
                         <td className="px-4 py-3 text-sm font-medium text-slate-900">{item.name}</td>
                         <td className="px-4 py-3 text-sm text-slate-600">{item.slug}</td>
+                        <td className="px-4 py-3 text-sm">
+                          {item.category ? (
+                            <span className="inline-block rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">{item.category}</span>
+                          ) : (
+                            <span className="text-xs text-slate-300">—</span>
+                          )}
+                        </td>
                         <td className="px-4 py-3 text-sm"><StatusBadge status={item.status || "draft"} /></td>
                         <td className="px-4 py-3 text-right text-sm">
                           <div className="flex items-center justify-end gap-3">

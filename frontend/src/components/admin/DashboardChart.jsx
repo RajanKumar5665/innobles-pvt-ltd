@@ -9,10 +9,7 @@ import {
   Legend,
 } from "recharts";
 
-/**
- * Bar chart comparing published vs draft counts for
- * Blogs, Products and Services side-by-side.
- */
+// Bar chart comparing published vs draft counts for Blogs, Products, Services.
 const DashboardChart = ({ stats }) => {
   const data = [
     {

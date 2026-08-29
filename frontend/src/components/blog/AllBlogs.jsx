@@ -3,15 +3,12 @@ import BlogPagination from "./BlogPagination";
 import BlogShare from "./BlogShare";
 import StaggerGroup, { StaggerItem } from "../common/StaggerGroup";
 
-/**
- * "All Blogs" — a single rounded container holding the paginated
- * "backend feed", a page indicator and circular pill pagination.
- * A social share strip appears beneath the pagination.
- */
+// "All Blogs" — a rounded container holding the paginated blog list,
+// a page indicator, pagination and a social share strip.
 const AllBlogs = ({ blogs = [], page = 1, totalPages = 1, onPageChange }) => {
   if (blogs.length === 0) {
     return (
-      <section id="all-blogs" aria-labelledby="all-blogs-title" className="mt-12 md:mt-16">
+      <section id="all-blogs" aria-labelledby="all-blogs-title" className="mt-12 scroll-mt-24 md:mt-16">
         <div className="blog-empty-state">
           <p className="blog-empty-state-title">No blogs available yet.</p>
           <p className="blog-empty-state-desc">
@@ -24,7 +21,7 @@ const AllBlogs = ({ blogs = [], page = 1, totalPages = 1, onPageChange }) => {
   }
 
   return (
-    <section id="all-blogs" aria-labelledby="all-blogs-title" className="mt-12 md:mt-16">
+    <section id="all-blogs" aria-labelledby="all-blogs-title" className="mt-12 scroll-mt-24 md:mt-16">
       <div className="blog-panel">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -38,12 +35,8 @@ const AllBlogs = ({ blogs = [], page = 1, totalPages = 1, onPageChange }) => {
           </span>
         </div>
 
-        {/* Top pagination — lets readers jump pages without scrolling to the bottom */}
-        {totalPages > 1 && (
-          <BlogPagination current={page} total={totalPages} onChange={onPageChange} />
-        )}
-
-        <StaggerGroup className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {/* Re-mount the grid on page changes so the stagger animation runs again. */}
+        <StaggerGroup key={page} className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {blogs.map((blog) => (
             <StaggerItem key={blog.id} className="h-full">
               <BlogPreviewCard blog={blog} />

@@ -2,10 +2,7 @@ const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 export { API_BASE };
 
-/**
- * Shared response handler for both JSON and FormData requests.
- * Parses the JSON body (if any) and throws a normalized Error on failure.
- */
+// Reads the JSON response and throws a normal error on failure.
 async function handleResponse(res) {
   const data = await res.json().catch(() => ({}));
 
@@ -20,9 +17,7 @@ async function handleResponse(res) {
   return data;
 }
 
-/**
- * Core request function for JSON payloads (GET/POST/PUT/PATCH/DELETE).
- */
+// Sends a JSON request (GET/POST/PUT/PATCH/DELETE).
 async function request(path, options = {}) {
   const url = `${API_BASE}${path}`;
 
@@ -45,10 +40,8 @@ async function request(path, options = {}) {
   return handleResponse(res);
 }
 
-/**
- * Upload a multipart/form-data payload (file uploads).
- * Content-Type is NOT set manually so the browser sets the correct boundary.
- */
+// Sends a file upload (multipart/form-data).
+// Content-Type is left to the browser so it sets the right boundary.
 async function requestForm(path, options = {}) {
   const url = `${API_BASE}${path}`;
 
@@ -68,7 +61,7 @@ async function requestForm(path, options = {}) {
   return handleResponse(res);
 }
 
-/** Builds a query string from a plain object, skipping empty/undefined values. */
+// Builds a query string, skipping empty/undefined values.
 function toQueryString(params = {}) {
   const query = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {

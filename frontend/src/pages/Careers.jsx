@@ -133,6 +133,7 @@ const Careers = () => {
           options={{ department: departments, location: locations, type: types }}
           onChange={handleChange}
           onSubmit={handleApply}
+          onClear={clearFilters}
         />
       </section>
 

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Seo from "../components/seo/Seo";
 import Loader from "../components/common/Loader";
 import BlogHero from "../components/blog/BlogHero";
@@ -8,10 +8,7 @@ import { useBlogs } from "../hooks/useBlogs";
 
 const POSTS_PER_PAGE = 6;
 
-/**
- * Blog landing page — hero card → recent blogs → paginated "all blogs"
- * feed. Data flows through the existing Redux "backend" feed (useBlogs).
- */
+// Blog landing page — hero, recent blogs, then a paginated "all blogs" feed.
 const Blog = () => {
   const { list, recent, status, error } = useBlogs();
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,8 +20,14 @@ const Blog = () => {
     [activePage, list],
   );
 
+  // If the feed shrinks below the current page, go back to the last page.
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(totalPages);
+  }, [currentPage, totalPages]);
+
   const changePage = (page) => {
     setCurrentPage(page);
+    // Scroll to the feed so the sticky header does not hide the heading.
     document.getElementById("all-blogs")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 

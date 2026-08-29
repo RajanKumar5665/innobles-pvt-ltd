@@ -29,7 +29,7 @@ src/
 ├── components/
 │   ├── common/             # Navbar, Footer, Button, Loader, Reveal, SectionHeading, ScrollToTop
 │   ├── forms/              # ContactForm (validated, redux-dispatched)
-│   ├── home/               # Hero, ServiceGrid, Projects, Testimonials, Blog, CTA, etc.
+│   ├── home/               # Hero, ServiceGrid, Projects, Blog, CTA, etc.
 │   └── seo/                # Seo component (per-page meta tags)
 ├── config/                 # siteConfig.js — one place for brand/contact/nav data
 ├── data/                   # dummyData.js — services, projects, team, careers, blogs, FAQs

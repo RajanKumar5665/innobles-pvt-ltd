@@ -13,10 +13,8 @@ import Contact from "../pages/Contact";
 import NotFound from "../pages/NotFound";
 import AdminRoutes from "./AdminRoutes";
 
-/**
- * Central route map. `MainLayout` wraps every page and renders <Outlet />,
- * so the Navbar + Footer stay consistent while only the page body swaps.
- */
+// Central routing — every URL maps to a page here.
+// MainLayout wraps each page so the Navbar + Footer stay fixed.
 const AppRoutes = () => {
   return (
     <Routes>

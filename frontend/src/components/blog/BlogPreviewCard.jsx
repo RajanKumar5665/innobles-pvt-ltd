@@ -3,13 +3,8 @@ import { ArrowRight, CalendarDays } from "lucide-react";
 import BlogImage from "./BlogImage";
 import { stripHtml } from "../../lib/richText";
 
-/**
- * Modern, consistent blog card — used on the homepage blog preview and the
- * blog detail "related reads". Matches the Service / Product card design
- * system (same surface, radius, image aspect, spacing, CTA). Entrance
- * staggering is applied by the parent StaggerGroup wrapper, never here, so the
- * CSS hover lift / image zoom on this card always work.
- */
+// Reusable blog card used on the home preview and blog detail "related reads".
+// Entrance animation comes from the parent <StaggerGroup>, not here.
 const BlogPreviewCard = ({ blog, showCategory = true }) => {
   const href = `/blog/${blog.slug}`;
 

@@ -23,7 +23,10 @@ const cookieOptions = () => {
 const register = asyncHandler(async (req, res) => {
   const configuredSecret = process.env.ADMIN_SETUP_SECRET;
   if (!configuredSecret) {
-    throw new ApiError(500, "ADMIN_SETUP_SECRET is not configured on the server");
+    throw new ApiError(
+      500,
+      "ADMIN_SETUP_SECRET is not configured on the server",
+    );
   }
 
   if (req.headers["x-admin-setup-secret"] !== configuredSecret) {
@@ -43,7 +46,12 @@ const register = asyncHandler(async (req, res) => {
 
   return success(
     res,
-    { id: admin._id.toString(), name: admin.name, email: admin.email, role: admin.role },
+    {
+      id: admin._id.toString(),
+      name: admin.name,
+      email: admin.email,
+      role: admin.role,
+    },
     "Admin created successfully",
     201,
   );
@@ -52,7 +60,8 @@ const register = asyncHandler(async (req, res) => {
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const admin = await Admin.findOne({ email }).select("+password");
-  const passwordMatches = admin && (await bcrypt.compare(password, admin.password));
+  const passwordMatches =
+    admin && (await bcrypt.compare(password, admin.password));
 
   // Keep the message generic — don't reveal whether the email exists.
   if (!admin || !admin.isActive || !passwordMatches) {
@@ -67,7 +76,12 @@ const login = asyncHandler(async (req, res) => {
 
   return success(
     res,
-    { id: admin._id.toString(), name: admin.name, email: admin.email, role: admin.role },
+    {
+      id: admin._id.toString(),
+      name: admin.name,
+      email: admin.email,
+      role: admin.role,
+    },
     "Login successful",
   );
 });
@@ -77,6 +91,7 @@ const logout = (req, res) => {
   return success(res, null, "Logged out successfully");
 };
 
-const me = (req, res) => success(res, req.admin, "Authenticated admin information");
+const me = (req, res) =>
+  success(res, req.admin, "Authenticated admin information");
 
 export default { register, login, logout, me };

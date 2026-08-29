@@ -1,4 +1,4 @@
-/** Build a windowed list of page numbers matching the reference (e.g. ‹ 1 2 3 4 … 8 ›). */
+// Builds a windowed list of page numbers (e.g. ‹ 1 2 3 4 … 8 ›).
 const getPageItems = (current, total) => {
   if (total <= 4) return Array.from({ length: total }, (_, i) => i + 1);
   const windowSize = 4;
@@ -19,10 +19,7 @@ const getPageItems = (current, total) => {
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-/**
- * Circular pill pagination — ‹/› arrows and numbered pages.
- * Active page uses the orange filled circle.
- */
+// Pagination with ‹/› arrows and numbered pill buttons. Active page is orange.
 const BlogPagination = ({ current = 1, total = 1, onChange }) => {
   const items = getPageItems(current, total);
   const goPrev = () => onChange?.(Math.max(1, current - 1));

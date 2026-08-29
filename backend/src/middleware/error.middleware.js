@@ -25,13 +25,18 @@ const errorHandler = (err, req, res, next) => {
   } else if (err instanceof mongoose.Error.CastError) {
     statusCode = 400;
     message = "Invalid id format";
-    errors = [{ field: err.path || "id", message: "Invalid identifier provided" }];
+    errors = [
+      { field: err.path || "id", message: "Invalid identifier provided" },
+    ];
   } else if (err.code === 11000) {
     statusCode = 409;
     message = "Duplicate value";
     const field = Object.keys(err.keyValue || {})[0];
     errors = [{ field, message: `${field} already exists` }];
-  } else if (err instanceof jwt.JsonWebTokenError || err instanceof jwt.TokenExpiredError) {
+  } else if (
+    err instanceof jwt.JsonWebTokenError ||
+    err instanceof jwt.TokenExpiredError
+  ) {
     statusCode = 401;
     message = "Invalid or expired token";
   } else if (err instanceof MulterError) {

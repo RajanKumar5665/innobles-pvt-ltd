@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
-/** Smoothly scrolls to the top whenever the route changes. */
+// Scrolling to the top whenever the route changes.
 export const useScrollToTop = () => {
   const { pathname } = useLocation();
 

@@ -1,13 +1,4 @@
-/**
- * ContentStatCard — combines all the stats for one content type
- * into a single compact card.
- *
- * props:
- * - title:   content type heading (e.g. "Blogs")
- * - icon:    optional lucide icon component
- * - color:   accent color classes (e.g. "bg-brand-orange")
- * - stats:   array of { label, value, dot } rows shown together
- */
+// Compact card showing all the stats for one content type.
 const ContentStatCard = ({ title, icon: Icon, color = "bg-brand-orange", stats = [] }) => {
   const IconColor = color.replace("bg-", "text-");
 

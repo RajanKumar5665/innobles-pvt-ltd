@@ -1,8 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-/**
- * Build a compact page-item list with ellipses for large page counts.
- */
+// Builds a compact page-number list with ellipses for large counts.
 const getPageItems = (current, total) => {
   if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
   const items = [1];
@@ -15,9 +13,7 @@ const getPageItems = (current, total) => {
   return items;
 };
 
-/**
- * Pagination — Previous / numbered pages / Next. Orange circle for the active page.
- */
+// Pagination — Previous / numbered pages / Next. Active page is orange.
 const JobPagination = ({ current, total, onChange }) => {
   const items = getPageItems(current, total);
   const goPrev = () => onChange(Math.max(1, current - 1));

@@ -4,16 +4,7 @@ import { useRecentBlogs } from "../../hooks/useRecentBlogs";
 
 const CARD_LIMIT = 3;
 
-/**
- * Homepage "Latest Insights / Blog Preview" section.
- *
- * Shows the 3 most-recent published blogs from the existing /blogs API (same
- * data managed through the Admin panel) inside the shared `ContentShowcase`
- * shell (centered header + staggered 3-column grid + consistent CTA).
- * "View All Blogs" navigates to the existing blog listing page (/blog), and
- * each card opens the existing blog detail route (/blog/:slug).
- * No blog system is duplicated.
- */
+// Home page "Latest Insights" section — shows the 3 newest published blogs.
 const BlogPreview = () => {
   const { list, status, error } = useRecentBlogs(CARD_LIMIT);
 

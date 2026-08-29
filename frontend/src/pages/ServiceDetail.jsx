@@ -5,10 +5,7 @@ import Loader from "../components/common/Loader";
 import ServiceBanner from "../components/service/ServiceBanner";
 import { useServices } from "../hooks/useServices";
 
-/**
- * Service detail page — shows the full service data (the card only previews it).
- * Renders the long description here, never on the listing card.
- */
+// Service detail page — shows everything about one service.
 const ServiceDetail = () => {
   const { id } = useParams();
   const { list, status, error } = useServices();

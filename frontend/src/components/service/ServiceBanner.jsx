@@ -1,15 +1,7 @@
 import { useState } from "react";
 import { Image as ImageIcon } from "lucide-react";
 
-/**
- * Service banner image that renders the backend-provided `bannerImage` URL.
- *
- * - Renders a landscape `object-cover` image so crops stay consistent.
- * - If the URL is missing / empty / fails to load it shows a clean, neutral
- *   placeholder (matching the card surface) instead of a broken-image icon —
- *   it never shows a hard-coded stock image.
- * - Parent must supply sizing (e.g. `h-full w-full object-cover`) via className.
- */
+
 const ServiceBanner = ({ src, alt = "", className = "", ...rest }) => {
   const [failed, setFailed] = useState(false);
   const validSrc = src && !failed;

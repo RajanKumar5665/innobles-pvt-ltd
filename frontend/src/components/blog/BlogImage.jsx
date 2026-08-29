@@ -1,12 +1,8 @@
 import { useState } from "react";
 import { Image as ImageIcon } from "lucide-react";
 
-/**
- * Blog image that renders the backend-provided URL. When there is no
- * usable image (empty / missing / broken URL) it shows a clean, neutral
- * placeholder (matching the shared card surface) instead of falling back to a
- * hard-coded stock photo, so cards never display dummy imagery.
- */
+// Shows the blog image. If the image is missing or broken, shows a neutral
+// placeholder instead of a dummy photo.
 const BlogImage = ({ src, alt = "", className = "", ...rest }) => {
   const [failed, setFailed] = useState(false);
   const validSrc = src && !failed;

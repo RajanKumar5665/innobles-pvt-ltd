@@ -5,6 +5,32 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError, success } from "../utils/apiResponse.js";
 import { uploadSingle, deleteByPublicId } from "../config/cloudinary.js";
 
+/* ----------------------------------------------------------------------------
+ * Publish guard
+ * A blog can only be marked "published" if the fields needed to show a full
+ * public card / article are filled.
+ * -------------------------------------------------------------------------- */
+const PUBLISH_REQUIRED = [
+  { field: "title", label: "Title" },
+  { field: "category", label: "Category" },
+  { field: "description", label: "Description" },
+  { field: "content", label: "Content" },
+];
+
+const stripHtmlTags = (html = "") => String(html).replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").trim();
+
+// Throw a 400 when a blog being published is missing a required field.
+const assertPublishable = (payload) => {
+  const missing = PUBLISH_REQUIRED.filter(({ field }) => !stripHtmlTags(payload[field]));
+  if (missing.length) {
+    const labels = missing.map((m) => m.label);
+    throw new ApiError(
+      400,
+      `Cannot publish: ${labels.join(", ")} ${labels.length > 1 ? "are required" : "is required"}.`,
+    );
+  }
+};
+
 // Public
 
 const getPublicBlogs = asyncHandler(async (req, res) => {
@@ -43,6 +69,9 @@ const adminCreateBlog = asyncHandler(async (req, res) => {
     const { url } = await uploadSingle({ buffer: req.files.authorAvatar[0].buffer, folder: "innobles/avatars" });
     payload.authorAvatar = url;
   }
+
+  // Never allow an incomplete blog to go straight to "published".
+  if (payload.status === "published") assertPublishable(payload);
 
   const blog = await Blog.create({
     ...payload,
@@ -108,6 +137,12 @@ const adminUpdateBlog = asyncHandler(async (req, res) => {
     payload.publishedAt = null;
   }
 
+  // Guard against an incomplete blog being (re)published via an update.
+  const effectiveStatus = payload.status ?? blog.status;
+  if (effectiveStatus === "published") {
+    assertPublishable({ ...blog.toObject(), ...payload });
+  }
+
   Object.assign(blog, payload);
   await blog.save();
   return success(res, blog, "Blog updated");
@@ -116,6 +151,9 @@ const adminUpdateBlog = asyncHandler(async (req, res) => {
 const adminUpdateBlogStatus = asyncHandler(async (req, res) => {
   const blog = await Blog.findById(req.params.id);
   if (!blog) throw new ApiError(404, "Blog not found");
+
+  // Prevent publishing an incomplete blog from the list view.
+  if (req.body.status === "published") assertPublishable(blog.toObject());
 
   blog.status = req.body.status;
   if (blog.status === "published" && !blog.publishedAt) blog.publishedAt = new Date();

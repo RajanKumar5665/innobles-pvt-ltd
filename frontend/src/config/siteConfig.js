@@ -1,8 +1,5 @@
-/**
- * Central site configuration.
- * Change things in ONE place — brand name, contact details, links, socials —
- * and it updates everywhere across the site.
- */
+// Central site config. Change brand info, links and socials here once,
+// and it updates everywhere on the site.
 export const siteConfig = {
   name: "Innobles",
   legalName: "Innobles Smart Technologies Pvt. Ltd.",
@@ -10,14 +7,13 @@ export const siteConfig = {
   description:
     "Innobles builds web platforms, mobile apps, cloud infra and AI-driven systems for businesses that want to move faster than their market.",
   url: "https://www.innobles.in",
-  email: "info@innobles.in",
-  phone: "+91 98765 43210",
-  address: "5th Floor, Tech Park One, Salt Lake Sector V, Kolkata, West Bengal 700091, India",
+  email: "contact@innobles.com",
+  phone: "+91-9811557712",
+  address: "X-15, 1st Floor, Hauz Khas, New Delhi – 110016, India",
   socials: {
+    // Only link profiles that actually exist. LinkedIn is confirmed; the rest
+    // are removed until real profiles are available.
     linkedin: "https://linkedin.com/company/innobles",
-    twitter: "https://twitter.com/innobles",
-    github: "https://github.com/innobles",
-    instagram: "https://instagram.com/innobles",
   },
 };
 

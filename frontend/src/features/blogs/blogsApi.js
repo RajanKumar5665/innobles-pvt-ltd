@@ -8,10 +8,7 @@ const toDate = (value) => {
 };
 
 export const fetchBlogsApi = async (options = {}) => {
-  // `?limit=` is optional — used by the homepage preview to fetch only the N
-  // most-recent published articles. When omitted we keep the original
-  // full-newest-first behaviour (up to the 50 record cap) so the client-side
-  // pager on /blog still has the complete published set to slice.
+  // ?limit is optional. Pass it to fetch only the newest N blogs (home page preview).
   const params = new URLSearchParams();
   const limit = options.limit ?? 50;
   if (limit) params.set("limit", String(limit));

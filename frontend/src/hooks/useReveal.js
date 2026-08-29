@@ -1,9 +1,7 @@
 import { useEffect, useRef } from "react";
 
-/**
- * Adds the `revealed` class to an element once it enters the viewport,
- * triggering the CSS transition (fade/translate). Respects reduced-motion.
- */
+// Adds the "revealed" class when the element scrolls into view.
+// This triggers the CSS fade/translate animation.
 export const useReveal = (options = {}) => {
   const ref = useRef(null);
 

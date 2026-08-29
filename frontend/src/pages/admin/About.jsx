@@ -6,13 +6,8 @@ import { TeamSection } from "../../components/about/admin/TeamSection";
 import { LocationsSection } from "../../components/about/admin/LocationsSection";
 import { StatisticsSection } from "../../components/about/admin/StatisticsSection";
 
-/**
- * About Us admin panel.
- *
- * Only the dynamic sections are managed here — Team, Locations and Statistics.
- * The general/intro copy is intentionally static (hardcoded on the public About
- * page) and has no management UI, matching the "General stays static" rule.
- */
+// About Us admin panel. Manages the dynamic Team, Locations and Statistics
+// sections. General/intro copy stays static on the public page.
 const TABS = [
   { id: "team", label: "Team", icon: Users },
   { id: "locations", label: "Locations", icon: MapPin },

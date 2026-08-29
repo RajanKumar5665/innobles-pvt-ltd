@@ -6,11 +6,7 @@ import Reveal from "../common/Reveal";
 
 const CARD_LIMIT = 3;
 
-/**
- * Shared skeleton card — mirrors the `.content-card` surface exactly, so the
- * loading state matches the real Service / Product / Blog cards (same radius,
- * border, shadow, 16:9 image band and content rhythm).
- */
+// Loading placeholder that looks like the real card.
 const CardSkeleton = () => (
   <div className="content-card h-full">
     <div className="aspect-[16/9] w-full shrink-0 animate-pulse bg-slate-200" />
@@ -26,20 +22,8 @@ const CardSkeleton = () => (
   </div>
 );
 
-/**
- * One reusable showcase section for the homepage Services / Products / Blog
- * previews.
- *
- * All three sections render through this exact shell so they share the same:
- *   - section padding & container (`container-x`)
- *   - CENTERED header (eyebrow → heading → description via `SectionHeader`)
- *   - staggered 3-column card grid (`StaggerGroup` / `StaggerItem`)
- *   - loading skeleton, error and empty states
- *   - centered "View All" CTA (`btn-ghost` + arrow, revealed on scroll)
- *
- * Data fetching stays in each section component — this only receives the
- * already-fetched list/status and a `renderCard` function for the grid items.
- */
+// One reusable section for the home page Services / Products / Blog previews.
+// Shows a heading, the cards, and a "View All" button.
 const ContentShowcase = ({
   sectionClassName = "bg-white",
   eyebrow,
@@ -52,6 +36,7 @@ const ContentShowcase = ({
   renderCard,
   cta, // { to, label } — optional centered "View All" button
 }) => {
+  // Show only the first 3 items on the home page.
   const visible = (list || []).slice(0, CARD_LIMIT);
 
   return (

@@ -23,17 +23,24 @@ const serialize = (doc, { publicOnly = false } = {}) => ({
   teamMembers: sortByOrder(doc.teamMembers),
   locations: sortByOrder(doc.locations),
   statistics: sortByOrder(
-    publicOnly ? doc.statistics.filter((s) => s.active !== false) : doc.statistics,
+    publicOnly
+      ? doc.statistics.filter((s) => s.active !== false)
+      : doc.statistics,
   ),
 });
 
-const findIndex = (arr, id) => arr.findIndex((item) => item._id.toString() === id);
+const findIndex = (arr, id) =>
+  arr.findIndex((item) => item._id.toString() === id);
 
 // Public
 
 const getPublicAbout = asyncHandler(async (req, res) => {
   const doc = await getDoc();
-  return success(res, serialize(doc, { publicOnly: true }), "About content retrieved");
+  return success(
+    res,
+    serialize(doc, { publicOnly: true }),
+    "About content retrieved",
+  );
 });
 
 // Admin
@@ -58,7 +65,10 @@ const adminCreateTeamMember = asyncHandler(async (req, res) => {
 
   let image = null;
   if (req.file) {
-    image = await uploadSingle({ buffer: req.file.buffer, folder: IMAGE_FOLDER });
+    image = await uploadSingle({
+      buffer: req.file.buffer,
+      folder: IMAGE_FOLDER,
+    });
   }
 
   const member = {
@@ -71,7 +81,12 @@ const adminCreateTeamMember = asyncHandler(async (req, res) => {
   };
   doc.teamMembers.push(member);
   await doc.save();
-  return success(res, doc.teamMembers[doc.teamMembers.length - 1], "Team member added", 201);
+  return success(
+    res,
+    doc.teamMembers[doc.teamMembers.length - 1],
+    "Team member added",
+    201,
+  );
 });
 
 const adminUpdateTeamMember = asyncHandler(async (req, res) => {
@@ -82,14 +97,18 @@ const adminUpdateTeamMember = asyncHandler(async (req, res) => {
 
   if (req.file) {
     if (member.image?.publicId) await deleteByPublicId(member.image.publicId);
-    member.image = await uploadSingle({ buffer: req.file.buffer, folder: IMAGE_FOLDER });
+    member.image = await uploadSingle({
+      buffer: req.file.buffer,
+      folder: IMAGE_FOLDER,
+    });
   } else if (req.body.imageRemoved === "true") {
     if (member.image?.publicId) await deleteByPublicId(member.image.publicId);
     member.image = null;
   }
   if (req.body.name !== undefined) member.name = req.body.name;
   if (req.body.role !== undefined) member.role = req.body.role;
-  if (req.body.description !== undefined) member.description = req.body.description;
+  if (req.body.description !== undefined)
+    member.description = req.body.description;
   if (req.body.linkedin !== undefined) member.linkedin = req.body.linkedin;
 
   await doc.save();
@@ -135,7 +154,10 @@ const adminCreateLocation = asyncHandler(async (req, res) => {
 
   let image = null;
   if (req.file) {
-    image = await uploadSingle({ buffer: req.file.buffer, folder: IMAGE_FOLDER });
+    image = await uploadSingle({
+      buffer: req.file.buffer,
+      folder: IMAGE_FOLDER,
+    });
   }
 
   const location = {
@@ -151,7 +173,12 @@ const adminCreateLocation = asyncHandler(async (req, res) => {
   };
   doc.locations.push(location);
   await doc.save();
-  return success(res, doc.locations[doc.locations.length - 1], "Location added", 201);
+  return success(
+    res,
+    doc.locations[doc.locations.length - 1],
+    "Location added",
+    201,
+  );
 });
 
 const adminUpdateLocation = asyncHandler(async (req, res) => {
@@ -161,10 +188,15 @@ const adminUpdateLocation = asyncHandler(async (req, res) => {
   const location = doc.locations[idx];
 
   if (req.file) {
-    if (location.image?.publicId) await deleteByPublicId(location.image.publicId);
-    location.image = await uploadSingle({ buffer: req.file.buffer, folder: IMAGE_FOLDER });
+    if (location.image?.publicId)
+      await deleteByPublicId(location.image.publicId);
+    location.image = await uploadSingle({
+      buffer: req.file.buffer,
+      folder: IMAGE_FOLDER,
+    });
   } else if (req.body.imageRemoved === "true") {
-    if (location.image?.publicId) await deleteByPublicId(location.image.publicId);
+    if (location.image?.publicId)
+      await deleteByPublicId(location.image.publicId);
     location.image = null;
   }
   if (req.body.city !== undefined) location.city = req.body.city;
@@ -173,7 +205,8 @@ const adminUpdateLocation = asyncHandler(async (req, res) => {
   if (req.body.phone !== undefined) location.phone = req.body.phone;
   if (req.body.email !== undefined) location.email = req.body.email;
   if (req.body.mapLink !== undefined) location.mapLink = req.body.mapLink;
-  if (req.body.description !== undefined) location.description = req.body.description;
+  if (req.body.description !== undefined)
+    location.description = req.body.description;
 
   await doc.save();
   return success(res, location, "Location updated");
@@ -223,7 +256,12 @@ const adminCreateStatistic = asyncHandler(async (req, res) => {
   };
   doc.statistics.push(statistic);
   await doc.save();
-  return success(res, doc.statistics[doc.statistics.length - 1], "Statistic added", 201);
+  return success(
+    res,
+    doc.statistics[doc.statistics.length - 1],
+    "Statistic added",
+    201,
+  );
 });
 
 const adminUpdateStatistic = asyncHandler(async (req, res) => {

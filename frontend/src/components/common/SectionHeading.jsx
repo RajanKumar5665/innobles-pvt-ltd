@@ -1,8 +1,6 @@
 import Reveal from "./Reveal";
 
-/**
- * Consistent section heading: eyebrow pill + title + optional subtitle.
- */
+// Section heading: eyebrow pill + title + optional subtitle.
 const SectionHeading = ({ eyebrow, title, subtitle, align = "left" }) => {
   const alignment = align === "center" ? "text-center mx-auto" : "text-left";
   const innerAlign = align === "center" ? "justify-center" : "";

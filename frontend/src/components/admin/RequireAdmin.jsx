@@ -8,11 +8,8 @@ import {
 } from "../../features/auth/authThunks";
 import Loader from "../common/Loader";
 
-/**
- * Guards admin routes. While the auth-check is in flight it shows a
- * centred spinner. If the check fails (no valid session) it redirects
- * to /admin/login.
- */
+// Guards admin routes. Shows a spinner while checking the session,
+// and redirects to /admin/login if there is no valid session.
 const RequireAdmin = ({ children }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -25,7 +22,7 @@ const RequireAdmin = ({ children }) => {
     }
   }, [dispatch, navigate, status]);
 
-  // Still loading — check whether we have a session.
+  // Still loading — check if we have a session.
   if (status === "loading" && !isAuthenticated) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-900">
@@ -34,7 +31,7 @@ const RequireAdmin = ({ children }) => {
     );
   }
 
-  // If after checking we still have no session, the redirect is happening.
+  // No session after checking — the redirect is already happening.
   if (!isAuthenticated && status === "error") {
     return null;
   }

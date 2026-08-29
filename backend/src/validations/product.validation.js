@@ -6,6 +6,18 @@ const imageObject = Joi.object({
   publicId: Joi.string().allow("", null),
 });
 
+// Must match the category labels in frontend/src/config/productCategories.js.
+const PRODUCT_CATEGORY_LABELS = [
+  "Collections",
+  "Disbursements",
+  "Treasury & Finance",
+  "Bank Instruments",
+  "Procurement",
+  "Governance & Citizen Services",
+  "Sector Solutions",
+  "Workforce & Operations",
+];
+
 const baseProduct = {
   name: Joi.string().trim().min(2).max(200).required().messages({
     "any.required": "Name is required",
@@ -17,6 +29,14 @@ const baseProduct = {
   description: Joi.string().trim().min(1).required().messages({
     "any.required": "Description is required",
   }),
+  // Category uses a controlled value so duplicate/incorrect spellings are
+  // rejected instead of silently creating new categories.
+  category: Joi.string()
+    .trim()
+    .valid(...PRODUCT_CATEGORY_LABELS)
+    .allow("")
+    .default("")
+    .messages({ "any.only": "Please select a valid product category" }),
   // Optional external link — an empty string / missing value is allowed.
   productLink: Joi.string().trim().uri().allow("", null).max(500),
   link: Joi.string().trim().uri().allow("", null).max(500),
@@ -34,6 +54,7 @@ const updateProduct = Joi.object({
   slug: baseProduct.slug,
   shortDescription: baseProduct.shortDescription.optional(),
   description: baseProduct.description.optional(),
+  category: baseProduct.category,
   productLink: baseProduct.productLink,
   link: baseProduct.link,
   image: baseProduct.image,
@@ -48,6 +69,7 @@ const productStatusSchema = Joi.object({
 const productQuerySchema = pagination.keys({
   search: Joi.string().trim().allow(""),
   status: Joi.string().valid("draft", "published"),
+  category: Joi.string().trim().allow(""),
 });
 
 export { createProduct, updateProduct, productStatusSchema, productQuerySchema };

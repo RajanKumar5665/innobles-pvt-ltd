@@ -1,21 +1,12 @@
 import { api } from "../../lib/api";
 
-/**
- * Fetch published products from the public API.
- *
- * The backend already sorts by `createdAt` descending (newest first) and
- * accepts `?limit=` / `?page=` query params (see productQuerySchema + paginate).
- *
- * Pass `{ limit }` to fetch only the N most-recent records (used by the
- * homepage highlight section). Omit it to fetch the full published set
- * (used by the Products listing / detail pages via the shared Redux slice).
- *
- * Backward-compatible: existing callers that pass no arguments still get the
- * default backend behaviour (all published products, newest-first).
- */
+// Fetches published products from the public API.
+// Pass { limit } to get only the N newest (home page preview).
+// Otherwise we request up to 50 so the /products pager has the full set.
 export const fetchProductsApi = async (options = {}) => {
   const params = new URLSearchParams();
-  if (options.limit) params.set("limit", String(options.limit));
+  const limit = options.limit ?? 50;
+  if (limit) params.set("limit", String(limit));
   const query = params.toString();
 
   const response = await api.get(`/products${query ? `?${query}` : ""}`);
@@ -26,10 +17,11 @@ export const fetchProductsApi = async (options = {}) => {
     title: item.name || "Untitled Product",
     shortDescription: item.shortDescription || "",
     description: item.description || "",
-    // Backend stores the Cloudinary asset as `image: { url, publicId }`.
-    // We surface the URL and also fall back to the legacy `images` gallery.
+    // Category label stored on the product (empty for existing/uncategorized).
+    category: item.category || "",
+    createdAt: item.createdAt || "",
+    // Backend stores the image as { url, publicId }; fall back to the images gallery.
     image: item.image?.url || item.images?.[0]?.url || "",
-    // Optional external link — the internal detail page is the main destination.
     productLink: item.productLink || item.link || "",
     status: item.status || "draft",
   }));

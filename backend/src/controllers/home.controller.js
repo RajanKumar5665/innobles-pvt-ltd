@@ -34,7 +34,8 @@ const adminUpdateHome = asyncHandler(async (req, res) => {
   const payload = { ...req.body };
 
   // Multipart form data sends nested fields as JSON strings — parse them back.
-  const parseIfString = (val) => (typeof val === "string" ? JSON.parse(val) : val);
+  const parseIfString = (val) =>
+    typeof val === "string" ? JSON.parse(val) : val;
   payload.hero = parseIfString(payload.hero);
   payload.highlights = parseIfString(payload.highlights);
   payload.featuredProducts = parseIfString(payload.featuredProducts);
@@ -43,8 +44,12 @@ const adminUpdateHome = asyncHandler(async (req, res) => {
 
   // Replace the hero image when a new file is uploaded.
   if (req.file) {
-    const asset = await uploadSingle({ buffer: req.file.buffer, folder: "innobles/home" });
-    if (content?.hero?.image?.publicId) await deleteByPublicId(content.hero.image.publicId);
+    const asset = await uploadSingle({
+      buffer: req.file.buffer,
+      folder: "innobles/home",
+    });
+    if (content?.hero?.image?.publicId)
+      await deleteByPublicId(content.hero.image.publicId);
     payload.hero = { ...(payload.hero || {}), image: asset };
   }
 

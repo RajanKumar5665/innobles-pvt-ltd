@@ -19,6 +19,14 @@ const productSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    // Product category (one of the shared category labels, e.g. "Collections").
+    // Kept as a plain string so it stays easy to filter and read; the admin
+    // form uses a controlled dropdown so arbitrary spellings are avoided.
+    category: {
+      type: String,
+      trim: true,
+      default: "",
+    },
     description: {
       type: String,
       default: "",

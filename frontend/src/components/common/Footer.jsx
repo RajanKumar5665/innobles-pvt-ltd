@@ -1,16 +1,13 @@
 import { Link } from "react-router-dom";
 import { Mail, MapPin, Phone } from "lucide-react";
-import { FaGithub, FaInstagram, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
+import { FaLinkedinIn } from "react-icons/fa6";
 import BrandLogo from "./BrandLogo";
 import FooterParticles from "./FooterParticles";
-import { contactInfo, navLinks, siteConfig } from "../../config/siteConfig";
-import { services } from "../../data/dummyData";
+import { contactInfo, siteConfig } from "../../config/siteConfig";
+import { PRODUCT_CATEGORIES } from "../../config/productCategories";
 
 const socialIcons = [
   { label: "LinkedIn", url: siteConfig.socials.linkedin, Icon: FaLinkedinIn },
-  { label: "Twitter (X)", url: siteConfig.socials.twitter, Icon: FaXTwitter },
-  { label: "GitHub", url: siteConfig.socials.github, Icon: FaGithub },
-  { label: "Instagram", url: siteConfig.socials.instagram, Icon: FaInstagram },
 ];
 
 const contactIcons = {
@@ -18,6 +15,24 @@ const contactIcons = {
   Phone: Phone,
   Office: MapPin,
 };
+
+// Company column (footer labels — "Products" here, "Product" on the navbar).
+const companyLinks = [
+  { label: "Home", path: "/" },
+  { label: "Services", path: "/services" },
+  { label: "Products", path: "/products" },
+  { label: "Careers", path: "/careers" },
+  { label: "Blog", path: "/blog" },
+  { label: "About Us", path: "/about" },
+];
+
+// Product categories — taken from the shared source so the footer and the
+// Products page always stay in sync. Each category links to the products page
+// with its category pre-selected.
+const productLinks = PRODUCT_CATEGORIES.map((c) => ({
+  label: c.label,
+  hash: c.id,
+}));
 
 const Footer = () => {
   return (
@@ -32,8 +47,9 @@ const Footer = () => {
               <BrandLogo className="text-2xl" />
             </Link>
             <p className="footer-copy mt-4 max-w-xs text-sm leading-relaxed">
-              {siteConfig.tagline} We help businesses move faster with thoughtful software, AI, and
-              cloud solutions.
+              Innobles builds and operates digital platforms for government
+              departments, PSUs and institutions — software for the processes
+              where accountability matters.
             </p>
             <div className="footer-social">
               {socialIcons.map(({ label, url, Icon }) => (
@@ -54,7 +70,7 @@ const Footer = () => {
           <div className="lg:col-span-2">
             <h3 className="footer-heading">Company</h3>
             <ul className="footer-list">
-              {navLinks.map((link) => (
+              {companyLinks.map((link) => (
                 <li key={link.path}>
                   <Link to={link.path}>{link.label}</Link>
                 </li>
@@ -63,11 +79,11 @@ const Footer = () => {
           </div>
 
           <div className="lg:col-span-3">
-            <h3 className="footer-heading">Services</h3>
+            <h3 className="footer-heading">Products</h3>
             <ul className="footer-list">
-              {services.map((service) => (
-                <li key={service.id}>
-                  <Link to="/services">{service.title}</Link>
+              {productLinks.map((link) => (
+                <li key={link.hash}>
+                  <Link to={`/products?category=${link.hash}`}>{link.label}</Link>
                 </li>
               ))}
             </ul>
@@ -102,7 +118,7 @@ const Footer = () => {
       <div className="footer-content footer-bottom">
         <div className="container-x py-6 text-center text-sm">
           <span>
-            © {new Date().getFullYear()} {siteConfig.legalName}. All rights reserved.
+            © 2026 Innobles Smart Technologies Private Limited. All rights reserved.
           </span>
         </div>
       </div>

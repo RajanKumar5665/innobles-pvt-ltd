@@ -1,9 +1,6 @@
 import { motion } from "framer-motion";
 
-/**
- * Consistent, animated section heading: eyebrow pill + title + optional
- * subtitle. Fades/slides in when the section scrolls into view.
- */
+// Consistent animated section heading: eyebrow pill + title + optional subtitle.
 const SectionHeader = ({ eyebrow, title, subtitle, align = "left", id, as = "h2" }) => {
   const center = align === "center";
   const Heading = as;

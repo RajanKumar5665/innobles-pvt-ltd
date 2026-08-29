@@ -2,13 +2,7 @@ import { useState } from "react";
 import { Copy, Check } from "lucide-react";
 import { FaLinkedinIn, FaFacebook, FaSquareXTwitter } from "react-icons/fa6";
 
-/**
- * Social share strip — lets readers share a blog on LinkedIn, Facebook,
- * Twitter (X) or copy a direct link.
- *
- * `url`   — the URL that gets shared (defaults to the current page).
- * `title` — pre-filled tweet / LinkedIn text (defaults to document title).
- */
+// Social share strip — LinkedIn, Facebook, Twitter (X) or copy link.
 const BlogShare = ({ url, title, className = "" }) => {
   const shareUrl = url || window.location.href;
   const shareTitle = title || document.title;

@@ -1,10 +1,7 @@
 import { api } from "../../lib/api";
 
-/**
- * Fetches published services from the public API.
- * Pass { limit } to get only the N most recent ones (used on the homepage).
- * Omit it to get the full published list (used on the Services page).
- */
+// Fetches published services from the public API.
+// Pass { limit } to get only the N newest ones (used on the home page).
 export const fetchServicesApi = async (options = {}) => {
   const params = new URLSearchParams();
   if (options.limit) params.set("limit", String(options.limit));

@@ -5,13 +5,10 @@ import Loader from "../components/common/Loader";
 import ProductImage from "../components/product/ProductImage";
 import { useProducts } from "../hooks/useProducts";
 import { toRenderableHtml } from "../lib/richText";
+import { getCategoryByLabel } from "../config/productCategories";
 
-/**
- * Product detail page — shows the complete product. Built from the real
- * backend data (no fake/hard-coded content). The "View Details" card always
- * lands here; a separate "Visit Product" button appears only when the admin
- * provided an optional external link.
- */
+// Product detail page — shows the full product from real backend data.
+// "Visit Product" appears only when the admin set an external link.
 const ProductDetail = () => {
   const { slug } = useParams();
   const { list, status, error } = useProducts();
@@ -48,6 +45,7 @@ const ProductDetail = () => {
   }
 
   const hasDescription = Boolean(product.description && product.description.trim());
+  const category = getCategoryByLabel(product.category);
 
   return (
     <>
@@ -81,6 +79,19 @@ const ProductDetail = () => {
               {product.title}
             </h1>
 
+            {/* Category chip — links back to the Products page pre-filtered */}
+            {category && (
+              <div className="mt-4">
+                <Link
+                  to={`/products?category=${category.id}`}
+                  className="inline-flex items-center rounded-full bg-brand-orange px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-brand-cyan"
+                  aria-label={`Browse all ${category.label} products`}
+                >
+                  {category.label}
+                </Link>
+              </div>
+            )}
+
             {product.shortDescription ? (
               <p className="mt-4 text-lg font-medium text-muted">{product.shortDescription}</p>
             ) : null}
@@ -100,6 +111,18 @@ const ProductDetail = () => {
           <aside className="h-fit rounded-2xl border border-line bg-slate-50 p-6 lg:sticky lg:top-24">
             <p className="eyebrow">Product</p>
             <p className="mt-3 text-sm font-bold text-ink">{product.title}</p>
+
+            {category && (
+              <>
+                <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-slate-500">Category</p>
+                <Link
+                  to={`/products?category=${category.id}`}
+                  className="mt-1 inline-flex items-center rounded-full bg-brand-orange/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-brand-orange transition-colors hover:bg-brand-orange hover:text-white"
+                >
+                  {category.label}
+                </Link>
+              </>
+            )}
 
             <Link to="/contact" className="btn-primary mt-6 inline-flex w-full items-center justify-center gap-2">
               <CheckCircle2 size={16} aria-hidden="true" /> Get in touch

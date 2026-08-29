@@ -14,6 +14,20 @@ const createApplication = asyncHandler(async (req, res) => {
   const career = await Career.findOne({ _id: req.params.careerId, status: "open" });
   if (!career) throw new ApiError(404, "This career is no longer accepting applications");
 
+  // Normalize exactly as the schema stores it so the pre-check matches the
+  // unique index on (careerId, email).
+  const email = String(req.body.email).trim().toLowerCase();
+
+  // Block duplicate applications for the same job before spending a Cloudinary
+  // upload on an application that can never be saved.
+  const existing = await JobApplication.findOne({ careerId: career._id, email });
+  if (existing) {
+    throw new ApiError(
+      409,
+      "You have already applied to this position. Your application is under review.",
+    );
+  }
+
   let resume = {};
   if (req.file) {
     // PDFs are uploaded as image assets so Cloudinary can preview them inline;
@@ -30,16 +44,30 @@ const createApplication = asyncHandler(async (req, res) => {
     resume = { ...asset, originalName: req.file.originalname };
   }
 
-  const application = await JobApplication.create({
-    careerId: career._id,
-    name: req.body.name,
-    email: req.body.email,
-    phone: req.body.phone,
-    coverLetter: req.body.coverLetter,
-    resume,
-  });
+  try {
+    const application = await JobApplication.create({
+      careerId: career._id,
+      name: req.body.name,
+      email,
+      phone: req.body.phone,
+      coverLetter: req.body.coverLetter,
+      resume,
+    });
 
-  return success(res, { id: application._id }, "Application submitted successfully", 201);
+    return success(res, { id: application._id }, "Application submitted successfully", 201);
+  } catch (err) {
+    // Defense in depth: if two requests race past the pre-check, Mongo's unique
+    // index on (careerId, email) rejects the second one with code 11000.
+    if (err?.code === 11000) {
+      // Don't leave an orphaned resume in Cloudinary for a rejected application.
+      if (resume.publicId) await deleteByPublicId(resume.publicId);
+      throw new ApiError(
+        409,
+        "You have already applied to this position. Your application is under review.",
+      );
+    }
+    throw err;
+  }
 });
 
 // Admin

@@ -1,8 +1,4 @@
-/**
- * Right column of the hero: the Innobles hero image floating gently,
- * wrapped in a soft orange/cyan glow with a few subtle decorative particles
- * kept behind the image.
- */
+// Right side of the hero: the hero image with glows and decorative particles.
 const HeroVisual = () => (
   <div className="hero-visual">
     {/* soft orange + cyan radial glows behind the image */}

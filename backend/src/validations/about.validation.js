@@ -56,7 +56,7 @@ const statisticSchema = Joi.object({
   active: Joi.boolean().optional(),
 });
 
-/** Reorder payload: an ordered array of subdocument ids. */
+// Reorder payload: an ordered array of subdocument ids.
 const reorderSchema = Joi.object({
   ids: Joi.array()
     .items(Joi.string().hex().length(24))

@@ -2,13 +2,8 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import ProductImage from "./ProductImage";
 
-/**
- * Public product card — rendered on the homepage preview and the Products
- * listing. Uses the shared `.content-card` surface so it stays visually
- * consistent with Service and Blog cards (same radius, border, shadow, aspect
- * ratio, spacing and CTA). Built entirely from real backend data; the single
- * "View Details" action always opens the existing product detail page.
- */
+// Public product card used on the home preview and Products listing.
+// "View Details" opens the product detail page.
 const ProductCard = ({ product, to = `/products/${product.slug}` }) => {
   const image = product.image || "";
 

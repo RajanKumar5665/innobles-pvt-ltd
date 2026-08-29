@@ -6,7 +6,11 @@ import { uploadSingle, deleteByPublicId } from "../config/cloudinary.js";
 
 // features may be an array, or a single string when only one line is submitted.
 const normalizeFeatures = (value) => {
-  const list = Array.isArray(value) ? value : typeof value === "string" ? [value] : [];
+  const list = Array.isArray(value)
+    ? value
+    : typeof value === "string"
+      ? [value]
+      : [];
   return list.map((f) => String(f).trim()).filter(Boolean);
 };
 
@@ -23,7 +27,9 @@ const getPublicServices = asyncHandler(async (req, res) => {
     limit,
     sort: { createdAt: -1 },
   });
-  return success(res, result.data, "Services retrieved", 200, { pagination: result.pagination });
+  return success(res, result.data, "Services retrieved", 200, {
+    pagination: result.pagination,
+  });
 });
 
 // Admin
@@ -34,7 +40,10 @@ const adminCreateService = asyncHandler(async (req, res) => {
   delete payload.bannerRemoved;
 
   if (req.files?.banner?.[0]) {
-    payload.banner = await uploadSingle({ buffer: req.files.banner[0].buffer, folder: "innobles/services" });
+    payload.banner = await uploadSingle({
+      buffer: req.files.banner[0].buffer,
+      folder: "innobles/services",
+    });
   } else {
     throw new ApiError(400, "Banner image is required");
   }
@@ -56,7 +65,9 @@ const adminListServices = asyncHandler(async (req, res) => {
     limit,
     sort: { createdAt: -1 },
   });
-  return success(res, result.data, "Services retrieved", 200, { pagination: result.pagination });
+  return success(res, result.data, "Services retrieved", 200, {
+    pagination: result.pagination,
+  });
 });
 
 const adminGetService = asyncHandler(async (req, res) => {
@@ -71,16 +82,22 @@ const adminUpdateService = asyncHandler(async (req, res) => {
 
   const payload = { ...req.body };
   delete payload.bannerRemoved;
-  if (payload.features !== undefined) payload.features = normalizeFeatures(payload.features);
+  if (payload.features !== undefined)
+    payload.features = normalizeFeatures(payload.features);
 
   Object.assign(service, payload);
 
   // Replace the banner on upload, or remove it when the admin cleared it.
   if (req.files?.banner?.[0]) {
-    if (service.banner?.publicId) await deleteByPublicId(service.banner.publicId);
-    service.banner = await uploadSingle({ buffer: req.files.banner[0].buffer, folder: "innobles/services" });
+    if (service.banner?.publicId)
+      await deleteByPublicId(service.banner.publicId);
+    service.banner = await uploadSingle({
+      buffer: req.files.banner[0].buffer,
+      folder: "innobles/services",
+    });
   } else if (req.body.bannerRemoved === "true") {
-    if (service.banner?.publicId) await deleteByPublicId(service.banner.publicId);
+    if (service.banner?.publicId)
+      await deleteByPublicId(service.banner.publicId);
     service.banner = null;
   }
 
@@ -93,7 +110,11 @@ const adminUpdateServiceStatus = asyncHandler(async (req, res) => {
   if (!service) throw new ApiError(404, "Service not found");
   service.status = req.body.status;
   await service.save();
-  return success(res, service, `Service ${service.status === "published" ? "published" : "unpublished"}`);
+  return success(
+    res,
+    service,
+    `Service ${service.status === "published" ? "published" : "unpublished"}`,
+  );
 });
 
 const adminDeleteService = asyncHandler(async (req, res) => {

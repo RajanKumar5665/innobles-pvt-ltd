@@ -1,18 +1,10 @@
 import { Link } from "react-router-dom";
-import { ExternalLink, Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import Seo from "../components/seo/Seo";
 import SectionHeading from "../components/common/SectionHeading";
 import Reveal from "../components/common/Reveal";
+import TeamCard from "../components/about/TeamCard";
 import { useAbout } from "../hooks/useAbout";
-
-/** Derive an initials avatar (e.g. "Rahul Verma" -> "RV") for the team fallback. */
-const getInitials = (name = "") =>
-  name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((word) => word[0]?.toUpperCase() || "")
-    .join("");
 
 const AboutSkeleton = () => (
   <div className="animate-pulse">
@@ -67,15 +59,14 @@ const About = () => {
         <div className="container-x relative py-20 text-center md:py-28">
           <p className="eyebrow mb-4 justify-center">About Innobles</p>
           <h1 className="mx-auto max-w-3xl font-disp text-4xl font-bold leading-tight md:text-5xl">
-            Small team, <span className="text-gradient">big outcomes.</span>
+            Trusted teams <span className="text-gradient">public</span> outcomes.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-white/60 md:text-lg">
-            We're Innobles — a product-minded software studio helping startups and enterprises ship faster with
-            web, mobile, cloud and AI.
+           We're Innobles — a software product and engineering company building the digital
+platforms that government departments, PSUs and institutions run on.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link to="/services" className="btn-primary">Our Services</Link>
-            <Link to="/contact" className="btn-ghost">Work With Us</Link>
           </div>
         </div>
 
@@ -97,19 +88,28 @@ const About = () => {
         <Reveal variant="left">
           <p className="eyebrow mb-4">Our story</p>
           <h2 className="font-disp text-3xl font-bold leading-tight md:text-4xl">
-            We started with a simple belief: software should <span className="text-primary">work for people</span>, not the other way around.
+            We started with a simple belief: public systems deserve software
+built with care. <span className="text-primary"></span>
           </h2>
         </Reveal>
         <Reveal variant="right">
           <div className="space-y-4 text-white/60">
             <p>
-              Innobles was founded to fix a common frustration — projects that drag on, budgets that balloon, and
-              software that nobody enjoys using. We built a studio around the opposite: small senior teams, weekly
-              demos, and honest communication.
+              The "In" in Innobles is India. We build for the processes this country actually runs on —
+tax collection, fund disbursement, land records, tenders, files moving between desks — and
+for the departments, PSUs and institutions that run them.
+Run and operated by industry veterans and dynamic young leaders, we deliver elegant,
+data-driven platforms that help organisations perform more effectively and reach better
+outcomes. Over 8 years we've grown a portfolio of 37 products spanning collections,
+disbursements, treasury, procurement and governance — deployed live across India, and
+integrated with the banking system: payment gateways, electronic bank guarantees and
+Aadhaar-based verification.
+
             </p>
             <p>
-              Today we design, build and scale products for clients across fintech, healthcare, retail, logistics and
-              education — from first wireframe to millions of users.
+              Our mission is to be a socially responsible organisation with focus on people — one that
+inspires its team to deliver outstanding technology intervention and helps our clients
+complete their digital transformation.
             </p>
           </div>
         </Reveal>
@@ -121,33 +121,8 @@ const About = () => {
           <SectionHeading eyebrow="Team" title="The people behind the work" align="center" />
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {team.map((m, i) => (
-              <Reveal key={m._id} delay={i * 90}>
-                <div className="card flex h-full flex-col p-6 text-center hover:border-primary/60">
-                  {m.image?.url ? (
-                    <img
-                      src={m.image.url}
-                      alt={m.name}
-                      className="mx-auto mb-4 h-20 w-20 rounded-full object-cover ring-2 ring-primary/10"
-                    />
-                  ) : (
-                    <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary font-disp text-xl font-bold text-slate-50">
-                      {getInitials(m.name) || "?"}
-                    </div>
-                  )}
-                  <h3 className="font-disp font-bold">{m.name}</h3>
-                  {m.role && <p className="mt-1 text-sm text-white/50">{m.role}</p>}
-                  {m.description && <p className="mt-3 flex-1 text-sm leading-relaxed text-muted">{m.description}</p>}
-                  {m.linkedin && (
-                    <a
-                      href={m.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-4 inline-flex items-center justify-center gap-1.5 text-sm font-semibold text-brand-cyan transition-colors hover:text-brand-orange"
-                    >
-                      <ExternalLink className="h-4 w-4" aria-hidden="true" /> LinkedIn
-                    </a>
-                  )}
-                </div>
+              <Reveal key={m._id} delay={i * 90} className="h-full">
+                <TeamCard member={m} />
               </Reveal>
             ))}
           </div>

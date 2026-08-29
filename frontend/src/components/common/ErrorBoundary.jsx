@@ -1,9 +1,7 @@
 import { Component } from "react";
 
-/**
- * Catches render errors from the whole tree so the app never goes fully blank.
- * Shows a friendly fallback with a reload button instead.
- */
+// Catches render errors so the app never goes fully blank.
+// Shows a friendly fallback with a reload button instead.
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);

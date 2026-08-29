@@ -6,10 +6,8 @@ import FeatureCheck from "../common/FeatureCheck";
 const inputClass =
   "w-full rounded-xl border border-line bg-slate-50 px-4 py-3 text-sm text-ink placeholder-slate-400 transition-colors focus:border-brand-orange focus:outline-none focus:ring-2 focus:ring-brand-orange/20";
 
-/**
- * Application form shown when a candidate clicks "Apply Now" on a job card.
- * Submits the candidate's details + resume to POST /careers/:careerId/applications.
- */
+// Application form shown when a candidate clicks "Apply Now" on a job.
+// Submits candidate details + resume to POST /careers/:careerId/applications.
 const ApplicationModal = ({ job, onClose }) => {
   const [form, setForm] = useState({ name: "", email: "", phone: "", coverLetter: "" });
   const [resume, setResume] = useState(null);

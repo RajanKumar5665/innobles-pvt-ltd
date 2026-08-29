@@ -1,5 +1,4 @@
-﻿import { useMemo } from "react";
-import { useSelector } from "react-redux";
+﻿import { useSelector } from "react-redux";
 import { selectHome, selectHomeStatus } from "../../features/home/homeSlice";
 import Loader from "../../components/common/Loader";
 

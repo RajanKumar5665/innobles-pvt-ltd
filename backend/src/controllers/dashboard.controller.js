@@ -73,10 +73,22 @@ const getDashboardStats = asyncHandler(async (req, res) => {
 
   const stats = {
     blogs: { total: totalBlogs, published: publishedBlogs, draft: draftBlogs },
-    products: { total: totalProducts, published: publishedProducts, draft: draftProducts },
-    services: { total: totalServices, published: publishedServices, draft: draftServices },
+    products: {
+      total: totalProducts,
+      published: publishedProducts,
+      draft: draftProducts,
+    },
+    services: {
+      total: totalServices,
+      published: publishedServices,
+      draft: draftServices,
+    },
     careers: { total: totalCareers, open: openCareers, closed: closedCareers },
-    contacts: { total: totalContacts, unread: unreadContacts, read: readContacts },
+    contacts: {
+      total: totalContacts,
+      unread: unreadContacts,
+      read: readContacts,
+    },
     applications: {
       total: totalApplications,
       new: newApplications,

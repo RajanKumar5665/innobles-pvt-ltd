@@ -1,7 +1,11 @@
-﻿const BrandLogo = ({ className = "text-xl" }) => (
-  <span className={`font-disp font-extrabold tracking-tight text-ink ${className}`}>
-    Innobles<span className="text-[#F59E0B]">.</span>
-  </span>
+﻿const BrandLogo = ({ className = "" }) => (
+  <a href="/" className={`flex items-center ${className}`}>
+    <img
+      src="/innobles_logo.png"
+      alt="Brand Logo"
+      className="h-12 w-auto object-contain"
+    />
+  </a>
 );
 
 export default BrandLogo;

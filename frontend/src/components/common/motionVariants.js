@@ -1,12 +1,7 @@
-/**
- * Shared Framer Motion animation variants for the public frontend.
- *
- * Keeping reusable, performance-friendly (GPU-accelerated `transform`/`opacity`
- * only) entrance variants in one place lets every homepage section and card
- * grid animate with the same smooth, lightweight feel.
- */
+// Shared Framer Motion animation variants used across the frontend.
+// Kept GPU-friendly (only transform/opacity) so cards animate smoothly.
 
-/** Simple fade + slight upward rise used by individual cards grid items. */
+// Simple fade + small upward rise for individual cards.
 export const fadeUpItem = {
   hidden: { opacity: 0, y: 26 },
   visible: {
@@ -16,13 +11,13 @@ export const fadeUpItem = {
   },
 };
 
-/** Stagger orchestration for a grid/group container (matches `.StaggerItem`). */
+// Stagger the cards appearing one after another in a grid.
 export const staggerContainer = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.09, delayChildren: 0.08 } },
 };
 
-/** Soft fade-up for headings / standalone blocks. */
+// Soft fade-up for headings / standalone blocks.
 export const fadeUp = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },

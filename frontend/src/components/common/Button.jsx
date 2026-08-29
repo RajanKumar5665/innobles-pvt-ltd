@@ -1,12 +1,6 @@
 import { Link } from "react-router-dom";
 
-/**
- * Reusable button.
- * - variant: "primary" (dark navy) | "accent" (orange) | "secondary" | "outline" | "ghost"
- * - `to`   -> renders react-router <Link>
- * - `href` -> renders an <a>
- * - otherwise renders a <button>
- */
+
 const variantClass = {
   primary: "btn-primary",
   accent: "btn-accent",

@@ -1,8 +1,4 @@
-/**
- * Color-coded status badge used across admin tables and forms.
- * The `scheme` prop lets you pick the palette — otherwise it
- * auto-detects common status values.
- */
+// Color-coded status badge. Picks colors automatically for common statuses.
 const STATUS_SCHEMES = {
   // blog / product / service (draft|published|archived)
   draft: "bg-slate-100 text-slate-600",

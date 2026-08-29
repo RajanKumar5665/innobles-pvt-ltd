@@ -64,7 +64,7 @@ const clearDraft = (key) => {
   }
 };
 
-/** A rich-text value counts as "empty" when it holds no visible text/image. */
+// A rich-text value is "empty" when it has no visible text or image.
 const isRichContentEmpty = (html) => {
   if (!html) return true;
   const node = document.createElement("div");
@@ -72,7 +72,7 @@ const isRichContentEmpty = (html) => {
   return !node.textContent.trim() && !node.querySelector("img");
 };
 
-/** Only restore a saved draft that actually carries user-entered content. */
+// Only restore a saved draft that actually has user-entered content.
 const draftHasContent = (draft) =>
   Boolean(
     (draft.title && draft.title.trim()) ||
@@ -236,6 +236,25 @@ const AdminBlogs = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError(null);
+
+    // Guard against publishing a blog with empty required fields. Drafts are
+    // allowed to be incomplete, but a published article must be fully filled.
+    if (form.status === "published") {
+      const missing = [];
+      if (!form.title || !form.title.trim()) missing.push("Title");
+      if (!form.category || !form.category.trim()) missing.push("Category");
+      if (isRichContentEmpty(form.description)) missing.push("Description");
+      if (isRichContentEmpty(form.content)) missing.push("Content");
+      if (missing.length) {
+        setFormError(
+          `Cannot publish: ${missing.join(", ")} ${missing.length > 1 ? "are required" : "is required"}.`,
+        );
+        setFormStatus("idle");
+        return;
+      }
+    }
+
     setFormStatus("loading");
     setFormError(null);
     try {

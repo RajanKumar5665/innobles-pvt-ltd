@@ -17,7 +17,9 @@ const homeContentSchema = new mongoose.Schema(
         description: { type: String, default: "" },
       },
     ],
-    featuredProducts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+    featuredProducts: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+    ],
     featuredBlogs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Blog" }],
     cta: {
       title: { type: String, default: "" },

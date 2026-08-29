@@ -10,15 +10,8 @@ import BlogPreviewCard from "../components/blog/BlogPreviewCard";
 import { useBlogs } from "../hooks/useBlogs";
 import { toRenderableHtml, stripHtml } from "../lib/richText";
 
-/**
- * Public single-blog page.
- *
- * The admin authors `description` and `content` in the TipTap rich-text editor,
- * so both are stored as HTML. We render them with `dangerouslySetInnerHTML`
- * (normalizing any legacy plain-text records via `toRenderableHtml`) so the
- * user always sees the article laid out cleanly — headings, lists, quotes and
- * links — never raw markup.
- */
+// Public single-blog page. Description and content are stored as HTML from
+// the admin editor, so we render them safely with dangerouslySetInnerHTML.
 const BlogDetail = () => {
   const { slug } = useParams();
   const { list, status, error } = useBlogs();

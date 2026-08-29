@@ -5,7 +5,7 @@ import { submitContact } from "../../features/contact/contactThunks";
 import Loader from "../common/Loader";
 import FeatureCheck from "../common/FeatureCheck";
 
-const emptyForm = { name: "", email: "", phone: "", service: "", message: "" };
+const emptyForm = { name: "", email: "", phone: "", subject: "", message: "" };
 const inputClass =
   "w-full rounded-xl border border-line bg-slate-50 px-4 py-3 text-sm text-ink placeholder-slate-400 transition-colors focus:border-brand-orange focus:outline-none focus:ring-2 focus:ring-brand-orange/20";
 
@@ -75,9 +75,9 @@ const ContactForm = () => {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <input type="tel" name="phone" placeholder="Phone (optional)" value={formData.phone} onChange={handleChange} onBlur={handleBlur} className={inputClass} />
-        <select name="service" value={formData.service} onChange={handleChange} onBlur={handleBlur} className={`${inputClass} ${formData.service ? "" : "text-slate-400"}`}>
-          <option value="" disabled className="bg-white text-ink">Select a service</option>
-          {["Web Development", "Mobile Apps", "Cloud & DevOps", "AI & Automation", "UI/UX Design", "IT Consulting", "Others"].map((s) => (
+        <select name="subject" value={formData.subject} onChange={handleChange} onBlur={handleBlur} className={`${inputClass} ${formData.subject ? "" : "text-slate-400"}`}>
+          <option value="" disabled className="bg-white text-ink">Select a topic</option>
+          {["Product demo", "New platform / custom build", "Integration (payments, eBG, Aadhaar)", "Careers", "Other"].map((s) => (
             <option key={s} className="bg-white text-ink">{s}</option>
           ))}
         </select>

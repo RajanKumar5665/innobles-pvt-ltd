@@ -1,18 +1,9 @@
 import { useEffect, useState } from "react";
 import { fetchProductsApi } from "../features/products/productsApi";
 
-/**
- * Fetches the most-recently added published products (limited, newest-first)
- * directly from the existing public /products API.
- *
- * Uses local component state (NOT the shared products Redux slice) so that
- * the homepage's limited fetch never pollutes the Products listing / detail
- * pages which need the full published set.
- *
- * Returns the same shape as the existing `useProducts` hook:
- *   { list, status, error }
- * where status is one of: "idle" | "loading" | "success" | "error"
- */
+// Fetches the newest published products from the public /products API.
+// Uses local state (not Redux) so the home preview does not affect the
+// full Products listing/detail pages. Returns { list, status, error }.
 export const useRecentProducts = (limit = 4) => {
   const [list, setList] = useState([]);
   const [status, setStatus] = useState("idle");

@@ -11,7 +11,9 @@ const MAX_IMAGES = 6;
 const imageFileFilter = (req, file, cb) => {
   const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
   if (allowed.includes(file.mimetype)) return cb(null, true);
-  return cb(new ApiError(400, "Only image files (JPEG, PNG, WEBP, GIF) are allowed"));
+  return cb(
+    new ApiError(400, "Only image files (JPEG, PNG, WEBP, GIF) are allowed"),
+  );
 };
 
 const documentFileFilter = (req, file, cb) => {
@@ -21,7 +23,10 @@ const documentFileFilter = (req, file, cb) => {
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   ];
   const ext = (file.originalname.split(".").pop() || "").toLowerCase();
-  if (allowedMimes.includes(file.mimetype) && ["pdf", "doc", "docx"].includes(ext)) {
+  if (
+    allowedMimes.includes(file.mimetype) &&
+    ["pdf", "doc", "docx"].includes(ext)
+  ) {
     return cb(null, true);
   }
   return cb(new ApiError(400, "Only PDF, DOC or DOCX documents are allowed"));

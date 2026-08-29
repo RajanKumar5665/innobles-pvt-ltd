@@ -1,11 +1,7 @@
 import HeroContent from "./hero/HeroContent";
 import HeroVisual from "./hero/HeroVisual";
 
-/**
- * Premium homepage hero:
- * left = business messaging + CTA
- * right = futuristic animated AI/Web/Cloud visual
- */
+// Home page hero: left = messaging + CTA, right = animated visual.
 const Hero = () => (
   <section className="hero-section">
     <div className="hero-bg-left" aria-hidden="true" />
