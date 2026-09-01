@@ -1,10 +1,31 @@
-﻿import { useSelector } from "react-redux";
+﻿import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { api } from "../../lib/api";
 import { selectHome, selectHomeStatus } from "../../features/home/homeSlice";
 import Loader from "../../components/common/Loader";
 
 const AdminHome = () => {
+  const dispatch = useDispatch();
   const home = useSelector(selectHome);
   const status = useSelector(selectHomeStatus);
+
+  // Loads the homepage content from the admin API and feeds it into Redux
+  // via the home slice actions (same data the public home page serves).
+  const load = async () => {
+    dispatch({ type: "home/fetchPending" });
+    try {
+      const res = await api.get("/admin/home");
+      const data = res?.data ?? res ?? {};
+      dispatch({ type: "home/fetchFulfilled", payload: data });
+    } catch (err) {
+      dispatch({ type: "home/fetchRejected", payload: err.message || "Failed to load home content." });
+    }
+  };
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const hero = home?.hero || {};
   const cta = home?.cta || {};
@@ -24,6 +45,9 @@ const AdminHome = () => {
       {status === "error" && (
         <div className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           Failed to load home content.
+          <button type="button" onClick={load} className="ml-3 text-xs font-semibold underline">
+            Try again
+          </button>
         </div>
       )}
 

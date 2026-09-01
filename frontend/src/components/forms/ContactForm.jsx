@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hook";
-import { resetContact } from "../../features/contact/contactSlice";
+import { resetContact, selectContactStatus, selectContactError } from "../../features/contact/contactSlice";
 import { submitContact } from "../../features/contact/contactThunks";
 import Loader from "../common/Loader";
 import FeatureCheck from "../common/FeatureCheck";
@@ -19,8 +19,8 @@ const validate = (v) => {
 
 const ContactForm = () => {
   const dispatch = useAppDispatch();
-  const status = useAppSelector((s) => s.contact.status);
-  const error = useAppSelector((s) => s.contact.error);
+  const status = useAppSelector(selectContactStatus);
+  const error = useAppSelector(selectContactError);
   const [formData, setFormData] = useState(emptyForm);
   const [touched, setTouched] = useState({});
 

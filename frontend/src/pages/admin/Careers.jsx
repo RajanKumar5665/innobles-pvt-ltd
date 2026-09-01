@@ -41,6 +41,8 @@ const AdminCareers = () => {
   };
 
   useEffect(() => {
+    // Data fetch on mount; `load` synchronously sets the loading status (intentional).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, []);
 

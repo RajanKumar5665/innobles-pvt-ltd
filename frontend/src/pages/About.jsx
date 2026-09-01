@@ -49,7 +49,7 @@ const About = () => {
         title="About Us"
         description="Meet Innobles — the team behind fast, reliable and scalable software for growing businesses."
         path="/about"
-        image="/logo.png"
+        image="/innobles_logo.png"
       />
 
       {/* Page hero — STATIC */}
@@ -59,10 +59,10 @@ const About = () => {
         <div className="container-x relative py-20 text-center md:py-28">
           <p className="eyebrow mb-4 justify-center">About Innobles</p>
           <h1 className="mx-auto max-w-3xl font-disp text-4xl font-bold leading-tight md:text-5xl">
-            Trusted teams <span className="text-gradient">public</span> outcomes.
+            Trusted teams. <span className="text-gradient">Public</span> outcomes.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-white/60 md:text-lg">
-           We're Innobles — a software product and engineering company building the digital
+           We're Innobles a software product and engineering company building the digital
 platforms that government departments, PSUs and institutions run on.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">

@@ -110,12 +110,16 @@ const Products = () => {
 
   // Any filter change sends the user back to page 1 so nothing looks missing.
   useEffect(() => {
+    // Intentionally re-syncs the page when filters change (derived-state clamp).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentPage(1);
   }, [activeCategory, debouncedSearch, sortBy]);
 
   // If the feed shrinks below the current page (e.g. after a refresh), fall
   // back to the last available page so the view is never empty or out of range.
   useEffect(() => {
+    // Intentionally clamps the current page when the total shrinks (derived state).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (currentPage > totalPages) setCurrentPage(totalPages);
   }, [currentPage, totalPages]);
 
@@ -133,8 +137,6 @@ const Products = () => {
     setCurrentPage(page);
     document.getElementById("products-grid")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
-
-  const hasActiveFilters = Boolean(activeCategory) || debouncedSearch !== "";
 
   return (
     <>

@@ -1,10 +1,10 @@
 import Seo from "../components/seo/Seo";
-import Hero from "../components/home/Hero";
-import ServiceGrid from "../components/home/ServiceGrid";
-import ProductsHighlight from "../components/home/ProductsHighlight";
-import BlogPreview from "../components/home/BlogPreview";
-import CTA from "../components/home/CTA";
-import ContactSection from "../components/home/ContactSection";
+import Hero from "../components/Home/Hero";
+import ServiceGrid from "../components/Home/ServiceGrid";
+import ProductsHighlight from "../components/Home/ProductsHighlight";
+import BlogPreview from "../components/Home/BlogPreview";
+import CTA from "../components/Home/CTA";
+import ContactSection from "../components/Home/ContactSection";
 
 // Public home page. Fetches services, products and blogs live from the API
 // (the same data managed through the Admin panel).

@@ -32,7 +32,7 @@ const HeroContent = () => (
       style={{ animationDelay: "240ms" }}
     >
       Innobles builds and operates the software behind government collections,
-      disbursements, procurement and citizen services — 37 products, deployed
+      disbursements, procurement and citizen services 37 products, deployed
       with departments, PSUs and institutions across India.
     </p>
 

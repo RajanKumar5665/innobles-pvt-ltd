@@ -1,25 +1,5 @@
-import { useState } from "react";
 import Seo from "../components/seo/Seo";
-import Reveal from "../components/common/Reveal";
-import ContactSection from "../components/home/ContactSection";
-import { faqs } from "../data/dummyData";
-
-const FAQItem = ({ faq }) => {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="card overflow-hidden">
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between gap-4 p-5 text-left"
-        aria-expanded={open}
-      >
-        <span className="font-disp font-semibold">{faq.q}</span>
-        <span className={`text-primary transition-transform ${open ? "rotate-45" : ""}`}>+</span>
-      </button>
-      {open && <div className="border-t border-white/10 p-5 text-sm leading-relaxed text-white/60">{faq.a}</div>}
-    </div>
-  );
-};
+import ContactSection from "../components/Home/ContactSection";
 
 const Contact = () => {
   return (
@@ -45,20 +25,6 @@ const Contact = () => {
       </section>
 
       <ContactSection />
-
-      {/* FAQ */}
-      <section className="container-x border-t border-white/10 py-20">
-        <Reveal>
-          <h2 className="text-center font-disp text-3xl font-bold">Frequently asked questions</h2>
-        </Reveal>
-        <div className="mx-auto mt-10 max-w-3xl space-y-4">
-          {faqs.map((f, i) => (
-            <Reveal key={f.q} delay={i * 70}>
-              <FAQItem faq={f} />
-            </Reveal>
-          ))}
-        </div>
-      </section>
     </>
   );
 };

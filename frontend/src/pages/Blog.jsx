@@ -22,6 +22,8 @@ const Blog = () => {
 
   // If the feed shrinks below the current page, go back to the last page.
   useEffect(() => {
+    // Intentionally clamps the current page when the total shrinks (derived state).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (currentPage > totalPages) setCurrentPage(totalPages);
   }, [currentPage, totalPages]);
 

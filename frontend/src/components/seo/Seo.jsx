@@ -3,7 +3,7 @@ import { siteConfig } from "../../config/siteConfig";
 
 // Updates the page title, meta tags and social (OG/Twitter) tags.
 // Props: title, description, keywords, path, image.
-const Seo = ({ title, description, keywords, path = "/", image = "/hero.png" }) => {
+const Seo = ({ title, description, keywords, path = "/", image = "/hero-image.png" }) => {
   useEffect(() => {
     const fullTitle = title ? `${title} | ${siteConfig.name}` : siteConfig.name;
     const fullDescription = description || siteConfig.description;

@@ -48,7 +48,7 @@ const Footer = () => {
             </Link>
             <p className="footer-copy mt-4 max-w-xs text-sm leading-relaxed">
               Innobles builds and operates digital platforms for government
-              departments, PSUs and institutions — software for the processes
+              departments, PSUs and institutions software for the processes
               where accountability matters.
             </p>
             <div className="footer-social">

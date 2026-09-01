@@ -14,7 +14,7 @@ const ProductsHighlight = () => {
       eyebrow="What We Build"
       title="Our Products"
       subtitle="Ready-to-deploy platforms for collections, disbursements, treasury, procurement
-and governance — configured to your department, not built from scratch."
+and governance configured to your department, not built from scratch."
       list={list}
       status={status}
       errorMessage={error || "Something went wrong while loading products. Please refresh."}

@@ -21,12 +21,11 @@ import {
   fetchMe,
   fetchStats,
   selectIsAuthenticated,
-  selectAdmin,
 } from "../features/auth/authThunks";
 
 const navItems = [
   { to: "/admin", icon: LayoutDashboard, label: "Dashboard", end: true },
-    { to: "/admin/blogs", icon: FileText, label: "Blogs" },
+  { to: "/admin/blogs", icon: FileText, label: "Blogs" },
   { to: "/admin/products", icon: Package, label: "Products" },
   { to: "/admin/services", icon: Settings, label: "Services" },
   { to: "/admin/careers", icon: Briefcase, label: "Careers" },
@@ -40,7 +39,6 @@ const AdminLayout = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  const admin = useSelector(selectAdmin);
 
   useEffect(() => {
     if (!isAuthenticated) {

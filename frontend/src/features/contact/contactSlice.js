@@ -35,7 +35,6 @@ export const { submitPending, submitFulfilled, submitRejected, resetContact } = 
 // Selectors
 export const selectContactStatus = (state) => state.contact.status;
 export const selectContactError = (state) => state.contact.error;
-export const selectContactMessage = (state) => state.contact.lastMessage;
 
 export default contactSlice.reducer;
 

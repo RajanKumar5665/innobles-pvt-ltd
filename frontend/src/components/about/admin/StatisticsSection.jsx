@@ -40,6 +40,8 @@ export const StatisticsSection = ({ statistics = [], onChanged }) => {
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
+    // Sync local form rows whenever fresh statistics arrive from the server.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRows(mergeRows(statistics));
   }, [statistics]);
 

@@ -2,10 +2,12 @@ import { useRef } from "react";
 import { Image as ImageIcon, Loader as LoaderIcon, Trash2, X } from "lucide-react";
 
 // Allowed image types + size limit (kept in sync with the other admin forms).
+// eslint-disable-next-line react-refresh/only-export-components -- shared helper used by 3 admin sections
 export const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 export const IMAGE_MAX_MB = 5;
 
 // Shared input class, aligned with the Product/Service admin forms.
+// eslint-disable-next-line react-refresh/only-export-components -- shared helper used by 3 admin sections
 export const fieldClass = (hasError) =>
   `w-full rounded-xl border ${
     hasError ? "border-red-400" : "border-line"

@@ -4,6 +4,13 @@ import { useEffect, useRef } from "react";
 // This triggers the CSS fade/translate animation.
 export const useReveal = (options = {}) => {
   const ref = useRef(null);
+  // Keep the latest options in a ref so the observer is not torn down and
+  // re-created on every render when callers pass a fresh object literal.
+  const optionsRef = useRef(options);
+
+  useEffect(() => {
+    optionsRef.current = options;
+  }, [options]);
 
   useEffect(() => {
     const el = ref.current;
@@ -24,12 +31,12 @@ export const useReveal = (options = {}) => {
           }
         });
       },
-      { threshold: 0.15, rootMargin: "0px 0px -40px 0px", ...options }
+      { threshold: 0.15, rootMargin: "0px 0px -40px 0px", ...optionsRef.current }
     );
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [options]);
+  }, []);
 
   return ref;
 };

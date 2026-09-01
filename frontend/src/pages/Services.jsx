@@ -3,7 +3,7 @@ import SectionHeading from "../components/common/SectionHeading";
 import Loader from "../components/common/Loader";
 import StaggerGroup, { StaggerItem } from "../components/common/StaggerGroup";
 import ServiceCard from "../components/service/ServiceCard";
-import ContactSection from "../components/home/ContactSection";
+import ContactSection from "../components/Home/ContactSection";
 import { useServices } from "../hooks/useServices";
 
 const Services = () => {
@@ -27,7 +27,7 @@ const Services = () => {
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-white/60 md:text-lg">
             Six capabilities, one accountable team. Pick one service or let us run the full
-lifecycle — from requirement gathering to live operations.
+lifecycle from requirement gathering to live operations.
           </p>
         </div>
       </section>
