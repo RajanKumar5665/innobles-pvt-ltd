@@ -1,10 +1,9 @@
-// Right side of the hero: the hero image with glows and decorative particles.
+// Home hero right visual. The image is intentionally STATIC — no float/bob
+// animation and no load-time entrance motion (per design request).
 const HeroVisual = () => (
   <div className="hero-visual">
-    {/* soft orange + cyan radial glows behind the image */}
     <div className="hero-visual-glow" aria-hidden="true" />
 
-    {/* gentle decorative particles (kept behind the image) */}
     <div className="hero-particles" aria-hidden="true">
       <span className="hero-particle hero-particle-1" />
       <span className="hero-particle hero-particle-2" />

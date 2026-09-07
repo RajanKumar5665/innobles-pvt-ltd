@@ -10,7 +10,7 @@ const ServiceGrid = () => {
   return (
     <ContentShowcase
       sectionClassName="bg-white"
-      eyebrow="What We Do"
+      // eyebrow="What We Do"
       title="Our Services"
       subtitle="From first requirement to live operations, we build, integrate and run digital
 platforms for organisations where accountability is non-negotiable."

@@ -30,10 +30,10 @@ const BackToTop = () => {
       initial={false}
       animate={visible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
       transition={{ duration: 0.2 }}
-      className="fixed right-4 bottom-4 z-[9999] flex h-10 w-10 items-center justify-center rounded-full bg-brand-orange shadow-lg transition-colors hover:bg-brand-yellow cursor-pointer"
+      className="fixed right-4 bottom-4 z-[9999] flex h-10 w-10 items-center justify-center rounded-full border border-[#F0703F]/30 bg-[#FFE9DE] text-[#172B3A] transition-colors hover:border-[#F0703F] hover:bg-[#FF9866] cursor-pointer"
       style={visible ? undefined : { pointerEvents: "none" }}
     >
-      <ArrowUp size={20} className="text-slate-50" />
+      <ArrowUp size={20} className="text-[#172B3A]" />
     </motion.button>
   );
 };

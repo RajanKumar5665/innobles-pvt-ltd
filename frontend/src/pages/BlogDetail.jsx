@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import Seo from "../components/seo/Seo";
 import Loader from "../components/common/Loader";
 import StaggerGroup, { StaggerItem } from "../components/common/StaggerGroup";
+import ImageReveal from "../components/common/ImageReveal";
 import BlogImage from "../components/blog/BlogImage";
 import AuthorAvatar from "../components/blog/AuthorAvatar";
 import BlogShare from "../components/blog/BlogShare";
@@ -44,10 +45,10 @@ const BlogDetail = () => {
       <div className="blog-frame">
         <main className="blog-container py-24 text-center">
           <span className="blog-eyebrow">Article not found</span>
-          <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-[#172033]">
+          <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-[#172B3A]">
             This article is unavailable.
           </h1>
-          <Link to="/blog" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#F59E0B] hover:text-[#D97706]">
+          <Link to="/blog" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#FF9866] hover:text-[#F0703F]">
             <ArrowLeft size={16} aria-hidden="true" /> Back to all articles
           </Link>
         </main>
@@ -72,14 +73,14 @@ const BlogDetail = () => {
         <div className="blog-container py-8 md:py-10">
           <Link
             to="/blog"
-            className="inline-flex items-center gap-2 text-[13px] font-semibold text-[#64748B] transition-colors hover:text-[#F59E0B]"
+            className="inline-flex items-center gap-2 text-[13px] font-semibold text-[#64748B] transition-colors hover:text-[#FF9866]"
           >
             <ArrowLeft size={16} aria-hidden="true" /> Back to all blogs
           </Link>
 
           <section className="mt-6 max-w-4xl">
             <span className="blog-badge-static">{category}</span>
-            <h1 className="mt-5 text-[28px] font-extrabold leading-[1.15] tracking-tight text-[#172033] md:text-[42px]">
+            <h1 className="mt-5 text-[28px] font-extrabold leading-[1.15] tracking-tight text-[#172B3A] md:text-[42px]">
               {title}
             </h1>
 
@@ -93,20 +94,22 @@ const BlogDetail = () => {
             <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 text-[13px] text-[#64748B]">
               <span className="inline-flex items-center gap-2">
                 <AuthorAvatar author={author} avatar={blog.authorAvatar} size={26} />
-                <span className="font-semibold text-[#172033]">{author}</span>
+                <span className="font-semibold text-[#172B3A]">{author}</span>
               </span>
               <span className="text-[#94A3B8]" aria-hidden="true">•</span>
               <span className="inline-flex items-center gap-1.5">
-                <CalendarDays size={14} className="text-[#F59E0B]" aria-hidden="true" /> {blog.date}
+                <CalendarDays size={14} className="text-[#FF9866]" aria-hidden="true" /> {blog.date}
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <Clock3 size={14} className="text-[#F59E0B]" aria-hidden="true" /> {blog.readTime}
+                <Clock3 size={14} className="text-[#FF9866]" aria-hidden="true" /> {blog.readTime}
               </span>
             </div>
           </section>
 
           <div className="blog-hero-img mt-8">
-            <BlogImage src={blog.image} alt={title} className="h-full w-full object-cover" />
+            <ImageReveal className="h-full">
+              <BlogImage src={blog.image} alt={title} className="h-full w-full object-cover" />
+            </ImageReveal>
           </div>
 
           <section className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,760px)_240px]">
@@ -127,7 +130,7 @@ const BlogDetail = () => {
 
             <aside className="h-fit rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-5 lg:sticky lg:top-24">
               <p className="blog-eyebrow">Article details</p>
-              <p className="mt-3 text-sm font-bold text-[#172033]">{category}</p>
+              <p className="mt-3 text-sm font-bold text-[#172B3A]">{category}</p>
               <p className="mt-2 text-[13px] leading-6 text-[#64748B]">
                 Written by {author}. Published {blog.date}. {blog.readTime}.
               </p>

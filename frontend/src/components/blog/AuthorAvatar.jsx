@@ -13,7 +13,7 @@ const AuthorAvatar = ({ author = "", avatar, size = 22, className = "" }) => {
   if (failed) {
     return (
       <span
-        className={`inline-flex items-center justify-center rounded-full bg-[#FEF3C7] font-semibold text-[#F59E0B] ${className}`}
+        className={`inline-flex items-center justify-center rounded-full bg-[#FFE9DE] font-semibold text-[#FF9866] ${className}`}
         style={{ width: size, height: size, fontSize: Math.max(9, size * 0.38) }}
         aria-hidden="true"
       >

@@ -3,8 +3,6 @@ import { ArrowRight, CalendarDays } from "lucide-react";
 import BlogImage from "./BlogImage";
 import { stripHtml } from "../../lib/richText";
 
-// Reusable blog card used on the home preview and blog detail "related reads".
-// Entrance animation comes from the parent <StaggerGroup>, not here.
 const BlogPreviewCard = ({ blog, showCategory = true }) => {
   const href = `/blog/${blog.slug}`;
 
@@ -14,13 +12,14 @@ const BlogPreviewCard = ({ blog, showCategory = true }) => {
         to={href}
         aria-label={`Read ${blog.title}`}
         tabIndex={-1}
-        className="relative block aspect-[16/9] w-full shrink-0 overflow-hidden"
+        className="content-card-media relative block aspect-[16/9] w-full shrink-0 overflow-hidden"
       >
         <BlogImage
           src={blog.image}
           alt=""
-          className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.07]"
         />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#172B3A]/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
         {showCategory && blog.category ? (
           <span className="card-category-badge">{blog.category}</span>
         ) : null}
@@ -32,8 +31,8 @@ const BlogPreviewCard = ({ blog, showCategory = true }) => {
           <span>{blog.date}</span>
         </div>
 
-        <h3 className="mt-2 font-disp text-lg font-bold leading-snug tracking-tight text-ink break-words">
-          <Link to={href} className="transition-colors hover:text-brand-orange">
+        <h3 className="mt-2 font-disp text-[1.05rem] font-bold leading-snug tracking-tight text-ink break-words">
+          <Link to={href} className="transition-colors duration-200 hover:text-brand-orange">
             {blog.title || "Untitled Article"}
           </Link>
         </h3>
@@ -42,7 +41,7 @@ const BlogPreviewCard = ({ blog, showCategory = true }) => {
           <p className="mt-2 text-sm leading-6 text-slate-500 line-clamp-2">{stripHtml(blog.description)}</p>
         ) : null}
 
-        <div className="mt-auto pt-4">
+        <div className="mt-auto border-t border-line/80 pt-4">
           <Link to={href} className="content-link">
             Read More <ArrowRight className="content-link-icon" size={15} aria-hidden="true" />
           </Link>

@@ -14,7 +14,6 @@ const SectionHeader = ({ eyebrow, title, subtitle, align = "left", id, as = "h2"
     >
       {eyebrow ? (
         <p className={`pill-eyebrow mb-4 ${center ? "justify-center" : ""}`}>
-          <span className="pill-dot" />
           {eyebrow}
         </p>
       ) : null}

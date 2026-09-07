@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Search } from "lucide-react";
 import Seo from "../components/seo/Seo";
+import PageHero from "../components/common/PageHero";
 import SectionHeading from "../components/common/SectionHeading";
 import Loader from "../components/common/Loader";
 import StaggerGroup, { StaggerItem } from "../components/common/StaggerGroup";
@@ -27,14 +28,15 @@ const SORT_OPTIONS = [
 // Simple tag stripper so search can look inside rich-text descriptions.
 const htmlToText = (html = "") => html.replace(/<[^>]*>/g, " ");
 
+// Lookup category id from a product label without scanning the array per item.
+const CATEGORY_ID_BY_LABEL = new Map(
+  PRODUCT_CATEGORIES.map((c) => [c.label.toLowerCase(), c.id]),
+);
+
 // One product passes the current category + search filters or not.
-const matchesFilters = (product, activeCategoryLabel, term) => {
+const matchesFilters = (product, searchText, activeCategoryLabel, term) => {
   if (activeCategoryLabel && product.category !== activeCategoryLabel) return false;
-  if (term) {
-    const haystack =
-      `${product.title} ${htmlToText(product.description)} ${product.category}`.toLowerCase();
-    if (!haystack.includes(term)) return false;
-  }
+  if (term && !searchText.includes(term)) return false;
   return true;
 };
 
@@ -71,17 +73,29 @@ const Products = () => {
   // How many published products each category holds (for the counters).
   const categoryCounts = useMemo(() => {
     const counts = {};
-    for (const cat of PRODUCT_CATEGORIES) {
-      counts[cat.id] = list.filter((p) => p.category === cat.label).length;
+    for (const cat of PRODUCT_CATEGORIES) counts[cat.id] = 0;
+    for (const p of list) {
+      const id = CATEGORY_ID_BY_LABEL.get(String(p.category || "").trim().toLowerCase());
+      if (id) counts[id] += 1;
     }
     return counts;
+  }, [list]);
+
+  // The searchable text for each product is built once per fetch instead of
+  // re-stripping the rich HTML on every keystroke while filtering.
+  const searchTextById = useMemo(() => {
+    const map = new Map();
+    for (const p of list) {
+      map.set(p.id, `${p.title} ${htmlToText(p.description)} ${p.category}`.toLowerCase());
+    }
+    return map;
   }, [list]);
 
   // Filter + sort fully on the client. The full published set is already in
   // the Redux store (fetched once by useProducts), so no extra API calls.
   const filteredList = useMemo(() => {
     const matched = list.filter((p) =>
-      matchesFilters(p, activeCategory ? activeCategory.label : "", debouncedSearch),
+      matchesFilters(p, searchTextById.get(p.id) || "", activeCategory ? activeCategory.label : "", debouncedSearch),
     );
     return [...matched].sort((a, b) => {
       switch (sortBy) {
@@ -95,7 +109,7 @@ const Products = () => {
           return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
       }
     });
-  }, [list, activeCategory, debouncedSearch, sortBy]);
+  }, [list, searchTextById, activeCategory, debouncedSearch, sortBy]);
 
   const totalPages = Math.max(1, Math.ceil(filteredList.length / PRODUCTS_PER_PAGE));
   const activePage = Math.min(currentPage, totalPages);
@@ -146,20 +160,12 @@ const Products = () => {
         path="/products"
       />
 
-      <section className="relative overflow-hidden border-b border-white/10">
-        <div className="pointer-events-none absolute inset-0 hero-glow" />
-        <div className="pointer-events-none absolute inset-0 bg-grid opacity-60" />
-        <div className="container-x relative py-20 text-center md:py-24">
-          <p className="eyebrow mb-4 justify-center">Our Products</p>
-          <h1 className="mx-auto max-w-3xl font-disp text-4xl font-bold leading-tight md:text-5xl">
-            Software products built to <span className="text-gradient">run your operations</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-white/60 md:text-lg">
-            Ready-to-deploy platforms for sales, operations, HR, analytics and more — with room to customise as you
-            scale.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Our Products"
+        title="Software products built to"
+        highlight="run your operations"
+        description="Ready-to-deploy platforms for sales, operations, HR, analytics and more — with room to customise as you scale."
+      />
 
       <section id="products-list" className="container-x scroll-mt-24 py-20">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -203,8 +209,8 @@ const Products = () => {
                       aria-pressed={isActive}
                       className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                         isActive
-                          ? "border-brand-orange bg-brand-orange text-white"
-                          : "border-line bg-white text-slate-600 hover:border-brand-orange hover:text-brand-orange"
+                          ? "border-[#F0703F] bg-[#FFE9DE] text-[#172B3A]"
+                          : "border-line bg-white text-slate-600 hover:border-[#FF9866] hover:bg-[#FFE9DE] hover:text-[#172B3A]"
                       }`}
                     >
                       {cat ? cat.label : "All Products"}
@@ -240,15 +246,15 @@ const Products = () => {
               <div className="mt-10 grid gap-10 lg:grid-cols-[240px_1fr]">
                 {/* Desktop category sidebar (mobile uses the chips above) */}
                 <aside className="hidden self-start lg:block">
-                  <nav aria-label="Product categories" className="sticky top-28 space-y-1 rounded-2xl border border-line bg-white p-3 shadow-sm">
-                    <button type="button" onClick={() => selectCategory(null)} aria-current={!activeCategory ? "true" : undefined} className={`flex w-full items-center justify-between rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${!activeCategory ? "bg-brand-orange/10 text-brand-orange" : "text-slate-600 hover:bg-slate-50 hover:text-ink"}`}>
+                  <nav aria-label="Product categories" className="sticky top-28 space-y-1 rounded-2xl border border-line bg-white p-3">
+                    <button type="button" onClick={() => selectCategory(null)} aria-current={!activeCategory ? "true" : undefined} className={`flex w-full items-center justify-between rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${!activeCategory ? "bg-[#FFE9DE] text-[#172B3A]" : "text-slate-600 hover:bg-[#FFE9DE] hover:text-[#172B3A]"}`}>
                       All Products
                       <span className="ml-2 text-xs text-slate-400">{list.length}</span>
                     </button>
                     {PRODUCT_CATEGORIES.map((cat) => {
                       const isActive = activeCategory?.id === cat.id;
                       return (
-                        <button key={cat.id} type="button" onClick={() => selectCategory(cat.id)} aria-current={isActive ? "true" : undefined} className={`flex w-full items-center justify-between rounded-xl px-4 py-2.5 text-left text-sm font-medium transition-colors ${isActive ? "bg-brand-orange/10 text-brand-orange" : "text-slate-600 hover:bg-slate-50 hover:text-ink"}`}>
+                        <button key={cat.id} type="button" onClick={() => selectCategory(cat.id)} aria-current={isActive ? "true" : undefined} className={`flex w-full items-center justify-between rounded-xl px-4 py-2.5 text-left text-sm font-medium transition-colors ${isActive ? "bg-[#FFE9DE] text-[#172B3A]" : "text-slate-600 hover:bg-[#FFE9DE] hover:text-[#172B3A]"}`}>
                           <span>{cat.label}</span>
                           <span className="ml-2 shrink-0 text-xs text-slate-400">{categoryCounts[cat.id]}</span>
                         </button>
@@ -272,9 +278,9 @@ const Products = () => {
                         key={`${activeCategory?.id || "all"}-${debouncedSearch}-${sortBy}-${activePage}`}
                         className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3"
                       >
-                      {pageProducts.map((p) => (
+                      {pageProducts.map((p, index) => (
                         <StaggerItem key={p.id} className="h-full">
-                          <ProductCard product={p} />
+                          <ProductCard product={p} priority={index === 0} />
                         </StaggerItem>
                       ))}
                     </StaggerGroup>

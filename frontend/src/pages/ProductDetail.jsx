@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import Seo from "../components/seo/Seo";
 import Loader from "../components/common/Loader";
 import ProductImage from "../components/product/ProductImage";
-import { useProducts } from "../hooks/useProducts";
+import { useProductBySlug } from "../hooks/useProductBySlug";
 import { toRenderableHtml } from "../lib/richText";
 import { getCategoryByLabel } from "../config/productCategories";
 
@@ -11,8 +11,7 @@ import { getCategoryByLabel } from "../config/productCategories";
 // "Visit Product" appears only when the admin set an external link.
 const ProductDetail = () => {
   const { slug } = useParams();
-  const { list, status, error } = useProducts();
-  const product = list.find((p) => p.slug === slug);
+  const { product, status, error } = useProductBySlug(slug);
 
   if (status === "loading" || status === "idle") {
     return (
@@ -68,6 +67,8 @@ const ProductDetail = () => {
           <ProductImage
             src={product.image}
             alt={product.title || ""}
+            priority
+            sizes="(min-width: 1280px) 1216px, 100vw"
             className="h-64 w-full object-cover md:h-80"
           />
         </div>

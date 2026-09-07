@@ -41,6 +41,8 @@ const Blog = () => {
         path="/blog"
       />
 
+      <BlogHero />
+
       <div className="blog-frame">
         <div className="blog-container py-6 md:py-9">
           {status === "loading" && (
@@ -57,12 +59,12 @@ const Blog = () => {
 
           {status === "success" && (
             <>
-              <BlogHero />
               <RecentBlogs blogs={recent} />
               <AllBlogs
                 blogs={pageBlogs}
                 page={activePage}
-                totalPages={totalPages}
+                total
+                Pages={totalPages}
                 onPageChange={changePage}
               />
             </>

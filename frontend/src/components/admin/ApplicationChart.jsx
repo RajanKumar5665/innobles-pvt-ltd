@@ -8,7 +8,7 @@ import {
 } from "recharts";
 
 // Donut chart showing the distribution of job application statuses.
-const COLORS = ["#3b82f6", "#f59e0b", "#8b5cf6", "#ef4444", "#10b981"];
+const COLORS = ["#3b82f6", "#FF9866", "#8b5cf6", "#ef4444", "#10b981"];
 
 const ApplicationChart = ({ stats }) => {
   const apps = stats?.applications ?? {};

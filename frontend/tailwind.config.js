@@ -5,62 +5,63 @@ export default {
       colors: {
         /* ------------------------------------------------------------------
            ONE global design system — Innobles
-           Primary navy  #172033 · Dark navy #0F172A · Accent orange #F59E0B
+           Primary navy  #172B3A · Dark navy #0F172A · Accent orange #FF9866
            White #FFFFFF · Light surface #F8FAFC · Border #E2E8F0
         ------------------------------------------------------------------ */
-        primary: "#172033",
+        primary: "#172B3A",
         "primary-dark": "#0F172A",
-        accent: "#F59E0B",
-        "accent-hover": "#D97706",
+        accent: "#FF9866",
+        "accent-hover": "#F0703F",
         background: "#FFFFFF",
         surface: "#FFFFFF",
         "light-surface": "#F8FAFC",
-        text: "#172033",
+        text: "#172B3A",
         "text-secondary": "#64748B",
         "text-muted": "#94A3B8",
 
         /* Backward-compatible aliases used across the codebase. */
         dark: "#F8FAFC", // light surface (used by ErrorBoundary / light sections)
-        ink: "#172033",
+        ink: "#172B3A",
         muted: "#64748B",
         line: "#E2E8F0",
 
         /* Brand aliases — all mapped into the navy/orange system. */
         brand: {
-          orange: "#F59E0B",
-          yellow: "#D97706", // accent-hover (legacy hover role)
-          cyan: "#172033", // navy primary (legacy cyan role)
+          orange: "#FF9866",
+          yellow: "#F0703F", // accent-hover (legacy hover role)
+          cyan: "#172B3A", // navy primary (legacy cyan role)
         },
 
         /* Careers design system — mapped into the same palette. */
         career: {
-          orange: "#F59E0B",
-          "orange-hover": "#D97706",
-          black: "#0F172A",
-          ink: "#172033",
+          orange: "#FF9866",
+          "orange-hover": "#F0703F",
+          black: "#172B3A",
+          ink: "#172B3A",
           gray: "#64748B",
           light: "#94A3B8",
           border: "#E2E8F0",
           line: "#E2E8F0",
           soft: "#F8FAFC",
-          "orange-light": "#FEF3C7",
+          "orange-light": "#FFE9DE",
         },
 
         /* Blog design system — mapped into the same palette. */
         blog: {
-          base: "#172033",
+          base: "#172B3A",
           raised: "#F8FAFC",
-          red: "#F59E0B",
+          red: "#FF9866",
           paper: "#FFFFFF",
           "paper-muted": "#E2E8F0",
-          ink: "#172033",
+          ink: "#172B3A",
           muted: "#64748B",
           line: "#E2E8F0",
         },
+        charcoal: "#303438",
       },
       fontFamily: {
-        disp: ["Poppins", "sans-serif"],
-        sans: ["Poppins", "sans-serif"],
+        sans: ["Plus Jakarta Sans", "ui-sans-serif", "system-ui", "sans-serif"],
+        disp: ["Plus Jakarta Sans", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       borderRadius: {
         xl: "0.875rem",

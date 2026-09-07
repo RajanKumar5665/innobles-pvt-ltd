@@ -58,7 +58,7 @@ const Login = () => {
             Admin
           </p>
           <h1 className="mt-2 font-disp text-3xl font-bold text-white">
-            Welcome back
+            Welcome 
           </h1>
           <p className="mt-2 text-sm text-white/60">
             Sign in to manage your website

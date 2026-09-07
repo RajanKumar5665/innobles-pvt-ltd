@@ -11,7 +11,7 @@ const BlogPreview = () => {
   return (
     <ContentShowcase
       sectionClassName="bg-white"
-      eyebrow="Insights & Updates"
+      // eyebrow="Insights & Updates"
       title="Latest Insights"
       subtitle="Explore our latest ideas, insights, and updates on technology, products, and digital innovation."
       list={list}

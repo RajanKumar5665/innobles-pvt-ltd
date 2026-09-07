@@ -40,7 +40,7 @@ const ContentShowcase = ({
   const visible = (list || []).slice(0, CARD_LIMIT);
 
   return (
-    <section className={`${sectionClassName} py-16 md:py-20`}>
+    <section className={`${sectionClassName} py-20 md:py-24`}>
       <div className="container-x">
         <SectionHeader eyebrow={eyebrow} title={title} subtitle={subtitle} align="center" />
 
@@ -83,7 +83,7 @@ const ContentShowcase = ({
                 <div className="mt-12 flex justify-center">
                   <Link
                     to={cta.to}
-                    className="btn-ghost inline-flex items-center gap-2 !py-2.5 text-sm"
+                    className="content-showcase-cta inline-flex items-center gap-2 !py-2.5 text-sm"
                   >
                     {cta.label}
                     <ArrowRight size={14} aria-hidden="true" />

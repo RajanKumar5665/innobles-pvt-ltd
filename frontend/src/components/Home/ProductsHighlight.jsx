@@ -11,7 +11,7 @@ const ProductsHighlight = () => {
   return (
     <ContentShowcase
       sectionClassName="bg-slate-50"
-      eyebrow="What We Build"
+      // eyebrow="What We Build"
       title="Our Products"
       subtitle="Ready-to-deploy platforms for collections, disbursements, treasury, procurement
 and governance configured to your department, not built from scratch."
