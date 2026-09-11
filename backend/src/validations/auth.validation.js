@@ -16,11 +16,16 @@ const registerSchema = Joi.object({
 });
 
 const loginSchema = Joi.object({
-  email: Joi.string().email().trim().lowercase().required().messages({
+  email: Joi.string().email().trim().lowercase().max(254).required().messages({
     "string.email": "Please provide a valid email",
     "any.required": "Email is required",
   }),
+  // The request body arrives RSA/AES-encrypted and is decrypted by the
+  // decryptBody middleware before validation runs, so `password` here is the
+  // plaintext (but only ever in server memory — never over the wire).
   password: Joi.string().min(8).max(100).required().messages({
+    "string.min": "Password must be at least 8 characters",
+    "string.max": "Password must be 100 characters or fewer",
     "any.required": "Password is required",
   }),
 });

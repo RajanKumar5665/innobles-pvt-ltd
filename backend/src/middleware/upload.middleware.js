@@ -6,7 +6,6 @@ const storage = multer.memoryStorage();
 
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_RESUME_SIZE = 8 * 1024 * 1024; // 8MB
-const MAX_IMAGES = 6;
 
 const imageFileFilter = (req, file, cb) => {
   const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -35,12 +34,6 @@ const documentFileFilter = (req, file, cb) => {
 export const uploadImage = multer({
   storage,
   limits: { fileSize: MAX_IMAGE_SIZE },
-  fileFilter: imageFileFilter,
-});
-
-export const uploadImages = multer({
-  storage,
-  limits: { fileSize: MAX_IMAGE_SIZE, files: MAX_IMAGES },
   fileFilter: imageFileFilter,
 });
 

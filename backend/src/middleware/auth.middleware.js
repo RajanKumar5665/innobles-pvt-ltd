@@ -5,6 +5,10 @@ import { ApiError } from "../utils/apiResponse.js";
 
 export const getCookieName = () => process.env.JWT_COOKIE_NAME || "token";
 
+// Refresh-token cookie name — used by the login/refresh/logout controllers.
+export const getRefreshCookieName = () =>
+  process.env.JWT_REFRESH_COOKIE_NAME || "refreshToken";
+
 // Reads the HttpOnly JWT cookie, verifies it, and loads the active admin onto req.admin.
 export const requireAdmin = asyncHandler(async (req, res, next) => {
   const token = req.cookies?.[getCookieName()];

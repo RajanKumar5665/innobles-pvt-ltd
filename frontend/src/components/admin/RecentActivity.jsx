@@ -1,15 +1,11 @@
-import { Clock, FileText, MessageSquare, Briefcase } from "lucide-react";
+import { Clock, MessageSquare, Briefcase } from "lucide-react";
 
 const iconMap = {
-  blog: FileText,
   application: Briefcase,
   contact: MessageSquare,
 };
 
 const statusLabel = (type, status) => {
-  if (type === "blog") {
-    return status === "published" ? "Published" : "Draft";
-  }
   if (type === "application") {
     return status?.charAt(0).toUpperCase() + status?.slice(1);
   }
@@ -17,11 +13,6 @@ const statusLabel = (type, status) => {
 };
 
 const statusColor = (type, status) => {
-  if (type === "blog") {
-    return status === "published"
-      ? "bg-emerald-500"
-      : "bg-slate-400";
-  }
   if (type === "application") {
     const map = {
       new: "bg-blue-500",
@@ -51,19 +42,10 @@ const timeAgo = (date) => {
   return `${Math.floor(diff / 86400)}d ago`;
 };
 
-// Shows the latest activity from blogs, applications and contacts.
+// Shows the latest activity from applications and contacts.
 const RecentActivity = ({ stats }) => {
   const items = [];
 
-  (stats?.recentBlogs || []).forEach((b) => {
-    items.push({
-      type: "blog",
-      title: b.title,
-      status: b.status,
-      time: timeAgo(b.updatedAt || b.createdAt),
-      id: b._id,
-    });
-  });
   (stats?.recentApplications || []).forEach((a) => {
     items.push({
       type: "application",
@@ -102,7 +84,7 @@ const RecentActivity = ({ stats }) => {
           </p>
         ) : (
           safeItems.map((item) => {
-            const Icon = iconMap[item.type] || FileText;
+            const Icon = iconMap[item.type] || MessageSquare;
             return (
               <div
                 key={`${item.type}-${item.id}`}

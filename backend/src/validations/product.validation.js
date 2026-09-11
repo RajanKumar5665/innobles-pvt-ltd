@@ -62,14 +62,10 @@ const updateProduct = Joi.object({
   status: baseProduct.status,
 });
 
-const productStatusSchema = Joi.object({
-  status: Joi.string().valid("draft", "published").required(),
-});
-
 const productQuerySchema = pagination.keys({
   search: Joi.string().trim().allow(""),
   status: Joi.string().valid("draft", "published"),
   category: Joi.string().trim().allow(""),
 });
 
-export { createProduct, updateProduct, productStatusSchema, productQuerySchema };
+export { createProduct, updateProduct, productQuerySchema };

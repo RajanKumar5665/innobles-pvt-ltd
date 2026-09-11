@@ -15,7 +15,13 @@ export {
 export const login = (credentials) => async (dispatch) => {
   dispatch({ type: "auth/loginPending" });
   try {
-    const data = await loginApi(credentials);
+    // The api layer (api.post) encrypts the whole payload with a random
+    // AES-256-GCM key wrapped by the server's RSA public key, so the raw
+    // password never leaves the browser in plaintext.
+    const data = await loginApi({
+      email: credentials.email,
+      password: credentials.password,
+    });
     dispatch({ type: "auth/loginFulfilled", payload: data });
     return data;
   } catch (error) {

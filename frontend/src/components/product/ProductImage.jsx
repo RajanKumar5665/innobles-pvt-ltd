@@ -1,52 +1,54 @@
-import { memo, useState } from "react";
+import { useState } from "react";
 import { Image as ImageIcon } from "lucide-react";
-import { buildResponsiveImage } from "../../lib/cloudinary";
+import { optimizeCloudinaryUrl } from "../../lib/imageUrl";
 
-const PLACEHOLDER_CLASS = "relative flex items-center justify-center bg-slate-100";
-const ICON_CLASS = "h-8 w-8 text-slate-400";
+// Shows the product image. It is served as an auto-compressed, correctly
+// sized Cloudinary derivative (f_auto + q_auto + width crop) so card grids
+// download and render quickly. If the image is missing or broken, shows a
+// neutral placeholder instead of a broken-image icon.
+//
+// Props:
+//   width / height — pixel size of the rendered slot (2x for retina).
+//   priority — "high" for above-the-fold images, otherwise lazy.
+const ProductImage = ({
+  src,
+  alt = "",
+  className = "",
+  width = 800,
+  height = null,
+  priority = "low",
+  ...rest
+}) => {
+  const [failed, setFailed] = useState(false);
+  const validSrc = src && !failed;
+  const optimizedSrc = validSrc ? optimizeCloudinaryUrl(src, { width, height }) : "";
 
-// Shows the product image. If it is missing or broken, shows a neutral
-// placeholder instead of a broken-image icon. Cloudinary sources are served
-// responsively (f_auto/q_auto + width srcset) so cards download only what the
-// viewport actually needs — much cheaper than the original full-size file.
-const ProductImage = memo(
-  ({ src, alt = "", className = "", sizes, priority = false, ...rest }) => {
-    const [failed, setFailed] = useState(false);
-    const validSrc = src && !failed;
-
-    if (!validSrc) {
-      return (
-        <div
-          className={`${PLACEHOLDER_CLASS} ${className}`}
-          role="img"
-          aria-label={alt || undefined}
-          {...rest}
-        >
-          <ImageIcon className={ICON_CLASS} strokeWidth={1.5} aria-hidden="true" />
-        </div>
-      );
-    }
-
-    const { src: optimizedSrc, srcSet } = buildResponsiveImage(src);
-
+  if (!optimizedSrc) {
     return (
-      <img
-        src={optimizedSrc}
-        srcSet={srcSet}
-        sizes={srcSet ? sizes : undefined}
-        alt={alt}
-        loading={priority ? "eager" : "lazy"}
-        fetchPriority={priority ? "high" : "low"}
-        decoding="async"
-        className={className}
-        onError={() => setFailed(true)}
+      <div
+        className={`relative flex items-center justify-center bg-slate-100 ${className}`}
+        role="img"
+        aria-label={alt || undefined}
         {...rest}
-      />
+      >
+        <ImageIcon className="h-8 w-8 text-slate-400" strokeWidth={1.5} aria-hidden="true" />
+      </div>
     );
-  },
-);
+  }
 
-// Keep the component name visible in React DevTools.
-ProductImage.displayName = "ProductImage";
+  return (
+    <img
+      src={optimizedSrc}
+      alt={alt}
+      width={width}
+      height={height || undefined}
+      loading={priority === "high" ? "eager" : "lazy"}
+      decoding="async"
+      className={className}
+      onError={() => setFailed(true)}
+      {...rest}
+    />
+  );
+};
 
 export default ProductImage;

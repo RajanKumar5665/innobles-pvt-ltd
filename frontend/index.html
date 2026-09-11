@@ -25,7 +25,7 @@
       content="Web platforms, mobile apps, cloud and AI-driven systems built for businesses that want to move faster."
     />
     <meta property="og:url" content="https://www.innobles.in/" />
-    <meta property="og:image" content="/hero-image.png" />
+    <meta property="og:image" content="/hero-image.jpg" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -36,7 +36,31 @@
     />
 
     <!-- Theme -->
-    <meta name="theme-color" content="#172B3A" />
+    <meta name="theme-color" content="#172033" />
+
+    <!-- Performance: give the browser the fastest path to the fonts + hero. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="image"
+      href="/hero-image.webp"
+      type="image/webp"
+      fetchpriority="high"
+    />
+    <!-- Non-blocking font load: starts async, only becomes blocking once applied. -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+      />
+    </noscript>
   </head>
   <body>
     <div id="root"></div>

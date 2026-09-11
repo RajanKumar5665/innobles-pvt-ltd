@@ -2,11 +2,23 @@ import Contact from "../models/Contact.js";
 import paginate from "../utils/paginate.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError, success } from "../utils/apiResponse.js";
+// import sendMail from "../utils/sendMail.js";
+// import { contactMailTemplate } from "../templates/contactMail.template.js";
 
 // Public
 
 const createContact = asyncHandler(async (req, res) => {
   const contact = await Contact.create(req.body);
+
+  // const notifyEmails = process.env.CONTACT_NOTIFY_EMAILS?.split(",") || [];
+  // if (notifyEmails.length) {
+  //   sendMail(
+  //     notifyEmails,
+  //     `New Contact Message${contact.subject ? `: ${contact.subject}` : ""}`,
+  //     contactMailTemplate(contact)
+  //   );
+  // }
+
   return success(res, { id: contact._id }, "Message sent successfully", 201);
 });
 

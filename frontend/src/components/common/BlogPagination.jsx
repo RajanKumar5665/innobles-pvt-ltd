@@ -26,7 +26,7 @@ const BlogPagination = ({ current = 1, total = 1, onChange }) => {
   const goNext = () => onChange?.(Math.min(total, current + 1));
 
   return (
-    <nav className="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Blog pagination">
+    <nav className="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Pagination">
       <button
         type="button"
         className="blog-pagination-btn"

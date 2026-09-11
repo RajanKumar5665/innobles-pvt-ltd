@@ -90,10 +90,6 @@ const updateService = Joi.object({
   bannerRemoved: Joi.string().valid("true", "false").allow("").optional(),
 });
 
-const serviceStatusSchema = Joi.object({
-  status: Joi.string().valid("draft", "published", "archived").required(),
-});
-
 const serviceQuerySchema = Joi.object({
   page: Joi.number().integer().min(1).default(1),
   limit: Joi.number().integer().min(1).max(100).default(20),
@@ -104,6 +100,5 @@ const serviceQuerySchema = Joi.object({
 export {
   createService,
   updateService,
-  serviceStatusSchema,
   serviceQuerySchema,
 };

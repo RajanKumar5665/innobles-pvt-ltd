@@ -6,13 +6,11 @@ import BackToTop from "../components/common/BackToTop";
 
 // Shared layout for public pages. <Outlet /> shows the current page inside it.
 const MainLayout = () => (
-  <div className="public-site flex min-h-screen flex-col">
+  <div className="flex min-h-screen flex-col">
     <ScrollToTop />
     <BackToTop />
     <Navbar />
     <main className="flex-1">
-      {/* Clears the fixed navbar height; heroes pull back up over it. */}
-      <div aria-hidden="true" className="nav-anchor" />
       <Outlet />
     </main>
     <Footer />

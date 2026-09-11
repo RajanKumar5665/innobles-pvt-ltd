@@ -5,7 +5,6 @@ import ctrl from "../controllers/service.controller.js";
 import {
   createService,
   updateService,
-  serviceStatusSchema,
   serviceQuerySchema,
 } from "../validations/service.validation.js";
 import { idParamSchema } from "../validations/common.js";
@@ -23,14 +22,12 @@ adminRouter.post(
   ctrl.adminCreateService,
 );
 adminRouter.get("/", validate(serviceQuerySchema, "query"), ctrl.adminListServices);
-adminRouter.get("/:id", validate(idParamSchema, "params"), ctrl.adminGetService);
 adminRouter.put(
   "/:id",
   uploadImage.fields(bannerFields),
   validate(updateService),
   ctrl.adminUpdateService,
 );
-adminRouter.patch("/:id/status", validate(serviceStatusSchema), ctrl.adminUpdateServiceStatus);
 adminRouter.delete("/:id", validate(idParamSchema, "params"), ctrl.adminDeleteService);
 
 export default { publicRouter, adminRouter };

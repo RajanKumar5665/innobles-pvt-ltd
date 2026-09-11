@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import Seo from "../components/seo/Seo";
 import Loader from "../components/common/Loader";
 import ProductImage from "../components/product/ProductImage";
-import { useProductBySlug } from "../hooks/useProductBySlug";
+import { useProducts } from "../hooks/useProducts";
 import { toRenderableHtml } from "../lib/richText";
 import { getCategoryByLabel } from "../config/productCategories";
 
@@ -11,7 +11,8 @@ import { getCategoryByLabel } from "../config/productCategories";
 // "Visit Product" appears only when the admin set an external link.
 const ProductDetail = () => {
   const { slug } = useParams();
-  const { product, status, error } = useProductBySlug(slug);
+  const { list, status, error } = useProducts();
+  const product = list.find((p) => p.slug === slug);
 
   if (status === "loading" || status === "idle") {
     return (
@@ -62,13 +63,14 @@ const ProductDetail = () => {
           <ArrowLeft size={16} aria-hidden="true" /> Back to all products
         </Link>
 
-        {/* Hero image */}
+        {/* Hero image — eager + high priority since it sits above the fold */}
         <div className="mt-8 overflow-hidden rounded-2xl border border-line bg-white">
           <ProductImage
             src={product.image}
             alt={product.title || ""}
-            priority
-            sizes="(min-width: 1280px) 1216px, 100vw"
+            width={1600}
+            height={640}
+            priority="high"
             className="h-64 w-full object-cover md:h-80"
           />
         </div>

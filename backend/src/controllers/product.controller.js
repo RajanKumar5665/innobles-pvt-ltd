@@ -23,19 +23,14 @@ const getPublicProducts = asyncHandler(async (req, res) => {
     page,
     limit,
     sort: { createdAt: -1 },
+    // Slash unused legacy fields so the list payload (used by /products and
+    // the home preview) is as small as possible. Description stays — the
+    // public Products page searches inside it client-side.
+    select: "-specifications -__v",
   });
   return success(res, result.data, "Products retrieved", 200, {
     pagination: result.pagination,
   });
-});
-
-const getPublicProductBySlug = asyncHandler(async (req, res) => {
-  const product = await Product.findOne({
-    slug: req.params.slug,
-    status: "published",
-  });
-  if (!product) throw new ApiError(404, "Product not found");
-  return success(res, product, "Product retrieved");
 });
 
 // Admin
@@ -82,12 +77,6 @@ const adminListProducts = asyncHandler(async (req, res) => {
   });
 });
 
-const adminGetProduct = asyncHandler(async (req, res) => {
-  const product = await Product.findById(req.params.id);
-  if (!product) throw new ApiError(404, "Product not found");
-  return success(res, product, "Product retrieved");
-});
-
 const adminUpdateProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
   if (!product) throw new ApiError(404, "Product not found");
@@ -120,18 +109,6 @@ const adminUpdateProduct = asyncHandler(async (req, res) => {
   return success(res, product, "Product updated");
 });
 
-const adminUpdateProductStatus = asyncHandler(async (req, res) => {
-  const product = await Product.findById(req.params.id);
-  if (!product) throw new ApiError(404, "Product not found");
-  product.status = req.body.status;
-  await product.save();
-  return success(
-    res,
-    product,
-    `Product ${product.status === "published" ? "published" : "unpublished"}`,
-  );
-});
-
 const adminDeleteProduct = asyncHandler(async (req, res) => {
   const product = await Product.findByIdAndDelete(req.params.id);
   if (!product) throw new ApiError(404, "Product not found");
@@ -141,11 +118,8 @@ const adminDeleteProduct = asyncHandler(async (req, res) => {
 
 export default {
   getPublicProducts,
-  getPublicProductBySlug,
   adminCreateProduct,
   adminListProducts,
-  adminGetProduct,
   adminUpdateProduct,
-  adminUpdateProductStatus,
   adminDeleteProduct,
 };

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { TriangleAlert, X } from "lucide-react";
 import {
   login,
   selectAuthStatus,
@@ -8,6 +9,13 @@ import {
 } from "../../features/auth/authThunks";
 import { clearError } from "../../features/auth/authSlice";
 import Loader from "../../components/common/Loader";
+import { consumeSessionExpiredFlag } from "../../lib/sessionExpired";
+import {
+  LIMITS,
+  validateEmail,
+  validatePassword,
+  fieldError,
+} from "../../lib/formValidation";
 
 const emptyForm = { email: "", password: "" };
 const inputClass =
@@ -23,11 +31,14 @@ const Login = () => {
   const error = useSelector(selectAuthError);
   const isLoading = status === "loading";
 
-  const errors = {};
-  if (!formData.email.trim()) errors.email = "Email is required";
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
-    errors.email = "Enter a valid email";
-  if (!formData.password) errors.password = "Password is required";
+  // True when the API layer redirected us here because the admin session expired.
+  // The flag is read (and cleared) once from sessionStorage on mount.
+  const [sessionExpired, setSessionExpired] = useState(consumeSessionExpiredFlag);
+
+  const errors = {
+    email: validateEmail(formData.email),
+    password: validatePassword(formData.password),
+  };
 
   const handleChange = (e) =>
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -36,19 +47,19 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSessionExpired(false);
     setTouched({ email: true, password: true });
-    if (Object.keys(errors).length) return;
+    const hasErrors = Object.values(errors).some(Boolean);
+    if (hasErrors) return;
     dispatch(clearError());
     try {
       await dispatch(login(formData));
       navigate("/admin");
-    } catch {
+    } catch(error) {
       // error handled in slice — shown via `error` variable below
+      console.error("LOGIN CATCH ERROR:", error);
     }
   };
-
-  const fieldError = (name) =>
-    touched[name] && errors[name] ? errors[name] : null;
 
   return (
     <div className="min-h-screen bg-[#0F172A] flex items-center justify-center px-4">
@@ -64,6 +75,27 @@ const Login = () => {
             Sign in to manage your website
           </p>
         </div>
+
+        {sessionExpired && (
+          <div
+            role="alert"
+            className="mt-4 flex items-start gap-2.5 rounded-lg border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-200"
+          >
+            <TriangleAlert size={18} className="mt-0.5 shrink-0" aria-hidden="true" />
+            <p className="flex-1">
+              <span className="font-semibold">Your session has expired.</span>{" "}
+              Please sign in again to continue.
+            </p>
+            <button
+              type="button"
+              onClick={() => setSessionExpired(false)}
+              className="mt-0.5 rounded-md p-0.5 text-amber-200 transition-colors hover:bg-amber-400/20"
+              aria-label="Dismiss session expired message"
+            >
+              <X size={15} aria-hidden="true" />
+            </button>
+          </div>
+        )}
 
         {error && (
           <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
@@ -82,12 +114,14 @@ const Login = () => {
               value={formData.email}
               onChange={handleChange}
               onBlur={handleBlur}
+              maxLength={LIMITS.EMAIL_MAX}
+              autoComplete="username"
               className={inputClass}
               placeholder="admin@innobles.in"
               disabled={isLoading}
             />
-            {fieldError("email") && (
-              <p className="mt-1.5 text-xs text-red-400">{fieldError("email")}</p>
+            {fieldError(errors, touched, "email") && (
+              <p className="mt-1.5 text-xs text-red-400">{fieldError(errors, touched, "email")}</p>
             )}
           </div>
 
@@ -101,13 +135,15 @@ const Login = () => {
               value={formData.password}
               onChange={handleChange}
               onBlur={handleBlur}
+              maxLength={LIMITS.PASSWORD_MAX}
+              autoComplete="current-password"
               className={inputClass}
               placeholder="••••••••"
               disabled={isLoading}
             />
-            {fieldError("password") && (
+            {fieldError(errors, touched, "password") && (
               <p className="mt-1.5 text-xs text-red-400">
-                {fieldError("password")}
+                {fieldError(errors, touched, "password")}
               </p>
             )}
           </div>

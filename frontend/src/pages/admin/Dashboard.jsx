@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Package, Users, FileText, MessageSquare, Briefcase } from "lucide-react";
+import { Package, Users, MessageSquare, Briefcase } from "lucide-react";
 import {
   fetchStats,
   selectStats,
@@ -49,17 +49,7 @@ const Dashboard = () => {
       {status === "success" && (
         <div className="space-y-6">
           {/* --- Stats: one card per content type, all values combined --- */}
-          <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-            <ContentStatCard
-              title="Blogs"
-              icon={FileText}
-              color="bg-brand-orange"
-              stats={[
-                { label: "Total", value: stats.blogs?.total, dot: "bg-brand-orange" },
-                { label: "Published", value: stats.blogs?.published, dot: "bg-emerald-500" },
-                { label: "Draft", value: stats.blogs?.draft, dot: "bg-slate-400" },
-              ]}
-            />
+          <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             <ContentStatCard
               title="Products"
               icon={Package}

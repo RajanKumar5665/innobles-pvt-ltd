@@ -1,4 +1,3 @@
-import Blog from "../models/Blog.js";
 import Product from "../models/Product.js";
 import Service from "../models/Service.js";
 import Career from "../models/Career.js";
@@ -9,9 +8,6 @@ import { success } from "../utils/apiResponse.js";
 
 const getDashboardStats = asyncHandler(async (req, res) => {
   const [
-    totalBlogs,
-    publishedBlogs,
-    draftBlogs,
     totalProducts,
     publishedProducts,
     draftProducts,
@@ -29,10 +25,8 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     reviewingApplications,
     shortlistedApplications,
     rejectedApplications,
+    hiredApplications,
   ] = await Promise.all([
-    Blog.countDocuments(),
-    Blog.countDocuments({ status: "published" }),
-    Blog.countDocuments({ status: "draft" }),
     Product.countDocuments(),
     Product.countDocuments({ status: "published" }),
     Product.countDocuments({ status: "draft" }),
@@ -50,14 +44,10 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     JobApplication.countDocuments({ status: "reviewing" }),
     JobApplication.countDocuments({ status: "shortlisted" }),
     JobApplication.countDocuments({ status: "rejected" }),
+    JobApplication.countDocuments({ status: "hired" }),
   ]);
 
-  const [recentBlogs, recentApplications, recentContacts] = await Promise.all([
-    Blog.find()
-      .sort({ createdAt: -1 })
-      .limit(5)
-      .select("title status createdAt updatedAt")
-      .lean(),
+  const [recentApplications, recentContacts] = await Promise.all([
     JobApplication.find()
       .sort({ createdAt: -1 })
       .limit(5)
@@ -72,7 +62,6 @@ const getDashboardStats = asyncHandler(async (req, res) => {
   ]);
 
   const stats = {
-    blogs: { total: totalBlogs, published: publishedBlogs, draft: draftBlogs },
     products: {
       total: totalProducts,
       published: publishedProducts,
@@ -95,8 +84,8 @@ const getDashboardStats = asyncHandler(async (req, res) => {
       reviewing: reviewingApplications,
       shortlisted: shortlistedApplications,
       rejected: rejectedApplications,
+      hired: hiredApplications,
     },
-    recentBlogs,
     recentApplications,
     recentContacts,
   };

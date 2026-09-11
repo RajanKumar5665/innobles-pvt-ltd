@@ -25,12 +25,6 @@ const getPublicCareers = asyncHandler(async (req, res) => {
   });
 });
 
-const getPublicCareerById = asyncHandler(async (req, res) => {
-  const career = await Career.findOne({ _id: req.params.id, status: "open" });
-  if (!career) throw new ApiError(404, "Career not found");
-  return success(res, career, "Career retrieved");
-});
-
 // Admin
 
 const adminCreateCareer = asyncHandler(async (req, res) => {
@@ -58,12 +52,6 @@ const adminListCareers = asyncHandler(async (req, res) => {
   return success(res, result.data, "Careers retrieved", 200, {
     pagination: result.pagination,
   });
-});
-
-const adminGetCareer = asyncHandler(async (req, res) => {
-  const career = await Career.findById(req.params.id);
-  if (!career) throw new ApiError(404, "Career not found");
-  return success(res, career, "Career retrieved");
 });
 
 const adminUpdateCareer = asyncHandler(async (req, res) => {
@@ -94,10 +82,8 @@ const adminDeleteCareer = asyncHandler(async (req, res) => {
 
 export default {
   getPublicCareers,
-  getPublicCareerById,
   adminCreateCareer,
   adminListCareers,
-  adminGetCareer,
   adminUpdateCareer,
   adminUpdateCareerStatus,
   adminDeleteCareer,

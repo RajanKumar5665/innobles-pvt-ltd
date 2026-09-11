@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { ArrowRight, Briefcase, CalendarDays, ChevronDown, ChevronUp, Clock, ListChecks, MapPin, Target } from "lucide-react";
 
 // Job card with department badge, meta row, description and an Apply button.
@@ -38,13 +37,7 @@ const JobCard = ({ job, onApply }) => {
     (job.requirements && job.requirements.length > 0);
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 18 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-      className="career-job-card p-5 md:p-6"
-    >
+    <article className="career-job-card p-5 md:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
@@ -129,7 +122,7 @@ const JobCard = ({ job, onApply }) => {
           )}
         </div>
       )}
-    </motion.article>
+    </article>
   );
 };
 

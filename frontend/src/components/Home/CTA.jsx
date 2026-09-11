@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ShieldCheck, Landmark, Rocket, LifeBuoy, Sparkles } from "lucide-react";
+import { ShieldCheck, Landmark, Rocket, LifeBuoy } from "lucide-react";
 import Reveal from "../common/Reveal";
 import FeatureCheck from "../common/FeatureCheck";
 
@@ -14,9 +14,9 @@ const proofPoints = [
   },
   {
     icon: LifeBuoy,
-    title: "Operated from start to finish",
+    title: "Operated end-to-end",
     description:
-      "We train departments, onboard users and support the platform after launch; delivery does not end at handover.",
+      "We train departments, onboard users and support the platform after go-live; delivery does not end at handover.",
   },
   {
     icon: ShieldCheck,
@@ -40,7 +40,7 @@ const whyChecklist = [
 ];
 
 const CTA = () => (
-  <section className="why-innobles-section relative overflow-hidden py-20 md:py-24">
+  <section className="relative overflow-hidden bg-ink py-20 md:py-24">
     {/* Subtle decorative glows on the dark band */}
     <div className="pointer-events-none absolute -left-24 top-0 h-72 w-72 rounded-full bg-brand-orange/25 blur-3xl" />
     <div className="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-brand-cyan/10 blur-3xl" />
@@ -48,8 +48,7 @@ const CTA = () => (
     <div className="container-x">
       {/* ---- Credibility block: WHY INNOBLES ---- */}
       <Reveal className="mx-auto max-w-3xl text-center">
-        <p className="pill-eyebrow mb-4 justify-center !text-[#FF9866]">
-          <Sparkles className="h-4 w-4 text-[#FF9866]" strokeWidth={2.2} aria-hidden="true" />
+        <p className="pill-eyebrow mb-4 justify-center">
           Why Innobles
         </p>
         <h2 className="font-disp text-3xl font-bold leading-tight text-slate-50 md:text-4xl">
@@ -66,8 +65,8 @@ const CTA = () => (
           const Icon = point.icon;
           return (
             <Reveal key={point.title} delay={i * 90}>
-              <div className="group h-full rounded-2xl border border-slate-700/60 bg-slate-900/40 p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-brand-orange/50 hover:bg-slate-900/70">
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#FFE9DE] text-[#172B3A] transition-transform duration-300 group-hover:scale-110">
+              <div className="h-full rounded-2xl border border-slate-700/60 bg-slate-900/40 p-6 transition-colors hover:border-brand-orange/40">
+                <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-orange/15 text-brand-orange">
                   <Icon className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
                 </span>
                 <h3 className="mt-5 font-disp text-lg font-bold leading-snug text-slate-50">
@@ -87,7 +86,7 @@ const CTA = () => (
         <div className="grid gap-10 lg:grid-cols-2">
           {/* Left: heading + sub + CTAs */}
           <Reveal className="max-w-xl">
-            <p className="text-xs font-bold uppercase tracking-widest !text-[#FF9866]">Ready to start?</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-brand-orange">Ready to start?</p>
             <h2 className="mt-4 font-disp text-3xl font-bold leading-tight text-slate-50 md:text-4xl">
               Digitise the process your team runs on paper today.
             </h2>
@@ -109,11 +108,11 @@ const CTA = () => (
 
           {/* Right: "Why Innobles?" checklist */}
           <Reveal delay={120} className="rounded-2xl border border-slate-700/60 bg-slate-900/40 p-8 md:p-10">
-            <p className="text-sm font-semibold text-[#FF9866]">Why Innobles?</p>
+            <p className="text-sm font-semibold text-brand-orange">Why Innobles?</p>
             <ul className="mt-6 space-y-4">
               {whyChecklist.map((item) => (
                 <li key={item} className="flex items-start gap-3 text-sm text-slate-200">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#FF9866] text-[#172B3A]">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-orange text-slate-50">
                     <FeatureCheck className="h-3 w-3" strokeWidth={3} />
                   </span>
                   {item}

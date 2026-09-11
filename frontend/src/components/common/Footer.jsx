@@ -22,7 +22,6 @@ const companyLinks = [
   { label: "Services", path: "/services" },
   { label: "Products", path: "/products" },
   { label: "Careers", path: "/careers" },
-  { label: "Blog", path: "/blog" },
   { label: "About Us", path: "/about" },
 ];
 

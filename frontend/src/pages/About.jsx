@@ -1,14 +1,10 @@
 import { Link } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone, Target } from "lucide-react";
 import Seo from "../components/seo/Seo";
-import PageHero from "../components/common/PageHero";
 import SectionHeading from "../components/common/SectionHeading";
 import Reveal from "../components/common/Reveal";
 import StaggerGroup, { StaggerItem } from "../components/common/StaggerGroup";
-import ImageReveal from "../components/common/ImageReveal";
-import TeamCard from "../components/about/TeamCard";
+import StatCounter from "../components/about/StatCounter";
 import { useAbout } from "../hooks/useAbout";
 
 const AboutSkeleton = () => (
@@ -17,14 +13,6 @@ const AboutSkeleton = () => (
     <div className="container-x py-20">
       <div className="mx-auto h-6 w-40 rounded bg-slate-200" />
       <div className="mx-auto mt-4 h-10 w-3/4 max-w-2xl rounded bg-slate-200" />
-      <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div
-            key={i}
-            className="h-56 rounded-2xl border border-slate-100 bg-slate-100"
-          />
-        ))}
-      </div>
     </div>
   </div>
 );
@@ -44,119 +32,6 @@ const AboutError = () => (
   </section>
 );
 
-const AnimatedStat = ({ value }) => {
-  const raw = String(value ?? "");
-  const match = raw.match(/(\d+(?:\.\d+)?)/);
-  const target = match ? Number(match[1]) : null;
-  const prefix = match ? raw.slice(0, match.index) : "";
-  const suffix = match ? raw.slice(match.index + match[0].length) : "";
-  const [current, setCurrent] = useState(0);
-
-  // Respect the user's reduced-motion preference (MotionConfig + OS setting).
-  const reducesMotion = useReducedMotion();
-
-  // Only count up once the stat scrolls into view.
-  // NOTE: useInView(ref, options) — first arg is the ref, returns a boolean.
-  const statRef = useRef(null);
-  const inView = useInView(statRef, { amount: 0.3, once: true });
-
-  useEffect(() => {
-    // Reduced motion / non-numeric / not-yet-visible: skip the count-up.
-    if (!inView || target === null || reducesMotion) return undefined;
-
-    let frame;
-    const started = performance.now();
-    const duration = 1200;
-    const tick = (now) => {
-      const progress = Math.min((now - started) / duration, 1);
-      const eased = 1 - (1 - progress) ** 3;
-      setCurrent(target * eased);
-      if (progress < 1) frame = requestAnimationFrame(tick);
-    };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [inView, target, reducesMotion]);
-
-  if (target === null) return raw;
-  const shown = reducesMotion ? target : current;
-  const formatted = Number.isInteger(target)
-    ? Math.round(shown)
-    : shown.toFixed(1);
-  return (
-    <span ref={statRef} className="tabular-nums">
-      {prefix}
-      {formatted}
-      {suffix}
-    </span>
-  );
-};
-
-const TeamCarousel = ({ team }) => {
-  const hasCarousel = team.length > 3;
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [direction, setDirection] = useState(1);
-  const reducesMotion = useReducedMotion();
-
-  useEffect(() => {
-    if (!hasCarousel) return undefined;
-    const timer = window.setInterval(() => {
-      setDirection(1);
-      setActiveIndex((current) => (current + 1) % team.length);
-    }, 5000);
-    return () => window.clearInterval(timer);
-  }, [team.length, hasCarousel]);
-
-  const showPrevious = () => {
-    setDirection(-1);
-    setActiveIndex((current) => (current - 1 + team.length) % team.length);
-  };
-
-  const showNext = () => {
-    setDirection(1);
-    setActiveIndex((current) => (current + 1) % team.length);
-  };
-
-  const visibleMembers = hasCarousel
-    ? Array.from({ length: 3 }, (_, offset) => team[(activeIndex + offset) % team.length])
-    : team;
-
-  return (
-    <div className="mt-12">
-      <div className={`mx-auto flex items-center gap-3 sm:gap-5 ${hasCarousel ? "max-w-7xl" : "max-w-5xl"}`}>
-        {hasCarousel && (
-          <button type="button" onClick={showPrevious} aria-label="Previous team group" className="team-carousel-control">
-            <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-          </button>
-        )}
-        <div className="min-w-0 flex-1" aria-live="polite">
-          <AnimatePresence initial={false} mode="wait" custom={direction}>
-            <motion.div
-              key={activeIndex}
-              custom={direction}
-              initial={reducesMotion ? { opacity: 0 } : { opacity: 0, x: direction * 44 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={reducesMotion ? { opacity: 0 } : { opacity: 0, x: direction * -44 }}
-              transition={{ duration: reducesMotion ? 0.15 : 0.42, ease: [0.22, 1, 0.36, 1] }}
-              className="grid gap-6 md:grid-cols-3"
-            >
-              {visibleMembers.map((member, index) => (
-                <Reveal key={member._id} delay={index * 60} className="h-full">
-                  <TeamCard member={member} />
-                </Reveal>
-              ))}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-        {hasCarousel && (
-          <button type="button" onClick={showNext} aria-label="Next team group" className="team-carousel-control">
-            <ChevronRight className="h-5 w-5" aria-hidden="true" />
-          </button>
-        )}
-      </div>
-    </div>
-  );
-};
-
 const About = () => {
   const { data, status } = useAbout();
 
@@ -166,108 +41,139 @@ const About = () => {
   const stats = Array.isArray(data?.statistics)
     ? data.statistics.filter((s) => s.active !== false)
     : [];
-  const team = Array.isArray(data?.teamMembers) ? data.teamMembers : [];
   const locations = Array.isArray(data?.locations) ? data.locations : [];
 
   return (
     <>
       <Seo
         title="About Us"
-        description="Meet Innobles, the team behind fast, reliable and scalable software for growing businesses."
+        description="Meet Innobles — the team behind fast, reliable and scalable software for growing businesses."
         path="/about"
         image="/innobles_logo.png"
       />
 
-      <PageHero
-        eyebrow="About Innobles"
-        title="Trusted teams."
-        highlight="Public"
-        afterHighlight="outcomes."
-        description="We're Innobles, a software product and engineering company building the digital platforms that government departments, PSUs and institutions run on."
-      >
-        <div className="flex flex-wrap justify-center gap-4">
-          <Link to="/services" className="btn-accent">
-            Our Services
-          </Link>
+      {/* Page hero — STATIC */}
+      <section className="relative overflow-hidden border-b border-white/10">
+        <div className="pointer-events-none absolute inset-0 hero-glow" />
+        <div className="pointer-events-none absolute inset-0 bg-grid opacity-60" />
+        <div className="container-x relative py-20 text-center md:py-28">
+          <p className="eyebrow mb-4 justify-center">About Innobles</p>
+          <h1 className="mx-auto max-w-3xl font-disp text-4xl font-bold leading-tight md:text-5xl">
+            Trusted teams. <span className="text-gradient">Public</span>{" "}
+            outcomes.
+          </h1>
+          <p className="mx-auto mt-6 max-w-2xl text-white/60 md:text-lg">
+            We're Innobles a software product and engineering company building
+            the digital platforms that government departments, PSUs and
+            institutions run on.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <Link to="/services" className="btn-primary">
+              Our Services
+            </Link>
+          </div>
         </div>
+
+        {/* Stats — hidden entirely when none are configured. Numbers count up
+            and the row fades in for a live feel. */}
         {stats.length > 0 && (
-          <StaggerGroup className="relative mx-auto mt-12 grid max-w-5xl grid-cols-2 gap-4 border-t border-line pt-10 text-center md:grid-cols-4 md:gap-8">
+          <StaggerGroup className="container-x grid grid-cols-2 gap-8 border-t border-white/10 py-10 text-center md:grid-cols-4">
             {stats.map((s) => (
-              <StaggerItem key={s._id} className="stat-card">
-                <p className="font-disp text-3xl font-bold text-primary md:text-4xl">
-                  <AnimatedStat value={s.value} />
-                </p>
-                <p className="mt-1 text-sm text-slate-500">{s.label}</p>
+              <StaggerItem key={s._id}>
+                <StatCounter
+                  value={s.value}
+                  className="font-disp text-3xl font-bold text-primary md:text-4xl"
+                />
+                <p className="mt-1 text-sm text-white/50">{s.label}</p>
               </StaggerItem>
             ))}
           </StaggerGroup>
         )}
-      </PageHero>
-
-      {/* Story — STATIC */}
-      <section className="container-x grid items-center gap-10 py-20 lg:grid-cols-2">
-        <Reveal variant="left">
-          <p className="eyebrow mb-4">Our story</p>
-          <h2 className="font-disp text-3xl font-bold leading-tight md:text-4xl">
-            We started with a simple belief: public systems deserve software
-            built with care. <span className="text-primary"></span>
-          </h2>
-        </Reveal>
-        <Reveal variant="right">
-          <div>
-            <div className="mb-7 overflow-hidden rounded-3xl border border-line">
-              <img
-                src="our_story_banner_img.png"
-                alt="Innobles team collaborating around a table"
-                loading="lazy"
-                className="h-64 w-full object-cover md:h-72"
-              />
-            </div>
-            <div className="space-y-4 text-slate-600">
-            <p>
-              The "In" in Innobles is India. We build for the processes this
-              country actually runs on: tax collection, fund disbursement, land
-              records, tenders, files moving between desks, and for the
-              departments, PSUs and institutions that run them. Run and operated
-              by industry veterans and dynamic young leaders, we deliver
-              elegant, data-driven platforms that help organisations perform
-              more effectively and reach better outcomes. Over 8 years we've
-              grown a portfolio of 37 products spanning collections,
-              disbursements, treasury, procurement and governance, deployed
-              live across India, and integrated with the banking system: payment
-              gateways, electronic bank guarantees and Aadhaar-based
-              verification.
-            </p>
-            <blockquote className="border-l-4 border-brand-orange bg-orange-500/10 p-4 sm:rounded-r-lg rounded-l-sm text-[15px] leading-relaxed">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#172B3A]">Our mission</span>
-              <p className="mt-2 text-slate-700">
-                Our mission is to be a socially responsible organisation with
-                focus on people, one that inspires its team to deliver
-                outstanding technology intervention and helps our clients complete
-                their digital transformation.
-              </p>
-            </blockquote>
-            </div>
-          </div>
-        </Reveal>
       </section>
 
-      {/* Team */}
-      {team.length > 0 && (
-        <section className="container-x py-20">
-          <SectionHeading eyebrow="Team" title="The people behind the work" align="center" eyebrowClassName="about-eyebrow" />
-          <TeamCarousel team={team} />
-        </section>
-      )}
+      {/* Story — STATIC. Leading image + "Our story" copy + highlighted mission panel */}
+      <section className="container-x py-20">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+          {/* Story image with floating stat badge */}
+          <Reveal variant="left" className="relative">
+            <div className="relative overflow-hidden rounded-3xl border border-line bg-slate-50 shadow-md">
+              <picture>
+                <source srcSet="/story-banner.webp" type="image/webp" />
+                <img
+                  src="/story-banner.jpg"
+                  alt="Innobles — digital platforms for public systems across India"
+                  width={1200}
+                  height={800}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-80 w-full object-cover md:h-[420px]"
+                />
+              </picture>
+            </div>
+
+            {/* Floating stat badge (uses the first live statistic when present) */}
+            <div className="absolute -bottom-5 right-5 flex items-center gap-2.5 rounded-xl border border-line bg-white px-4 py-2.5 shadow-md">
+              <span className="font-disp text-xl font-bold text-brand-orange">
+                {stats[0]?.value || "37+"}
+              </span>
+              <span className="text-xs font-semibold leading-tight text-slate-600">
+                {(stats[0]?.label || "Software Products").split(" ")[0]}
+              </span>
+            </div>
+          </Reveal>
+
+          {/* Our story + mission copy */}
+          <div className="min-w-0">
+            <Reveal variant="right">
+              <p className="eyebrow mb-4">Our story</p>
+              <h2 className="font-disp text-3xl font-bold leading-tight md:text-4xl">
+                We started with a simple belief: public systems deserve software
+                built with care.
+              </h2>
+            </Reveal>
+
+            <Reveal variant="right" delay={100}>
+              <p className="mt-5 text-slate-600 leading-relaxed md:text-lg">
+                The "In" in Innobles is India. We build for the processes this
+                country actually runs on — tax collection, fund disbursement, land
+                records, tenders, files moving between desks — and for the
+                departments, PSUs and institutions that run them. Run and operated
+                by industry veterans and dynamic young leaders, we deliver
+                elegant, data-driven platforms that help organisations perform
+                more effectively and reach better outcomes. Over 8 years we've
+                grown a portfolio of 37 products spanning collections,
+                disbursements, treasury, procurement and governance — deployed
+                live across India, and integrated with the banking system: payment
+                gateways, electronic bank guarantees and Aadhaar-based
+                verification.
+              </p>
+            </Reveal>
+
+            <Reveal variant="right" delay={180}>
+              <div className="mt-8 overflow-hidden rounded-2xl border border-line bg-ink p-6 md:p-8">
+                <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-brand-orange">
+                  <Target size={15} aria-hidden="true" /> Our mission
+                </p>
+                <p className="mt-3 text-sm leading-relaxed text-slate-200 md:text-base">
+                  To be a socially responsible organisation with focus on people —
+                  one that inspires its team to deliver outstanding technology
+                  intervention and helps our clients complete their digital
+                  transformation.
+                </p>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
       {/* Locations */}
       {locations.length > 0 && (
-        <section className="border-t border-line bg-light-surface py-20">
+        <section className="border-t border-white/10 bg-white/[0.015] py-20">
           <div className="container-x">
             <SectionHeading
               eyebrow="Our Locations"
               title="Where we are"
               align="center"
-              eyebrowClassName="about-eyebrow"
               subtitle="We're growing our presence across key locations, connecting with clients and teams across India and the UAE."
             />
             <div
@@ -285,13 +191,11 @@ const About = () => {
                 <Reveal key={loc._id} delay={i * 90} className="h-full">
                   <article className="card flex h-full flex-col overflow-hidden hover:border-brand-orange/40">
                     {loc.image?.url ? (
-                      <ImageReveal className="h-40">
-                        <img
-                          src={loc.image.url}
-                          alt={loc.city}
-                          className="h-40 w-full object-cover"
-                        />
-                      </ImageReveal>
+                      <img
+                        src={loc.image.url}
+                        alt={loc.city}
+                        className="h-40 w-full object-cover"
+                      />
                     ) : (
                       <div className="flex h-40 w-full items-center justify-center bg-light-surface">
                         <MapPin
@@ -303,7 +207,7 @@ const About = () => {
                     <div className="flex flex-1 flex-col p-6">
                       <div className="flex items-center gap-2">
                         <MapPin
-                          className="h-4 w-4 shrink-0 text-[#172B3A]"
+                          className="h-4 w-4 shrink-0 text-brand-orange"
                           aria-hidden="true"
                         />
                         <h3 className="font-disp text-lg font-bold">
@@ -311,12 +215,12 @@ const About = () => {
                         </h3>
                       </div>
                       {loc.country && (
-                        <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#F0703F]">
+                        <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-cyan">
                           {loc.country}
                         </p>
                       )}
                       {loc.description && (
-                        <p className="mt-3 text-sm leading-relaxed text-slate-500">
+                        <p className="mt-3 text-sm leading-relaxed text-white/60">
                           {loc.description}
                         </p>
                       )}
@@ -329,10 +233,10 @@ const About = () => {
                         {loc.phone && (
                           <a
                             href={`tel:${loc.phone.replace(/\s/g, "")}`}
-                            className="inline-flex items-center gap-1.5 text-[#334155] transition-colors hover:text-[#F0703F]"
+                            className="inline-flex items-center gap-1.5 transition-colors hover:text-brand-orange"
                           >
                             <Phone
-                              className="h-3.5 w-3.5 text-[#172B3A]"
+                              className="h-3.5 w-3.5 text-brand-cyan"
                               aria-hidden="true"
                             />
                             {loc.phone}
@@ -341,10 +245,10 @@ const About = () => {
                         {loc.email && (
                           <a
                             href={`mailto:${loc.email}`}
-                            className="inline-flex items-center gap-1.5 text-[#334155] transition-colors hover:text-[#F0703F]"
+                            className="inline-flex items-center gap-1.5 transition-colors hover:text-brand-orange"
                           >
                             <Mail
-                              className="h-3.5 w-3.5 text-[#172B3A]"
+                              className="h-3.5 w-3.5 text-brand-orange"
                               aria-hidden="true"
                             />
                             {loc.email}
@@ -356,7 +260,7 @@ const About = () => {
                           href={loc.mapLink}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-[#172B3A] transition-colors hover:text-[#F0703F]"
+                          className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-brand-cyan transition-colors hover:text-brand-orange"
                         >
                           <MapPin className="h-3.5 w-3.5" aria-hidden="true" />{" "}
                           View on map

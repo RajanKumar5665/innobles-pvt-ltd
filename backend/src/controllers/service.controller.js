@@ -70,12 +70,6 @@ const adminListServices = asyncHandler(async (req, res) => {
   });
 });
 
-const adminGetService = asyncHandler(async (req, res) => {
-  const service = await Service.findById(req.params.id);
-  if (!service) throw new ApiError(404, "Service not found");
-  return success(res, service, "Service retrieved");
-});
-
 const adminUpdateService = asyncHandler(async (req, res) => {
   const service = await Service.findById(req.params.id);
   if (!service) throw new ApiError(404, "Service not found");
@@ -105,18 +99,6 @@ const adminUpdateService = asyncHandler(async (req, res) => {
   return success(res, service, "Service updated");
 });
 
-const adminUpdateServiceStatus = asyncHandler(async (req, res) => {
-  const service = await Service.findById(req.params.id);
-  if (!service) throw new ApiError(404, "Service not found");
-  service.status = req.body.status;
-  await service.save();
-  return success(
-    res,
-    service,
-    `Service ${service.status === "published" ? "published" : "unpublished"}`,
-  );
-});
-
 const adminDeleteService = asyncHandler(async (req, res) => {
   const service = await Service.findByIdAndDelete(req.params.id);
   if (!service) throw new ApiError(404, "Service not found");
@@ -128,8 +110,6 @@ export default {
   getPublicServices,
   adminCreateService,
   adminListServices,
-  adminGetService,
   adminUpdateService,
-  adminUpdateServiceStatus,
   adminDeleteService,
 };

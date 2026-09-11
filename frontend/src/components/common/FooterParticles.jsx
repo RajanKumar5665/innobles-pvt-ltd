@@ -146,7 +146,7 @@ const FooterParticles = ({ maxDistance = 135 }) => {
               0.07 + strength * 0.22
             );
 
-            ctx.strokeStyle = `rgba(255, 152, 102, ${opacity})`;
+            ctx.strokeStyle = `rgba(245, 158, 11, ${opacity})`;
             ctx.lineWidth = 0.8;
 
             ctx.beginPath();
@@ -269,7 +269,7 @@ const FooterParticles = ({ maxDistance = 135 }) => {
 
         ctx.globalAlpha = finalAlpha;
 
-        ctx.fillStyle = "rgb(255, 152, 102)";
+        ctx.fillStyle = "rgb(245, 158, 11)";
 
         ctx.beginPath();
         ctx.arc(

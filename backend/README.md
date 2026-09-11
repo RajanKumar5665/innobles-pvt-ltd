@@ -23,9 +23,9 @@ There is **no public authentication, no public signup, and no signup UI**. Only 
 backend/
 ├── src/
 │   ├── config/          # db.js, cloudinary.js
-│   ├── controllers/     # auth, blog, product, career, contact, application, home, dashboard
+│   ├── controllers/     # auth, product, career, contact, application, dashboard
 │   ├── middleware/      # auth, validate, error, notFound, rateLimit, upload
-│   ├── models/          # Admin, Blog, Product, Career, Contact, JobApplication, HomeContent
+│   ├── models/          # Admin, Product, Career, Contact, JobApplication
 │   ├── routes/          # per-resource public + admin routes
 │   ├── validations/     # Joi schemas
 │   ├── utils/           # asyncHandler, jwt, slugify, apiResponse, paginate
@@ -55,13 +55,20 @@ cp .env.example .env   # then fill in the values (see below)
 | `PORT`                  | Server port (default `5000`)                       |
 | `MONGODB_URI`           | MongoDB connection string (Atlas / local)          |
 | `FRONTEND_URL`          | Allowed frontend origin — **must not** be `*`      |
-| `JWT_SECRET`            | Secret used to sign admin JWTs (long random string)|
-| `JWT_EXPIRES_IN`        | e.g. `1d`                                          |
+| `JWT_SECRET`            | Secret used to sign admin access tokens (long random string) |
+| `JWT_EXPIRES_IN`        | Access-token TTL, e.g. `1m`, `1h`, `1d` (default `1m`)       |
+| `JWT_REFRESH_SECRET`    | Secret used to sign admin refresh tokens (long random string)|
+| `JWT_REFRESH_EXPIRES_IN`| Refresh-token TTL, e.g. `2m`, `7d` (default `2m`)            |
 | `JWT_COOKIE_NAME`       | Name of the HttpOnly cookie (default `token`)      |
 | `ADMIN_SETUP_SECRET`    | Secret required by the one-time admin registration |
 | `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name (image/resume upload)        |
 | `CLOUDINARY_API_KEY`    | Cloudinary API key                                  |
 | `CLOUDINARY_API_SECRET` | Cloudinary API secret                               |
+| `RSA_PUBLIC_KEY`        | RSA-2048 public key (SPKI DER base64) for browser→server payload encryption |
+| `RSA_PRIVATE_KEY`       | Matching RSA-2048 private key (PKCS#8 DER base64)  |
+
+> **Generating the RSA keys** (one-time): from `backend/`, run in Node:
+> `node -e "const c=require('crypto');const{publicKey,privateKey}=c.generateKeyPairSync('rsa',{modulusLength:2048});const fs=require('fs');const fmt=(k,t)=>k.export({type:t,format:'der'}).toString('base64');fs.appendFileSync('.env','\nRSA_PUBLIC_KEY='+fmt(publicKey,'spki')+'\nRSA_PRIVATE_KEY='+fmt(privateKey,'pkcs8'))"`
 
 > Never commit `.env`. It is ignored by Git.
 

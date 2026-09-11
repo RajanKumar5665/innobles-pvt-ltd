@@ -52,11 +52,6 @@ const adminGetAbout = asyncHandler(async (req, res) => {
 
 // Team
 
-const adminListTeam = asyncHandler(async (req, res) => {
-  const doc = await getDoc();
-  return success(res, sortByOrder(doc.teamMembers), "Team members retrieved");
-});
-
 const adminCreateTeamMember = asyncHandler(async (req, res) => {
   const doc = await getDoc();
   const nextOrder = doc.teamMembers.length
@@ -140,11 +135,6 @@ const adminReorderTeam = asyncHandler(async (req, res) => {
 });
 
 // Locations
-
-const adminListLocations = asyncHandler(async (req, res) => {
-  const doc = await getDoc();
-  return success(res, sortByOrder(doc.locations), "Locations retrieved");
-});
 
 const adminCreateLocation = asyncHandler(async (req, res) => {
   const doc = await getDoc();
@@ -238,11 +228,6 @@ const adminReorderLocations = asyncHandler(async (req, res) => {
 
 // Statistics
 
-const adminListStatistics = asyncHandler(async (req, res) => {
-  const doc = await getDoc();
-  return success(res, sortByOrder(doc.statistics), "Statistics retrieved");
-});
-
 const adminCreateStatistic = asyncHandler(async (req, res) => {
   const doc = await getDoc();
   const nextOrder = doc.statistics.length
@@ -302,17 +287,14 @@ const adminReorderStatistics = asyncHandler(async (req, res) => {
 export default {
   getPublicAbout,
   adminGetAbout,
-  adminListTeam,
   adminCreateTeamMember,
   adminUpdateTeamMember,
   adminDeleteTeamMember,
   adminReorderTeam,
-  adminListLocations,
   adminCreateLocation,
   adminUpdateLocation,
   adminDeleteLocation,
   adminReorderLocations,
-  adminListStatistics,
   adminCreateStatistic,
   adminUpdateStatistic,
   adminDeleteStatistic,

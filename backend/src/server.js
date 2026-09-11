@@ -5,8 +5,21 @@ import createApp from "./app.js";
 
 const PORT = process.env.PORT || 5000;
 
+// Don't let the server start in production if JWT_SECRET is missing or too short.
+const assertSecureConfig = () => {
+  if (process.env.NODE_ENV === "production") {
+    const secret = process.env.JWT_SECRET;
+    if (!secret || secret.length < 32) {
+      throw new Error(
+        "JWT_SECRET must be set to at least 32 characters in production",
+      );
+    }
+  }
+};
+
 const start = async () => {
   try {
+    assertSecureConfig();
     await connectDB();
     const app = createApp();
     const server = app.listen(PORT, () => {
@@ -15,6 +28,7 @@ const start = async () => {
       );
     });
 
+    // Close the server cleanly when the process is stopped (Ctrl+C, deploy restart, etc.)
     const shutdown = () => {
       server.close(() => process.exit(0));
     };

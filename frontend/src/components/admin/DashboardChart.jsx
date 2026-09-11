@@ -9,14 +9,9 @@ import {
   Legend,
 } from "recharts";
 
-// Bar chart comparing published vs draft counts for Blogs, Products, Services.
+// Bar chart comparing published vs draft counts for Products, Services.
 const DashboardChart = ({ stats }) => {
   const data = [
-    {
-      name: "Blogs",
-      published: stats?.blogs?.published ?? 0,
-      draft: stats?.blogs?.draft ?? 0,
-    },
     {
       name: "Products",
       published: stats?.products?.published ?? 0,

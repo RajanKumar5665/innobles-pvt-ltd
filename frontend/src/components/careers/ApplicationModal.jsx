@@ -2,17 +2,43 @@ import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { api } from "../../lib/api";
 import FeatureCheck from "../common/FeatureCheck";
+import {
+  LIMITS,
+  validateEmail,
+  validateMessage,
+  validateName,
+  validatePhone,
+  validateResume,
+  fieldError,
+} from "../../lib/formValidation";
 
 const inputClass =
   "w-full rounded-xl border border-line bg-slate-50 px-4 py-3 text-sm text-ink placeholder-slate-400 transition-colors focus:border-brand-orange focus:outline-none focus:ring-2 focus:ring-brand-orange/20";
 
+const initialForm = () => ({ name: "", email: "", phone: "", coverLetter: "" });
+
 // Application form shown when a candidate clicks "Apply Now" on a job.
 // Submits candidate details + resume to POST /careers/:careerId/applications.
 const ApplicationModal = ({ job, onClose }) => {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", coverLetter: "" });
+  const [form, setForm] = useState(initialForm());
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
   const [resume, setResume] = useState(null);
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
+
+  const validateForm = (values = form, file = resume) => ({
+    name: validateName(values.name),
+    email: validateEmail(values.email),
+    phone: values.phone.trim() ? validatePhone(values.phone) : "",
+    coverLetter: values.coverLetter.trim()
+      ? validateMessage(values.coverLetter, {
+          min: LIMITS.COVER_MIN,
+          max: LIMITS.COVER_MAX,
+        })
+      : "",
+    resume: validateResume(file),
+  });
 
   useEffect(() => {
     if (!job) return;
@@ -27,10 +53,30 @@ const ApplicationModal = ({ job, onClose }) => {
 
   if (!job) return null;
 
-  const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const handleBlur = (e) => {
+    setTouched((prev) => ({ ...prev, [e.target.name]: true }));
+    setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+  };
+
+  const handleResumeChange = (e) => {
+    const file = e.target.files?.[0] || null;
+    setResume(file);
+    setErrors((prev) => ({ ...prev, resume: "" }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const errs = validateForm();
+    setTouched({ name: true, email: true, phone: true, coverLetter: true, resume: true });
+    setErrors(errs);
+    if (Object.values(errs).some(Boolean)) return;
+
     setStatus("loading");
     setError(null);
     try {
@@ -39,12 +85,12 @@ const ApplicationModal = ({ job, onClose }) => {
       fd.append("email", form.email);
       fd.append("phone", form.phone || "");
       fd.append("coverLetter", form.coverLetter || "");
-      if (resume) fd.append("resume", resume);
+      fd.append("resume", resume);
       await api.postForm(`/careers/${job.id}/applications`, fd);
       setStatus("success");
     } catch (err) {
       setStatus("error");
-      setError(err.message);
+      setError(err.message || "Something went wrong. Please try again.");
     }
   };
 
@@ -95,20 +141,25 @@ const ApplicationModal = ({ job, onClose }) => {
               {job.department} · {job.location}
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} noValidate className="space-y-4">
               <div>
                 <label htmlFor="app-name" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">
                   Full Name
                 </label>
                 <input
                   id="app-name"
+                  type="text"
                   name="name"
                   value={form.name}
                   onChange={handleChange}
-                  className={inputClass}
+                  onBlur={handleBlur}
+                  maxLength={LIMITS.NAME_MAX}
+                  className={`${inputClass} ${fieldError(errors, touched, "name") ? "!border-red-500/60" : ""}`}
                   placeholder="Your full name"
-                  required
                 />
+                {fieldError(errors, touched, "name") && (
+                  <p className="mt-1 text-xs text-red-600">{fieldError(errors, touched, "name")}</p>
+                )}
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
@@ -122,10 +173,14 @@ const ApplicationModal = ({ job, onClose }) => {
                     name="email"
                     value={form.email}
                     onChange={handleChange}
-                    className={inputClass}
+                    onBlur={handleBlur}
+                    maxLength={LIMITS.EMAIL_MAX}
+                    className={`${inputClass} ${fieldError(errors, touched, "email") ? "!border-red-500/60" : ""}`}
                     placeholder="you@example.com"
-                    required
                   />
+                  {fieldError(errors, touched, "email") && (
+                    <p className="mt-1 text-xs text-red-600">{fieldError(errors, touched, "email")}</p>
+                  )}
                 </div>
                 <div>
                   <label htmlFor="app-phone" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">
@@ -137,9 +192,14 @@ const ApplicationModal = ({ job, onClose }) => {
                     name="phone"
                     value={form.phone}
                     onChange={handleChange}
-                    className={inputClass}
+                    onBlur={handleBlur}
+                    maxLength={LIMITS.PHONE_MAX}
+                    className={`${inputClass} ${fieldError(errors, touched, "phone") ? "!border-red-500/60" : ""}`}
                     placeholder="+91 98765 43210"
                   />
+                  {fieldError(errors, touched, "phone") && (
+                    <p className="mt-1 text-xs text-red-600">{fieldError(errors, touched, "phone")}</p>
+                  )}
                 </div>
               </div>
 
@@ -152,7 +212,9 @@ const ApplicationModal = ({ job, onClose }) => {
                   name="coverLetter"
                   value={form.coverLetter}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   rows={4}
+                  maxLength={LIMITS.COVER_MAX}
                   className={inputClass}
                   placeholder="Tell us why you're a great fit for this role..."
                 />
@@ -166,11 +228,14 @@ const ApplicationModal = ({ job, onClose }) => {
                   id="app-resume"
                   type="file"
                   accept=".pdf,.doc,.docx"
-                  onChange={(e) => setResume(e.target.files[0] || null)}
-                  className={inputClass}
-                  required
+                  onChange={handleResumeChange}
+                  className={`${inputClass} ${fieldError(errors, touched, "resume") ? "!border-red-500/60" : ""}`}
                 />
-                <p className="mt-1 text-xs text-slate-400">PDF, DOC or DOCX — max 8MB.</p>
+                {fieldError(errors, touched, "resume") ? (
+                  <p className="mt-1 text-xs text-red-600">{fieldError(errors, touched, "resume")}</p>
+                ) : (
+                  <p className="mt-1 text-xs text-slate-400">PDF, DOC or DOCX — max 8MB.</p>
+                )}
               </div>
 
               {error && <p className="text-sm text-red-600">{error}</p>}
