@@ -80,7 +80,7 @@ export const validateMessage = (
 
 export const validatePassword = (value) => {
   const password = String(value ?? "");
-  if (!password) return "Password is required";
+  if (!password.trim()) return "Password is required"; // ← .trim() add kiya sirf iss check ke liye
   if (password.length < LIMITS.PASSWORD_MIN)
     return `Password must be at least ${LIMITS.PASSWORD_MIN} characters`;
   if (password.length > LIMITS.PASSWORD_MAX)

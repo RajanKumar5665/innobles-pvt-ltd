@@ -1,12 +1,4 @@
-// Hybrid encryption for JSON request payloads.
-//
-// A random AES-256-GCM key encrypts the JSON body, then that AES key is
-// wrapped with the server's RSA public key (RSA-OAEP/SHA-256) and everything
-// is sent as { __encrypted: true, enc, iv, data } — the backend's
-// decryptBody middleware unwraps it back into the original object.
-//
-// This uses the WebCrypto API (crypto.subtle) which is available in all
-// modern browsers (and requires a secure context, e.g. https or localhost).
+
 
 let cachedPublicKey = null;
 
@@ -37,6 +29,8 @@ const getPublicKeyPem = async (apiBase) => {
     credentials: "include",
   });
   const json = await res.json().catch(() => ({}));
+  console.log(json);
+  
   if (!res.ok || !json?.data?.key) {
     throw new Error("Could not fetch the public encryption key");
   }

@@ -23,10 +23,6 @@ const getPublicProducts = asyncHandler(async (req, res) => {
     page,
     limit,
     sort: { createdAt: -1 },
-    // Slash unused legacy fields so the list payload (used by /products and
-    // the home preview) is as small as possible. Description stays — the
-    // public Products page searches inside it client-side.
-    select: "-specifications -__v",
   });
   return success(res, result.data, "Products retrieved", 200, {
     pagination: result.pagination,
