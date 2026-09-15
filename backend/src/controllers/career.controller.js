@@ -2,6 +2,7 @@ import Career from "../models/Career.js";
 import paginate from "../utils/paginate.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError, success } from "../utils/apiResponse.js";
+import { escapeRegex } from "../utils/escapeRegex.js";
 
 // Public
 
@@ -9,9 +10,15 @@ const getPublicCareers = asyncHandler(async (req, res) => {
   const { page, limit, search, department, location, jobType } = req.query;
   const filter = { status: "open" };
   if (department) filter.department = department;
-  if (location) filter.location = { $regex: location, $options: "i" };
+  if (location) {
+    const term = escapeRegex(String(location).trim());
+    if (term) filter.location = { $regex: term, $options: "i" };
+  }
   if (jobType) filter.jobType = jobType;
-  if (search) filter.title = { $regex: search, $options: "i" };
+  if (search) {
+    const term = escapeRegex(String(search).trim());
+    if (term) filter.title = { $regex: term, $options: "i" };
+  }
 
   const result = await paginate({
     model: Career,
@@ -36,9 +43,15 @@ const adminListCareers = asyncHandler(async (req, res) => {
   const { page, limit, search, department, location, jobType, status } =
     req.query;
   const filter = {};
-  if (search) filter.title = { $regex: search, $options: "i" };
+  if (search) {
+    const term = escapeRegex(String(search).trim());
+    if (term) filter.title = { $regex: term, $options: "i" };
+  }
   if (department) filter.department = department;
-  if (location) filter.location = { $regex: location, $options: "i" };
+  if (location) {
+    const term = escapeRegex(String(location).trim());
+    if (term) filter.location = { $regex: term, $options: "i" };
+  }
   if (jobType) filter.jobType = jobType;
   if (status) filter.status = status;
 

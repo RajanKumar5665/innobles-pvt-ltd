@@ -3,10 +3,13 @@ import JobApplication from "../models/JobApplication.js";
 import paginate from "../utils/paginate.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError, success } from "../utils/apiResponse.js";
+import { escapeRegex } from "../utils/escapeRegex.js";
+import {
+  DUPLICATE_APPLICATION_MESSAGE,
+  buildDuplicateQuery,
+  normalizeEmail,
+} from "../utils/applicationDuplicate.js";
 import { uploadSingle, deleteByPublicId } from "../config/cloudinary.js";
-
-// Escape regex metacharacters so user search input is matched literally.
-const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 // Public
 
@@ -14,18 +17,17 @@ const createApplication = asyncHandler(async (req, res) => {
   const career = await Career.findOne({ _id: req.params.careerId, status: "open" });
   if (!career) throw new ApiError(404, "This career is no longer accepting applications");
 
-  // Normalize exactly as the schema stores it so the pre-check matches the
-  // unique index on (careerId, email).
-  const email = String(req.body.email).trim().toLowerCase();
+  // unique indexes on (careerId, email) and (careerId, phoneKey).
+  const email = normalizeEmail(req.body.email);
+  const phone = String(req.body.phone ?? "").trim();
 
   // Block duplicate applications for the same job before spending a Cloudinary
   // upload on an application that can never be saved.
-  const existing = await JobApplication.findOne({ careerId: career._id, email });
+  const existing = await JobApplication.findOne(
+    buildDuplicateQuery({ careerId: career._id, email, phone }),
+  );
   if (existing) {
-    throw new ApiError(
-      409,
-      "You have already applied to this position. Your application is under review.",
-    );
+    throw new ApiError(409, DUPLICATE_APPLICATION_MESSAGE);
   }
 
   let resume = {};
@@ -49,7 +51,7 @@ const createApplication = asyncHandler(async (req, res) => {
       careerId: career._id,
       name: req.body.name,
       email,
-      phone: req.body.phone,
+      phone,
       coverLetter: req.body.coverLetter,
       resume,
     });
@@ -57,14 +59,12 @@ const createApplication = asyncHandler(async (req, res) => {
     return success(res, { id: application._id }, "Application submitted successfully", 201);
   } catch (err) {
     // Defense in depth: if two requests race past the pre-check, Mongo's unique
-    // index on (careerId, email) rejects the second one with code 11000.
+    // indexes on (careerId, email) and (careerId, phoneKey) reject the second
+    // one with code 11000.
     if (err?.code === 11000) {
       // Don't leave an orphaned resume in Cloudinary for a rejected application.
       if (resume.publicId) await deleteByPublicId(resume.publicId);
-      throw new ApiError(
-        409,
-        "You have already applied to this position. Your application is under review.",
-      );
+      throw new ApiError(409, DUPLICATE_APPLICATION_MESSAGE);
     }
     throw err;
   }

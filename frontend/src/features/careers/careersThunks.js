@@ -1,4 +1,4 @@
-import { fetchCareersApi } from "./careersApi";
+import { fetchCareersApi } from "./careersApi.js";
 
 export const fetchCareers = () => async (dispatch) => {
   dispatch({ type: "careers/fetchPending" });

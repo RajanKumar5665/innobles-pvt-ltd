@@ -14,8 +14,52 @@ const emptyForm = {
   status: "open",
 };
 
-const inputClass =
-  "w-full rounded-xl border border-line bg-slate-50 px-4 py-3 text-sm text-ink placeholder-slate-400 transition-colors focus:border-brand-orange focus:outline-none focus:ring-2 focus:ring-brand-orange/20";
+const fieldClass = (hasError) =>
+  `w-full rounded-xl border ${
+    hasError ? "border-red-400" : "border-line"
+  } bg-slate-50 px-4 py-3 text-sm text-ink placeholder-slate-400 transition-colors focus:border-brand-orange focus:outline-none focus:ring-2 focus:ring-brand-orange/20`;
+
+const FieldError = ({ message }) =>
+  message ? <p className="mt-1 text-sm text-red-600">{message}</p> : null;
+
+const TITLE_MAX = 200;
+const TITLE_MIN = 3;
+const DEPARTMENT_MAX = 80;
+const LOCATION_MAX = 120;
+const EXPERIENCE_MAX = 120;
+const DESCRIPTION_MAX = 10000;
+const LIST_ITEM_MAX = 1000;
+
+// Mirrors backend/src/validations/career.validation.js so the admin gets
+// immediate, field-level feedback before the request is fired.
+const validateCareerForm = (v) => {
+  const errs = {};
+  const title = v.title.trim();
+  const department = v.department.trim();
+  if (!title) errs.title = "Title is required.";
+  else if (title.length < TITLE_MIN) errs.title = `Title must be at least ${TITLE_MIN} characters.`;
+  else if (title.length > TITLE_MAX) errs.title = `Title must be ${TITLE_MAX} characters or fewer.`;
+
+  if (!department) errs.department = "Department is required.";
+  else if (department.length > DEPARTMENT_MAX) errs.department = `Department must be ${DEPARTMENT_MAX} characters or fewer.`;
+
+  if (v.location.trim().length > LOCATION_MAX) errs.location = `Location must be ${LOCATION_MAX} characters or fewer.`;
+  if (v.experience.trim().length > EXPERIENCE_MAX) errs.experience = `Experience must be ${EXPERIENCE_MAX} characters or fewer.`;
+  if (v.description.trim().length > DESCRIPTION_MAX) errs.description = `Description must be ${DESCRIPTION_MAX} characters or fewer.`;
+
+  for (const [key, label] of [
+    ["responsibilities", "Responsibilities"],
+    ["requirements", "Requirements"],
+  ]) {
+    const items = v[key]
+      ? v[key].split("\n").map((s) => s.trim()).filter(Boolean)
+      : [];
+    if (items.some((s) => s.length > LIST_ITEM_MAX)) {
+      errs[key] = `Each ${label.toLowerCase()} line must be ${LIST_ITEM_MAX} characters or fewer.`;
+    }
+  }
+  return errs;
+};
 
 const AdminCareers = () => {
   const [list, setList] = useState([]);
@@ -25,6 +69,7 @@ const AdminCareers = () => {
   const [form, setForm] = useState(emptyForm);
   const [formStatus, setFormStatus] = useState("idle");
   const [formError, setFormError] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
   const [showForm, setShowForm] = useState(false);
 
   const load = async () => {
@@ -72,10 +117,19 @@ const AdminCareers = () => {
     setFormError(null);
   };
 
-  const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    if (formErrors[name]) setFormErrors((prev) => ({ ...prev, [name]: "" }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formStatus === "loading") return; // prevent duplicate submissions
+    const errs = validateCareerForm(form);
+    setFormErrors(errs);
+    if (Object.values(errs).some(Boolean)) return;
+
     setFormStatus("loading");
     setFormError(null);
     try {
@@ -93,6 +147,7 @@ const AdminCareers = () => {
       setShowForm(false);
       setEditing(null);
       setForm(emptyForm);
+      setFormErrors({});
       load();
     } catch (err) {
       setFormStatus("error");
@@ -132,25 +187,56 @@ const AdminCareers = () => {
       {showForm && (
         <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="font-disp text-lg font-bold text-slate-900">{editing ? "Edit Career" : "New Career"}</h2>
-          <form onSubmit={handleSubmit} className="mt-4 grid gap-4">
+          <form onSubmit={handleSubmit} noValidate className="mt-4 grid gap-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Title</label>
-                <input name="title" value={form.title} onChange={handleChange} className={inputClass} required />
+                <label htmlFor="career-title" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Title <span className="text-red-500" aria-hidden="true">*</span>
+                </label>
+                <input
+                  id="career-title"
+                  name="title"
+                  value={form.title}
+                  onChange={handleChange}
+                  maxLength={TITLE_MAX}
+                  className={fieldClass(!!formErrors.title)}
+                  placeholder="e.g. Senior React Developer"
+                />
+                <FieldError message={formErrors.title} />
               </div>
               <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Department</label>
-                <input name="department" value={form.department} onChange={handleChange} className={inputClass} required />
+                <label htmlFor="career-department" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Department <span className="text-red-500" aria-hidden="true">*</span>
+                </label>
+                <input
+                  id="career-department"
+                  name="department"
+                  value={form.department}
+                  onChange={handleChange}
+                  maxLength={DEPARTMENT_MAX}
+                  className={fieldClass(!!formErrors.department)}
+                  placeholder="e.g. Engineering"
+                />
+                <FieldError message={formErrors.department} />
               </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Location</label>
-                <input name="location" value={form.location} onChange={handleChange} className={inputClass} />
+                <label htmlFor="career-location" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Location</label>
+                <input
+                  id="career-location"
+                  name="location"
+                  value={form.location}
+                  onChange={handleChange}
+                  maxLength={LOCATION_MAX}
+                  className={fieldClass(!!formErrors.location)}
+                  placeholder="e.g. Bengaluru, India or Remote - Global"
+                />
+                <FieldError message={formErrors.location} />
               </div>
               <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Job Type</label>
-                <select name="jobType" value={form.jobType} onChange={handleChange} className={inputClass}>
+                <label htmlFor="career-jobType" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Job Type</label>
+                <select id="career-jobType" name="jobType" value={form.jobType} onChange={handleChange} className={fieldClass(false)}>
                   <option value="full-time">Full-time</option>
                   <option value="part-time">Part-time</option>
                   <option value="contract">Contract</option>
@@ -159,39 +245,70 @@ const AdminCareers = () => {
               </div>
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">
+              <label htmlFor="career-experience" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">
                 Required Experience <span className="font-normal normal-case text-slate-400">(e.g. 2-4 years)</span>
               </label>
               <input
+                id="career-experience"
                 name="experience"
                 value={form.experience}
                 onChange={handleChange}
-                className={inputClass}
+                maxLength={EXPERIENCE_MAX}
+                className={fieldClass(!!formErrors.experience)}
                 placeholder="e.g. 2-4 years, 5+ years, Fresher"
               />
+              <FieldError message={formErrors.experience} />
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Description</label>
-              <textarea name="description" value={form.description} onChange={handleChange} rows={3} className={inputClass} />
+              <label htmlFor="career-description" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Description</label>
+              <textarea
+                id="career-description"
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                rows={3}
+                maxLength={DESCRIPTION_MAX}
+                className={fieldClass(!!formErrors.description)}
+                placeholder="Describe the role, team and what success looks like..."
+              />
+              <FieldError message={formErrors.description} />
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Responsibilities (one per line)</label>
-              <textarea name="responsibilities" value={form.responsibilities} onChange={handleChange} rows={3} className={inputClass} />
+              <label htmlFor="career-responsibilities" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Responsibilities (one per line)</label>
+              <textarea
+                id="career-responsibilities"
+                name="responsibilities"
+                value={form.responsibilities}
+                onChange={handleChange}
+                rows={3}
+                className={fieldClass(!!formErrors.responsibilities)}
+                placeholder={"Ship features end to end\nMentor junior engineers\nCollaborate with design"}
+              />
+              <FieldError message={formErrors.responsibilities} />
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Requirements (one per line)</label>
-              <textarea name="requirements" value={form.requirements} onChange={handleChange} rows={3} className={inputClass} />
+              <label htmlFor="career-requirements" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Requirements (one per line)</label>
+              <textarea
+                id="career-requirements"
+                name="requirements"
+                value={form.requirements}
+                onChange={handleChange}
+                rows={3}
+                className={fieldClass(!!formErrors.requirements)}
+                placeholder={"3+ years of experience\nStrong JavaScript skills\nExcellent communication"}
+              />
+              <FieldError message={formErrors.requirements} />
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Status</label>
-              <select name="status" value={form.status} onChange={handleChange} className={inputClass}>
+              <label htmlFor="career-status" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">Status</label>
+              <select id="career-status" name="status" value={form.status} onChange={handleChange} className={fieldClass(false)}>
                 <option value="open">Open</option>
                 <option value="closed">Closed</option>
               </select>
             </div>
-            {formError && <p className="text-sm text-red-600">{formError}</p>}
+            {formError && <p role="alert" className="text-sm text-red-600">{formError}</p>}
             <div className="flex gap-3">
-              <button type="submit" disabled={formStatus === "loading"} className="btn-primary">
+              <button type="submit" disabled={formStatus === "loading"} className="btn-primary disabled:cursor-not-allowed disabled:opacity-60">
                 {formStatus === "loading" ? "Saving..." : editing ? "Update" : "Create"}
               </button>
               <button type="button" onClick={() => setShowForm(false)} className="btn-ghost">Cancel</button>

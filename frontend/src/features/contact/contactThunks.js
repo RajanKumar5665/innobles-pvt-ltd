@@ -1,4 +1,4 @@
-import { submitContactApi } from "./contactApi";
+import { submitContactApi } from "./contactApi.js";
 
 export const submitContact = (payload) => async (dispatch) => {
   dispatch({ type: "contact/submitPending" });

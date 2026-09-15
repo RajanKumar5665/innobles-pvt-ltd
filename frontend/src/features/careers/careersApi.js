@@ -1,4 +1,4 @@
-import { api } from "../../lib/api";
+import { api } from "../../lib/api.js";
 
 export const fetchCareersApi = async () => {
   const response = await api.get("/careers?limit=50");

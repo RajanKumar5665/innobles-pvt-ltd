@@ -272,13 +272,22 @@ const AdminProducts = () => {
     const name = form.name.trim();
     const short = form.shortDescription.trim();
     const desc = form.description.trim();
+    const link = form.productLink.trim();
     if (!form.category) errs.category = "Please select a category.";
     if (!name) errs.name = "Product name is required.";
+    else if (name.length < 2) errs.name = "Product name must be at least 2 characters.";
     else if (name.length > NAME_MAX) errs.name = `Product name must be ${NAME_MAX} characters or fewer.`;
     if (!short) errs.shortDescription = "Short description is required.";
     else if (short.length > SHORT_MAX) errs.shortDescription = `Short description must be ${SHORT_MAX} characters or fewer.`;
     if (isRichContentEmpty(form.description)) errs.description = "Description is required.";
     else if (desc.length > DESCRIPTION_MAX) errs.description = `Description must be ${DESCRIPTION_MAX} characters or fewer.`;
+    if (link) {
+      try {
+        new URL(link);
+      } catch {
+        errs.productLink = "Please enter a valid URL (e.g. https://example.com).";
+      }
+    }
     return errs;
   };
 

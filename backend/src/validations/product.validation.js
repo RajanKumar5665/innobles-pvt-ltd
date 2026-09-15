@@ -30,7 +30,9 @@ const baseProduct = {
     "any.required": "Description is required",
   }),
   // Category uses a controlled value so duplicate/incorrect spellings are
-  // rejected instead of silently creating new categories.
+  // rejected instead of silently creating new categories. UPDATE stays
+  // permissive so legacy records without a category can still be saved; CREATE
+  // (below) requires one because the admin form does.
   category: Joi.string()
     .trim()
     .valid(...PRODUCT_CATEGORY_LABELS)
@@ -48,7 +50,24 @@ const baseProduct = {
   status: Joi.string().valid("draft", "published").default("draft"),
 };
 
-const createProduct = Joi.object(baseProduct);
+// CREATE requires a category — this rule lives OUTSIDE baseProduct so it is
+// never passed as a separate body key (Joi would otherwise reject the payload
+// for containing an unexpected `categoryOnCreate` key).
+const categoryOnCreate = Joi.string()
+  .trim()
+  .valid(...PRODUCT_CATEGORY_LABELS)
+  .min(1)
+  .required()
+  .messages({
+    "any.only": "Please select a valid product category",
+    "any.required": "Please select a category",
+    "string.empty": "Please select a category",
+  });
+
+const createProduct = Joi.object({
+  ...baseProduct,
+  category: categoryOnCreate,
+});
 const updateProduct = Joi.object({
   name: baseProduct.name.optional(),
   slug: baseProduct.slug,

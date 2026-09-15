@@ -2,6 +2,7 @@ import Contact from "../models/Contact.js";
 import paginate from "../utils/paginate.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError, success } from "../utils/apiResponse.js";
+import { escapeRegex } from "../utils/escapeRegex.js";
 // import sendMail from "../utils/sendMail.js";
 // import { contactMailTemplate } from "../templates/contactMail.template.js";
 
@@ -28,11 +29,14 @@ const adminListContacts = asyncHandler(async (req, res) => {
   const { page, limit, search, status } = req.query;
   const filter = {};
   if (search) {
-    filter.$or = [
-      { name: { $regex: search, $options: "i" } },
-      { email: { $regex: search, $options: "i" } },
-      { subject: { $regex: search, $options: "i" } },
-    ];
+    const term = escapeRegex(String(search).trim());
+    if (term) {
+      filter.$or = [
+        { name: { $regex: term, $options: "i" } },
+        { email: { $regex: term, $options: "i" } },
+        { subject: { $regex: term, $options: "i" } },
+      ];
+    }
   }
   if (status) filter.status = status;
 

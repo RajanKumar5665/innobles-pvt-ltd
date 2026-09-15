@@ -26,7 +26,9 @@ const createContact = Joi.object({
     "string.min": "Message must be at least 10 characters",
     "string.max": "Message must be 1000 characters or fewer",
   }),
-  status: Joi.string().valid("unread", "read", "resolved"),
+  // NOTE: `status` is intentionally NOT part of the public schema. stripUnknown
+  // drops it, so a website visitor can never mark their own message as
+  // read/resolved.
 });
 
 const contactStatusSchema = Joi.object({

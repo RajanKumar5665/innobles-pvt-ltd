@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { normalizePhoneKey } from "../utils/applicationDuplicate.js";
 
 const applicationSchema = new mongoose.Schema(
   {
@@ -23,6 +24,11 @@ const applicationSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    // Auto-derived from phone, used only for the duplicate-check index below.
+    phoneKey: {
+      type: String,
+      trim: true,
+    },
     resume: {
       url: String,
       publicId: String,
@@ -41,11 +47,23 @@ const applicationSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+// Keeps phoneKey in sync with phone before every save.
+applicationSchema.pre("validate", function () {
+  this.phoneKey = this.phone ? normalizePhoneKey(this.phone) : undefined;
+});
+
 applicationSchema.index({ careerId: 1, status: 1, createdAt: -1 });
 
-// Prevent a candidate from submitting more than one application to the same job.
-// Mongo enforces this atomically, so even concurrent double-submits (double-click,
-// rapid refresh) raise a 11000 duplicate-key error instead of saving a duplicate.
+// One application per candidate per job.
 applicationSchema.index({ careerId: 1, email: 1 }, { unique: true });
+
+// Same rule for phone, but only applies when a phone is actually present.
+applicationSchema.index(
+  { careerId: 1, phoneKey: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { phoneKey: { $type: "string", $ne: "" } },
+  },
+);
 
 export default mongoose.model("JobApplication", applicationSchema);

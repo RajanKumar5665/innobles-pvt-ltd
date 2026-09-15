@@ -56,7 +56,8 @@ export const validateEmail = (value) => {
 export const validatePhone = (value) => {
   const phone = toString(value);
   if (!phone) return "";
-  if (phone.length > LIMITS.PHONE_MAX)
+  const compact = cleanPhone(phone);
+  if (compact.length > LIMITS.PHONE_MAX)
     return `Phone number must be ${LIMITS.PHONE_MAX} digits or fewer`;
   if (isIndianMobile(phone) || isInternationalPhone(phone)) return "";
   return "Enter a valid phone number (e.g. +91 98765 43210)";

@@ -299,7 +299,7 @@ const validate = () => {
     else if (features.length > MAX_FEATURES) errs.features = `At most ${MAX_FEATURES} features are allowed.`;
     else if (features.some((f) => f.length > FEATURE_MAX))
       errs.features = `Each feature must be ${FEATURE_MAX} characters or fewer.`;
-    if (!bannerFile && !existingBannerUrl) errs.banner = "Banner image is required.";
+    // Banner is optional (matches backend/src/validations/service.validation.js).
     return errs;
   };
 

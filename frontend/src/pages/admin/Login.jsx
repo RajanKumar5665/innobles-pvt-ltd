@@ -55,11 +55,13 @@ const Login = () => {
     try {
       await dispatch(login(formData));
       navigate("/admin");
-    } catch(error) {
+    } catch {
       // error handled in slice — shown via `error` variable below
-      console.error("LOGIN CATCH ERROR:", error);
     }
   };
+
+  const errorId = (name) => (fieldError(errors, touched, name) ? `login-${name}-error` : undefined);
+  const invalid = (name) => !!fieldError(errors, touched, name);
 
   return (
     <div className="min-h-screen bg-[#0F172A] flex items-center justify-center px-4">
@@ -105,10 +107,11 @@ const Login = () => {
 
         <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-5">
           <div>
-            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-white/70">
+            <label htmlFor="login-email" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-white/70">
               Email
             </label>
             <input
+              id="login-email"
               type="email"
               name="email"
               value={formData.email}
@@ -116,20 +119,25 @@ const Login = () => {
               onBlur={handleBlur}
               maxLength={LIMITS.EMAIL_MAX}
               autoComplete="username"
+              required
+              aria-required="true"
+              aria-invalid={invalid("email")}
+              aria-describedby={errorId("email")}
               className={inputClass}
-              placeholder="admin@innobles.in"
+              placeholder="Enter your email address"
               disabled={isLoading}
             />
             {fieldError(errors, touched, "email") && (
-              <p className="mt-1.5 text-xs text-red-400">{fieldError(errors, touched, "email")}</p>
+              <p id="login-email-error" className="mt-1.5 text-xs text-red-400">{fieldError(errors, touched, "email")}</p>
             )}
           </div>
 
           <div>
-            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-white/70">
+            <label htmlFor="login-password" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-white/70">
               Password
             </label>
             <input
+              id="login-password"
               type="password"
               name="password"
               value={formData.password}
@@ -137,12 +145,16 @@ const Login = () => {
               onBlur={handleBlur}
               maxLength={LIMITS.PASSWORD_MAX}
               autoComplete="current-password"
+              required
+              aria-required="true"
+              aria-invalid={invalid("password")}
+              aria-describedby={errorId("password")}
               className={inputClass}
-              placeholder="••••••••"
+              placeholder="Enter your password"
               disabled={isLoading}
             />
             {fieldError(errors, touched, "password") && (
-              <p className="mt-1.5 text-xs text-red-400">
+              <p id="login-password-error" className="mt-1.5 text-xs text-red-400">
                 {fieldError(errors, touched, "password")}
               </p>
             )}

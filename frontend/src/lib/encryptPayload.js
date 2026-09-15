@@ -29,8 +29,7 @@ const getPublicKeyPem = async (apiBase) => {
     credentials: "include",
   });
   const json = await res.json().catch(() => ({}));
-  console.log(json);
-  
+
   if (!res.ok || !json?.data?.key) {
     throw new Error("Could not fetch the public encryption key");
   }

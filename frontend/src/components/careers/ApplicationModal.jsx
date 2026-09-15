@@ -72,6 +72,10 @@ const ApplicationModal = ({ job, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Guard against rapid double-clicks / duplicate API calls (the button is
+    // disabled while loading too, but this catches two submits in the same
+    // render frame).
+    if (status === "loading") return;
     const errs = validateForm();
     setTouched({ name: true, email: true, phone: true, coverLetter: true, resume: true });
     setErrors(errs);
@@ -144,7 +148,7 @@ const ApplicationModal = ({ job, onClose }) => {
             <form onSubmit={handleSubmit} noValidate className="space-y-4">
               <div>
                 <label htmlFor="app-name" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Full Name
+                  Full Name <span className="text-red-500" aria-hidden="true">*</span>
                 </label>
                 <input
                   id="app-name"
@@ -154,18 +158,23 @@ const ApplicationModal = ({ job, onClose }) => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   maxLength={LIMITS.NAME_MAX}
+                  required
+                  autoComplete="name"
+                  aria-required="true"
+                  aria-invalid={!!fieldError(errors, touched, "name")}
+                  aria-describedby={fieldError(errors, touched, "name") ? "app-name-error" : undefined}
                   className={`${inputClass} ${fieldError(errors, touched, "name") ? "!border-red-500/60" : ""}`}
-                  placeholder="Your full name"
+                  placeholder="Enter your full name"
                 />
                 {fieldError(errors, touched, "name") && (
-                  <p className="mt-1 text-xs text-red-600">{fieldError(errors, touched, "name")}</p>
+                  <p id="app-name-error" className="mt-1 text-xs text-red-600">{fieldError(errors, touched, "name")}</p>
                 )}
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="app-email" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Email
+                    Email <span className="text-red-500" aria-hidden="true">*</span>
                   </label>
                   <input
                     id="app-email"
@@ -175,16 +184,21 @@ const ApplicationModal = ({ job, onClose }) => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     maxLength={LIMITS.EMAIL_MAX}
+                    required
+                    autoComplete="email"
+                    aria-required="true"
+                    aria-invalid={!!fieldError(errors, touched, "email")}
+                    aria-describedby={fieldError(errors, touched, "email") ? "app-email-error" : undefined}
                     className={`${inputClass} ${fieldError(errors, touched, "email") ? "!border-red-500/60" : ""}`}
-                    placeholder="you@example.com"
+                    placeholder="Enter your email address"
                   />
                   {fieldError(errors, touched, "email") && (
-                    <p className="mt-1 text-xs text-red-600">{fieldError(errors, touched, "email")}</p>
+                    <p id="app-email-error" className="mt-1 text-xs text-red-600">{fieldError(errors, touched, "email")}</p>
                   )}
                 </div>
                 <div>
                   <label htmlFor="app-phone" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Phone
+                    Phone <span className="normal-case text-slate-400">(optional)</span>
                   </label>
                   <input
                     id="app-phone"
@@ -194,11 +208,17 @@ const ApplicationModal = ({ job, onClose }) => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     maxLength={LIMITS.PHONE_MAX}
+                    autoComplete="tel"
+                    inputMode="tel"
+                    aria-invalid={!!fieldError(errors, touched, "phone")}
+                    aria-describedby={fieldError(errors, touched, "phone") ? "app-phone-error" : "app-phone-hint"}
                     className={`${inputClass} ${fieldError(errors, touched, "phone") ? "!border-red-500/60" : ""}`}
-                    placeholder="+91 98765 43210"
+                    placeholder="Enter your mobile number (e.g. +91 98765 43210)"
                   />
-                  {fieldError(errors, touched, "phone") && (
-                    <p className="mt-1 text-xs text-red-600">{fieldError(errors, touched, "phone")}</p>
+                  {fieldError(errors, touched, "phone") ? (
+                    <p id="app-phone-error" className="mt-1 text-xs text-red-600">{fieldError(errors, touched, "phone")}</p>
+                  ) : (
+                    <p id="app-phone-hint" className="mt-1 text-xs text-slate-400">Indian mobile or international number.</p>
                   )}
                 </div>
               </div>
@@ -215,36 +235,47 @@ const ApplicationModal = ({ job, onClose }) => {
                   onBlur={handleBlur}
                   rows={4}
                   maxLength={LIMITS.COVER_MAX}
-                  className={inputClass}
+                  aria-invalid={!!fieldError(errors, touched, "coverLetter")}
+                  aria-describedby={fieldError(errors, touched, "coverLetter") ? "app-cover-error" : "app-cover-hint"}
+                  className={`${inputClass} ${fieldError(errors, touched, "coverLetter") ? "!border-red-500/60" : ""}`}
                   placeholder="Tell us why you're a great fit for this role..."
                 />
+                {fieldError(errors, touched, "coverLetter") ? (
+                  <p id="app-cover-error" className="mt-1 text-xs text-red-600">{fieldError(errors, touched, "coverLetter")}</p>
+                ) : (
+                  <p id="app-cover-hint" className="mt-1 text-xs text-slate-400">Minimum {LIMITS.COVER_MIN} characters if provided.</p>
+                )}
               </div>
 
               <div>
                 <label htmlFor="app-resume" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Resume
+                  Resume <span className="text-red-500" aria-hidden="true">*</span>
                 </label>
                 <input
                   id="app-resume"
                   type="file"
                   accept=".pdf,.doc,.docx"
+                  required
+                  aria-required="true"
+                  aria-invalid={!!fieldError(errors, touched, "resume")}
+                  aria-describedby={fieldError(errors, touched, "resume") ? "app-resume-error" : "app-resume-hint"}
                   onChange={handleResumeChange}
                   className={`${inputClass} ${fieldError(errors, touched, "resume") ? "!border-red-500/60" : ""}`}
                 />
                 {fieldError(errors, touched, "resume") ? (
-                  <p className="mt-1 text-xs text-red-600">{fieldError(errors, touched, "resume")}</p>
+                  <p id="app-resume-error" className="mt-1 text-xs text-red-600">{fieldError(errors, touched, "resume")}</p>
                 ) : (
-                  <p className="mt-1 text-xs text-slate-400">PDF, DOC or DOCX — max 8MB.</p>
+                  <p id="app-resume-hint" className="mt-1 text-xs text-slate-400">Upload your resume (PDF, DOC or DOCX) — max 8MB.</p>
                 )}
               </div>
 
-              {error && <p className="text-sm text-red-600">{error}</p>}
+              {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
 
               <div className="flex gap-3 pt-2">
-                <button type="submit" disabled={status === "loading"} className="btn-primary">
+                <button type="submit" disabled={status === "loading"} className="btn-primary disabled:cursor-not-allowed disabled:opacity-60">
                   {status === "loading" ? "Submitting..." : "Submit Application"}
                 </button>
-                <button type="button" onClick={onClose} className="btn-ghost">
+                <button type="button" onClick={onClose} disabled={status === "loading"} className="btn-ghost">
                   Cancel
                 </button>
               </div>

@@ -1,6 +1,5 @@
 import crypto from "crypto";
 import { ApiError } from "./apiResponse.js";
-import { log } from "console";
 
 // Keys can be stored in .env as full PEM blocks or as a single-line base64
 // DER string (what a typical node:generateKeyPairSync save produces).
@@ -34,7 +33,6 @@ const loadPublicKey = () => {
 
 const loadPrivateKey = () => {
   const env = process.env.RSA_PRIVATE_KEY ?? "";
-  console.log("Loading RSA_PRIVATE_KEY from .env (length:", env, ")");
   const body = normalizeKeyBody(env);
   if (!body) {
     throw new ApiError(500, "RSA_PRIVATE_KEY is not configured on the server");

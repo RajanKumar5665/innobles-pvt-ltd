@@ -13,6 +13,10 @@ const DEFAULT_STATS = [
   { key: "support", label: "24/7 Operations", value: "24/7" },
 ];
 
+// Mirrors backend/src/validations/about.validation.js (statisticSchema).
+const VALUE_MAX = 80;
+const LABEL_MAX = 200;
+
 const byOrder = (a, b) =>
   (a.order ?? 0) - (b.order ?? 0) ||
   new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
@@ -70,7 +74,9 @@ export const StatisticsSection = ({ statistics = [], onChanged }) => {
     const errs = {};
     rows.forEach((r) => {
       if (!r.value.trim()) errs[r.key] = "Value is required. e.g. 50+";
+      else if (r.value.trim().length > VALUE_MAX) errs[r.key] = `Value must be ${VALUE_MAX} characters or fewer.`;
       if (!r.label.trim()) errs[`${r.key}-label`] = "Label is required.";
+      else if (r.label.trim().length > LABEL_MAX) errs[`${r.key}-label`] = `Label must be ${LABEL_MAX} characters or fewer.`;
     });
     setErrors(errs);
     if (Object.values(errs).some(Boolean)) return;
@@ -141,6 +147,7 @@ return (
                     id={`stat-value-${r.key}`}
                     value={r.value}
                     onChange={(e) => updateRow(r.key, "value", e.target.value)}
+                    maxLength={VALUE_MAX}
                     placeholder="50+"
                     className={fieldClass(!!errors[r.key])}
                   />
@@ -154,6 +161,7 @@ return (
                     id={`stat-label-${r.key}`}
                     value={r.label}
                     onChange={(e) => updateRow(r.key, "label", e.target.value)}
+                    maxLength={LABEL_MAX}
                     placeholder="Projects Delivered"
                     className={fieldClass(!!errors[`${r.key}-label`])}
                   />

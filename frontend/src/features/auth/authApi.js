@@ -1,4 +1,4 @@
-import { api } from "../../lib/api";
+import { api } from "../../lib/api.js";
 
 export const loginApi = async (payload) => {
   const response = await api.post("/admin/auth/login", payload);

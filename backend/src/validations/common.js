@@ -15,15 +15,20 @@ const idParamSchema = Joi.object({ id: idParam() });
 
 // Optional phone number: empty is allowed, but a non-empty value must be a
 // valid Indian mobile (optional +91/0 prefix + 10 digits starting 6-9) or a
-// general E.164 international number (leading + and 7-14 digits).
+// general E.164 international number (leading + and 7-14 digits). Spaces and
+// hyphens are allowed purely for readability and are stripped before
+// validating, so the 15-character cap is applied to the COMPACT form
+// ("+91 98765 43210" is exactly 15 compact digits and must stay accepted).
 const phoneString = () =>
   Joi.string()
     .trim()
     .allow("", null)
-    .max(15)
     .custom((value, helpers) => {
       if (!value) return value;
       const compact = String(value).replace(/[\s-]/g, "");
+      if (compact.length > 15) {
+        return helpers.error("string.max");
+      }
       const valid =
         /^(\+?91|0)?[6-9]\d{9}$/.test(compact) || /^\+\d{7,14}$/.test(compact);
       if (!valid) return helpers.error("string.invalidPhone");

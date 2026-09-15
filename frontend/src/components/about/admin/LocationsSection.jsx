@@ -14,6 +14,14 @@ const emptyForm = () => ({
   description: "",
 });
 
+const CITY_MAX = 200;
+const COUNTRY_MAX = 200;
+const ADDRESS_MAX = 2000;
+const PHONE_MAX = 60;
+const EMAIL_MAX = 200;
+const MAP_LINK_MAX = 300;
+const DESCRIPTION_MAX = 2000;
+
 const emailValid = (value = "") => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 const urlSafe = (value = "") => {
   const v = value.trim();
@@ -88,9 +96,17 @@ export const LocationsSection = ({ locations = [], onChanged }) => {
     if (busy) return;
 
     const errs = {};
-    if (!form.city.trim()) errs.city = "Location name is required.";
+    const city = form.city.trim();
+    if (!city) errs.city = "Location name is required.";
+    else if (city.length > CITY_MAX) errs.city = `Location name must be ${CITY_MAX} characters or fewer.`;
+    if (form.country.trim().length > COUNTRY_MAX) errs.country = `Country must be ${COUNTRY_MAX} characters or fewer.`;
+    if (form.address.trim().length > ADDRESS_MAX) errs.address = `Address must be ${ADDRESS_MAX} characters or fewer.`;
+    if (form.phone.trim().length > PHONE_MAX) errs.phone = `Phone must be ${PHONE_MAX} characters or fewer.`;
     if (form.email.trim() && !emailValid(form.email)) errs.email = "Please enter a valid email address.";
+    else if (form.email.trim().length > EMAIL_MAX) errs.email = `Email must be ${EMAIL_MAX} characters or fewer.`;
     if (form.mapLink.trim() && !urlSafe(form.mapLink)) errs.mapLink = "Please enter a valid URL.";
+    else if (form.mapLink.trim().length > MAP_LINK_MAX) errs.mapLink = `URL must be ${MAP_LINK_MAX} characters or fewer.`;
+    if (form.description.trim().length > DESCRIPTION_MAX) errs.description = `Description must be ${DESCRIPTION_MAX} characters or fewer.`;
     setErrors(errs);
     if (Object.values(errs).some(Boolean)) return;
 
@@ -210,6 +226,7 @@ export const LocationsSection = ({ locations = [], onChanged }) => {
                 id="location-city"
                 value={form.city}
                 onChange={(e) => setForm((f) => ({ ...f, city: e.target.value }))}
+                maxLength={CITY_MAX}
                 placeholder="Lucknow"
                 className={fieldClass(!!errors.city)}
               />
@@ -225,18 +242,24 @@ export const LocationsSection = ({ locations = [], onChanged }) => {
                 <FieldLabel htmlFor="location-phone">Phone</FieldLabel>
                 <input
                   id="location-phone"
+                  type="tel"
+                  inputMode="tel"
                   value={form.phone}
                   onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                  maxLength={PHONE_MAX}
                   placeholder="+91 98765 43210"
-                  className={fieldClass(false)}
+                  className={fieldClass(!!errors.phone)}
                 />
+                <FieldError message={errors.phone} />
               </div>
               <div>
                 <FieldLabel htmlFor="location-email">Email</FieldLabel>
                 <input
                   id="location-email"
+                  type="email"
                   value={form.email}
                   onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                  maxLength={EMAIL_MAX}
                   placeholder="lucknow@innobles.in"
                   className={fieldClass(!!errors.email)}
                 />
@@ -252,9 +275,11 @@ export const LocationsSection = ({ locations = [], onChanged }) => {
               value={form.address}
               onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
               rows={3}
+              maxLength={ADDRESS_MAX}
               placeholder="2nd Floor, Hazratganj, Lucknow, Uttar Pradesh 226001, India"
-              className={fieldClass(false)}
+              className={fieldClass(!!errors.address)}
             />
+            <FieldError message={errors.address} />
           </div>
 
           <div className="mt-6 grid gap-6 sm:grid-cols-2">
@@ -264,16 +289,20 @@ export const LocationsSection = ({ locations = [], onChanged }) => {
                 id="location-country"
                 value={form.country}
                 onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))}
+                maxLength={COUNTRY_MAX}
                 placeholder="India"
-                className={fieldClass(false)}
+                className={fieldClass(!!errors.country)}
               />
+              <FieldError message={errors.country} />
             </div>
             <div>
               <FieldLabel htmlFor="location-mapLink">Map URL (optional)</FieldLabel>
               <input
                 id="location-mapLink"
+                type="url"
                 value={form.mapLink}
                 onChange={(e) => setForm((f) => ({ ...f, mapLink: e.target.value }))}
+                maxLength={MAP_LINK_MAX}
                 placeholder="https://maps.app.goo.gl/..."
                 className={fieldClass(!!errors.mapLink)}
               />
@@ -288,8 +317,10 @@ export const LocationsSection = ({ locations = [], onChanged }) => {
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
               rows={2}
-              className={fieldClass(false)}
+              maxLength={DESCRIPTION_MAX}
+              className={fieldClass(!!errors.description)}
             />
+            <FieldError message={errors.description} />
           </div>
 
           {formError && <p className="mt-4 text-sm text-red-600">{formError}</p>}

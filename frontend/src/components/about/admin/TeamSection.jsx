@@ -6,6 +6,11 @@ import { DeleteModal, FieldError, FieldLabel, fieldClass, ImageField, Toast } fr
 
 const emptyForm = () => ({ name: "", role: "", description: "", linkedin: "" });
 
+const NAME_MAX = 200;
+const ROLE_MAX = 200;
+const DESCRIPTION_MAX = 2000;
+const LINKEDIN_MAX = 300;
+
 const getInitials = (name = "") =>
   name
     .trim()
@@ -86,8 +91,13 @@ export const TeamSection = ({ members = [], onChanged }) => {
     if (busy) return;
 
     const errs = {};
-    if (!form.name.trim()) errs.name = "Full name is required.";
+    const name = form.name.trim();
+    if (!name) errs.name = "Full name is required.";
+    else if (name.length > NAME_MAX) errs.name = `Full name must be ${NAME_MAX} characters or fewer.`;
+    if (form.role.trim().length > ROLE_MAX) errs.role = `Designation must be ${ROLE_MAX} characters or fewer.`;
+    if (form.description.trim().length > DESCRIPTION_MAX) errs.description = `Description must be ${DESCRIPTION_MAX} characters or fewer.`;
     if (form.linkedin.trim() && !urlSafe(form.linkedin)) errs.linkedin = "Please enter a valid LinkedIn / social URL.";
+    else if (form.linkedin.trim().length > LINKEDIN_MAX) errs.linkedin = `URL must be ${LINKEDIN_MAX} characters or fewer.`;
     setErrors(errs);
     if (Object.values(errs).some(Boolean)) return;
 
@@ -204,6 +214,7 @@ export const TeamSection = ({ members = [], onChanged }) => {
                 id="team-name"
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                maxLength={NAME_MAX}
                 placeholder="Rahul Verma"
                 className={fieldClass(!!errors.name)}
               />
@@ -218,16 +229,20 @@ export const TeamSection = ({ members = [], onChanged }) => {
                 id="team-role"
                 value={form.role}
                 onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
+                maxLength={ROLE_MAX}
                 placeholder="Founder & CEO"
-                className={fieldClass(false)}
+                className={fieldClass(!!errors.role)}
               />
+              <FieldError message={errors.role} />
             </div>
             <div>
               <FieldLabel htmlFor="team-linkedin">LinkedIn / Social URL (optional)</FieldLabel>
               <input
                 id="team-linkedin"
+                type="url"
                 value={form.linkedin}
                 onChange={(e) => setForm((f) => ({ ...f, linkedin: e.target.value }))}
+                maxLength={LINKEDIN_MAX}
                 placeholder="https://linkedin.com/in/..."
                 className={fieldClass(!!errors.linkedin)}
               />
@@ -242,9 +257,11 @@ export const TeamSection = ({ members = [], onChanged }) => {
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
               rows={3}
+              maxLength={DESCRIPTION_MAX}
               placeholder="A short line about this team member…"
-              className={fieldClass(false)}
+              className={fieldClass(!!errors.description)}
             />
+            <FieldError message={errors.description} />
           </div>
 
           {formError && <p className="mt-4 text-sm text-red-600">{formError}</p>}
