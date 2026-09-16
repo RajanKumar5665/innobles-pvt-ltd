@@ -3,9 +3,6 @@ import jwt from "jsonwebtoken";
 import { MulterError } from "multer";
 import { ApiError } from "../utils/apiResponse.js";
 
-// Central error handler — maps framework/DB errors to clean JSON and never
-// leaks stack traces to clients.
-// eslint-disable-next-line no-unused-vars
 const errorHandler = (err, req, res, next) => {
   let statusCode = err.statusCode || 500;
   let message = err.message || "Internal server error";
@@ -16,6 +13,7 @@ const errorHandler = (err, req, res, next) => {
     message = err.message;
     errors = err.errors;
   } else if (err instanceof mongoose.Error.ValidationError) {
+    // mongoose gives errors as an object keyed by field, flatten it to an array
     statusCode = 400;
     message = "Validation failed";
     errors = Object.values(err.errors).map((e) => ({
@@ -29,6 +27,7 @@ const errorHandler = (err, req, res, next) => {
       { field: err.path || "id", message: "Invalid identifier provided" },
     ];
   } else if (err.code === 11000) {
+    // mongo duplicate key error, grab the field name from keyValue
     statusCode = 409;
     message = "Duplicate value";
     const field = Object.keys(err.keyValue || {})[0];
@@ -44,12 +43,13 @@ const errorHandler = (err, req, res, next) => {
     message = err.message;
   }
 
-  // Log unexpected errors server-side only.
   if (statusCode >= 500) {
     console.error(`[${new Date().toISOString()}] Server error:`, err);
   }
 
+  // if response already started streaming, delegate to express's default handler
   if (res.headersSent) return next(err);
+
   return res.status(statusCode).json({ success: false, message, errors });
 };
 

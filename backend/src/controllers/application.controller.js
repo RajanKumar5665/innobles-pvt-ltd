@@ -14,8 +14,12 @@ import { uploadSingle, deleteByPublicId } from "../config/cloudinary.js";
 // Public
 
 const createApplication = asyncHandler(async (req, res) => {
-  const career = await Career.findOne({ _id: req.params.careerId, status: "open" });
-  if (!career) throw new ApiError(404, "This career is no longer accepting applications");
+  const career = await Career.findOne({
+    _id: req.params.careerId,
+    status: "open",
+  });
+  if (!career)
+    throw new ApiError(404, "This career is no longer accepting applications");
 
   // unique indexes on (careerId, email) and (careerId, phoneKey).
   const email = normalizeEmail(req.body.email);
@@ -56,7 +60,12 @@ const createApplication = asyncHandler(async (req, res) => {
       resume,
     });
 
-    return success(res, { id: application._id }, "Application submitted successfully", 201);
+    return success(
+      res,
+      { id: application._id },
+      "Application submitted successfully",
+      201,
+    );
   } catch (err) {
     // Defense in depth: if two requests race past the pre-check, Mongo's unique
     // indexes on (careerId, email) and (careerId, phoneKey) reject the second
@@ -79,7 +88,9 @@ const adminListApplications = asyncHandler(async (req, res) => {
     const term = escapeRegex(String(search).trim());
     if (term) {
       // Include careers whose title matches, so searching "developer" surfaces its applications.
-      const careerMatches = await Career.find({ title: { $regex: term, $options: "i" } })
+      const careerMatches = await Career.find({
+        title: { $regex: term, $options: "i" },
+      })
         .select("_id")
         .lean();
       const careerIds = careerMatches.map((c) => c._id);
@@ -157,7 +168,10 @@ const adminGetResume = asyncHandler(async (req, res) => {
   }
 
   res.setHeader("Content-Type", contentType);
-  res.setHeader("Content-Disposition", `inline; filename="resume${ext ? `.${ext}` : ""}"`);
+  res.setHeader(
+    "Content-Disposition",
+    `inline; filename="resume${ext ? `.${ext}` : ""}"`,
+  );
   res.setHeader("Cache-Control", "private, max-age=300");
 
   const { Readable } = await import("node:stream");
@@ -175,7 +189,8 @@ const adminUpdateApplicationStatus = asyncHandler(async (req, res) => {
 const adminDeleteApplication = asyncHandler(async (req, res) => {
   const application = await JobApplication.findByIdAndDelete(req.params.id);
   if (!application) throw new ApiError(404, "Application not found");
-  if (application.resume?.publicId) await deleteByPublicId(application.resume.publicId);
+  if (application.resume?.publicId)
+    await deleteByPublicId(application.resume.publicId);
   return success(res, null, "Application deleted");
 });
 

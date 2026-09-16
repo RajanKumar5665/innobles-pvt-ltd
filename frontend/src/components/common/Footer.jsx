@@ -115,10 +115,20 @@ const Footer = () => {
       </div>
 
       <div className="footer-content footer-bottom">
-        <div className="container-x py-6 text-center text-sm">
+        <div className="container-x flex flex-col items-center justify-center gap-1.5 py-6 text-center text-sm sm:flex-row sm:gap-3">
           <span>
-            © 2026 Innobles Smart Technologies Private Limited. All rights reserved.
+            © 2026 Innobles Smart Technologies Private Limited. All rights
+            reserved.
           </span>
+          <span className="hidden text-[#94A3B8] sm:inline" aria-hidden="true">
+            •
+          </span>
+          <Link
+            to="/privacy-policy"
+            className="transition-colors hover:text-[#F59E0B]"
+          >
+            Privacy Policy
+          </Link>
         </div>
       </div>
     </footer>

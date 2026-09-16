@@ -9,7 +9,18 @@ import { escapeRegex } from "../utils/escapeRegex.js";
 // Public
 
 const createContact = asyncHandler(async (req, res) => {
-  const contact = await Contact.create(req.body);
+  const email = String(req.body.email).trim().toLowerCase();
+  const message = String(req.body.message).trim();
+
+  // Block exact-duplicate submissions from the same email (double-click,
+  // form resubmit, or a bot spamming the same text). Different messages
+  // from the same person are still fine.
+  const duplicate = await Contact.findOne({ email, message });
+  if (duplicate) {
+    throw new ApiError(409, "You've already sent this message. We'll get back to you soon.");
+  }
+
+  const contact = await Contact.create({ ...req.body, email, message });
 
   // const notifyEmails = process.env.CONTACT_NOTIFY_EMAILS?.split(",") || [];
   // if (notifyEmails.length) {

@@ -14,6 +14,7 @@ const Products = lazy(() => import("../pages/Products"));
 const ProductDetail = lazy(() => import("../pages/ProductDetail"));
 const Careers = lazy(() => import("../pages/Careers"));
 const Contact = lazy(() => import("../pages/Contact"));
+const PrivacyPolicy = lazy(() => import("../pages/PrivacyPolicy"));
 const NotFound = lazy(() => import("../pages/NotFound"));
 
 // Fallback shown while a route chunk downloads.
@@ -38,6 +39,7 @@ const AppRoutes = () => {
           <Route path="products/:slug" element={<ProductDetail />} />
           <Route path="careers" element={<Careers />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="privacy-policy" element={<PrivacyPolicy />} />
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route path="/admin/*" element={<AdminRoutes />} />
